@@ -1,30 +1,100 @@
 'use client'
 
 import React, { useState, useEffect } from 'react'
-import Image from 'next/image'
 import Link from 'next/link'
-import { FileText, Shield, Users, ArrowRight, Loader2 } from 'lucide-react'
+import { motion } from 'framer-motion'
+import {
+  FileText, Shield, Users, ArrowUpRight, Loader2,
+  GraduationCap, BookOpen, Activity, TrendingUp, Hash
+} from 'lucide-react'
 import AdminShell, { type AdminRecord } from '@/components/admin/AdminShell'
+
+function StatCard({
+  label, value, icon: Icon, accent, sub, delay = 0
+}: {
+  label: string
+  value: number | string
+  icon: React.ElementType
+  accent: string
+  sub?: string
+  delay?: number
+}) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 12 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.35, delay }}
+      className="bg-white border border-slate-200 rounded-xl p-5 flex flex-col gap-3 hover:border-slate-300 hover:shadow-sm transition-all duration-200"
+    >
+      <div className="flex items-start justify-between">
+        <div className="w-9 h-9 rounded-lg flex items-center justify-center shrink-0" style={{ background: `${accent}14` }}>
+          <Icon className="w-4 h-4" style={{ color: accent }} />
+        </div>
+        <ArrowUpRight className="w-3.5 h-3.5 text-slate-300" />
+      </div>
+      <div>
+        <div className="text-2xl font-bold text-slate-900 tabular-nums">{value}</div>
+        <div className="text-xs font-medium text-slate-500 mt-0.5">{label}</div>
+        {sub && <div className="text-[10px] text-slate-400 mt-1 font-mono">{sub}</div>}
+      </div>
+    </motion.div>
+  )
+}
+
+function QuickActionCard({
+  href, icon: Icon, label, description, accent, delay = 0
+}: {
+  href: string
+  icon: React.ElementType
+  label: string
+  description: string
+  accent: string
+  delay?: number
+}) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, x: -8 }}
+      animate={{ opacity: 1, x: 0 }}
+      transition={{ duration: 0.3, delay }}
+    >
+      <Link
+        href={href}
+        className="flex items-center gap-4 p-4 bg-white border border-slate-200 rounded-xl hover:border-slate-300 hover:shadow-sm transition-all duration-200 group"
+      >
+        <div className="w-10 h-10 rounded-lg flex items-center justify-center shrink-0" style={{ background: `${accent}12` }}>
+          <Icon className="w-5 h-5 transition-transform duration-200 group-hover:scale-110" style={{ color: accent }} />
+        </div>
+        <div className="min-w-0 flex-1">
+          <div className="text-sm font-semibold text-slate-800">{label}</div>
+          <div className="text-xs text-slate-400 mt-0.5">{description}</div>
+        </div>
+        <ArrowUpRight className="w-4 h-4 text-slate-300 group-hover:text-slate-600 transition-colors shrink-0" />
+      </Link>
+    </motion.div>
+  )
+}
 
 function DashboardContent({ admin }: { admin: AdminRecord }) {
   const isSuperAdmin = admin.admin_type === 'superadmin'
-  const [statsData, setStatsData] = useState({
+  const [stats, setStats] = useState({
     certificatesIssued: 0,
+    marksheetsIssued: 0,
+    degreesIssued: 0,
+    coursesIssued: 0,
     verifiedOnChain: 0,
     adminUsers: 0
   })
   const [loading, setLoading] = useState(true)
+  const now = new Date()
 
   useEffect(() => {
     async function fetchStats() {
       try {
-        const res = await fetch('/api/admin/dashboard-stats')
+        const res  = await fetch('/api/admin/dashboard-stats')
         const data = await res.json()
-        if (data.success) {
-          setStatsData(data.stats)
-        }
+        if (data.success) setStats(data.stats)
       } catch (err) {
-        console.error('Failed to fetch dashboard stats:', err)
+        console.error('Failed to fetch stats:', err)
       } finally {
         setLoading(false)
       }
@@ -32,115 +102,168 @@ function DashboardContent({ admin }: { admin: AdminRecord }) {
     fetchStats()
   }, [])
 
-  const stats = [
-    { label: 'Certificates Issued', value: statsData.certificatesIssued, icon: FileText, color: 'text-blue-600', bg: 'bg-blue-50' },
-    { label: 'Verified On-Chain',   value: statsData.verifiedOnChain, icon: Shield,   color: 'text-emerald-600', bg: 'bg-emerald-50' },
-    { label: 'Admin Users',         value: statsData.adminUsers, icon: Users,    color: 'text-purple-600', bg: 'bg-purple-50' },
-  ]
+  const val = (n: number) => loading
+    ? <Loader2 className="w-4 h-4 animate-spin text-slate-300" />
+    : n
 
   return (
     <div className="space-y-6 max-w-7xl mx-auto w-full">
 
-      {/* ── Welcome Banner ── */}
-      <div className="bg-gradient-to-br from-blue-600 to-blue-700 rounded-2xl p-6 sm:p-8 text-white relative overflow-hidden">
-        <div className="absolute inset-0 opacity-10" style={{
-          backgroundImage: 'radial-gradient(white 1px, transparent 1px)',
-          backgroundSize: '20px 20px',
-        }} />
-        <div className="relative z-10 flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
-          <div>
-            <div className="flex items-center gap-3 mb-4">
-               <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center p-1.5 shadow-sm">
-                 <Image src="/logo.png" alt="" width={24} height={24} />
-               </div>
-              <span className="text-xs font-bold uppercase tracking-[0.2em] text-blue-200">Admin Portal</span>
+      {/* ── Welcome Banner ─────────────────────────────────────── */}
+      <motion.div
+        initial={{ opacity: 0, y: -8 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4 }}
+        className="rounded-xl overflow-hidden"
+        style={{ background: '#0A0F1E' }}
+      >
+        <div className="relative px-6 py-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          {/* Subtle grid overlay */}
+          <div className="absolute inset-0 pointer-events-none opacity-[0.03]"
+            style={{
+              backgroundImage: 'linear-gradient(rgba(255,255,255,0.5) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.5) 1px, transparent 1px)',
+              backgroundSize: '32px 32px'
+            }}
+          />
+          <div className="relative z-10">
+            <div className="flex items-center gap-2 mb-2">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+              <span className="text-[10px] font-bold tracking-[0.2em] uppercase" style={{ color: 'rgba(255,255,255,0.35)' }}>
+                Admin Portal · Sepolia Testnet
+              </span>
             </div>
-            <h2 className="text-xl sm:text-2xl font-bold mb-1">
-              Welcome back, {admin.name.split(' ')[0]} 👋
-            </h2>
-            <p className="text-blue-100 text-sm leading-relaxed">
+            <h1 className="text-xl font-bold text-white">
+              Good {now.getHours() < 12 ? 'morning' : now.getHours() < 17 ? 'afternoon' : 'evening'}, {admin.name.split(' ')[0]}
+            </h1>
+            <p className="text-sm mt-0.5" style={{ color: 'rgba(255,255,255,0.4)' }}>
               {admin.position ? `${admin.position} · ` : ''}
-              <span className={`inline-flex items-center gap-1 font-semibold ${isSuperAdmin ? 'text-yellow-200' : 'text-blue-200'}`}>
-                {isSuperAdmin ? '🛡 Superadmin' : '🔑 Admin'}
+              <span style={{ color: isSuperAdmin ? '#FCD34D' : 'rgba(255,255,255,0.4)' }}>
+                {isSuperAdmin ? '⬡ Superadmin' : '◯ Admin'}
               </span>
             </p>
           </div>
 
           {/* Email chip */}
-          <div className="shrink-0 bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl px-4 py-3 text-sm">
-            <div className="text-blue-200 text-[10px] uppercase font-bold tracking-wider mb-0.5">Signed in as</div>
-            <div className="text-white font-medium truncate max-w-[200px]">{admin.email}</div>
+          <div className="relative z-10 shrink-0 rounded-lg px-4 py-3 text-sm" style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.08)' }}>
+            <div className="text-[10px] font-bold uppercase tracking-wider mb-0.5" style={{ color: 'rgba(255,255,255,0.3)' }}>Signed in as</div>
+            <div className="font-mono text-xs text-white truncate max-w-[220px]">{admin.email}</div>
           </div>
+        </div>
+      </motion.div>
+
+      {/* ── Stat Cards ─────────────────────────────────────────── */}
+      <div>
+        <div className="flex items-center gap-2 mb-3">
+          <TrendingUp className="w-4 h-4 text-slate-400" />
+          <h2 className="text-xs font-bold uppercase tracking-wider text-slate-400">Issuance Overview</h2>
+        </div>
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
+          <StatCard label="Total Issued"      value={val(stats.certificatesIssued)} icon={Activity}      accent="#2563EB" delay={0}    />
+          <StatCard label="Marksheets"        value={val(stats.marksheetsIssued)}   icon={FileText}      accent="#2563EB" delay={0.05} />
+          <StatCard label="Degrees"           value={val(stats.degreesIssued)}      icon={GraduationCap} accent="#D97706" delay={0.1}  />
+          <StatCard label="Course Certs"      value={val(stats.coursesIssued)}      icon={BookOpen}      accent="#0D9488" delay={0.15} />
+          <StatCard label="On-Chain"          value={val(stats.verifiedOnChain)}    icon={Shield}        accent="#059669" delay={0.2}  />
+          <StatCard label="Admin Users"       value={val(stats.adminUsers)}         icon={Users}         accent="#6366F1" delay={0.25} />
         </div>
       </div>
 
-      {/* ── Stat Cards ── */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        {stats.map((stat) => (
-          <div key={stat.label} className="bg-white rounded-2xl border border-slate-200 p-5">
-            <div className={`w-10 h-10 rounded-xl ${stat.bg} flex items-center justify-center mb-4`}>
-              <stat.icon className={`w-5 h-5 ${stat.color}`} />
-            </div>
-            <div className="text-2xl font-bold text-slate-900 mb-0.5">
-              {loading ? <Loader2 className="w-5 h-5 animate-spin text-slate-300" /> : stat.value}
-            </div>
-            <div className="text-sm text-slate-500">{stat.label}</div>
-          </div>
-        ))}
-      </div>
-
-      {/* ── Quick actions for superadmin ── */}
-      {isSuperAdmin && (
-        <div className="bg-white rounded-2xl border border-slate-200 p-5 sm:p-6">
-          <h3 className="text-sm font-bold text-slate-700 uppercase tracking-wider mb-4">Quick Actions</h3>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            <Link
-              href="/admin/users"
-              className="flex items-center gap-3 p-4 rounded-xl border border-slate-200 hover:border-blue-200 hover:bg-blue-50/40 transition-all group"
-            >
-              <div className="w-9 h-9 rounded-xl bg-purple-50 flex items-center justify-center shrink-0">
-                <Users className="w-5 h-5 text-purple-600" />
-              </div>
-              <div className="min-w-0">
-                <div className="text-sm font-semibold text-slate-800">Manage Admins</div>
-                <div className="text-xs text-slate-400">Add or remove admin users</div>
-              </div>
-              <ArrowRight className="w-4 h-4 text-slate-300 group-hover:text-blue-500 ml-auto shrink-0 transition-colors" />
-            </Link>
-
-            <Link
-              href="/admin/marksheets"
-              className="flex items-center gap-3 p-4 rounded-xl border border-slate-200 hover:border-blue-200 hover:bg-blue-50/40 transition-all group"
-            >
-              <div className="w-9 h-9 rounded-xl bg-blue-50 flex items-center justify-center shrink-0">
-                <FileText className="w-5 h-5 text-blue-500" />
-              </div>
-              <div className="min-w-0">
-                <div className="text-sm font-semibold text-slate-800">Issue Marksheets</div>
-                <div className="text-xs text-slate-400">Issue blockchain-anchored credentials</div>
-              </div>
-              <ArrowRight className="w-4 h-4 text-slate-300 group-hover:text-blue-500 ml-auto shrink-0 transition-colors" />
-            </Link>
-          </div>
-        </div>
-      )}
-
-      {/* ── Additional Views ── */}
+      {/* ── Quick Actions ───────────────────────────────────────── */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <Link 
-          href="/admin/marksheets"
-          className="bg-white rounded-2xl border border-slate-200 p-6 flex items-center gap-4 hover:border-blue-200 transition-colors group"
-        >
-          <div className="w-14 h-14 bg-blue-50 rounded-2xl flex items-center justify-center shrink-0">
-            <FileText className="w-7 h-7 text-blue-400 group-hover:text-blue-600 transition-colors" />
+
+        {/* Issuance column */}
+        <div>
+          <div className="flex items-center gap-2 mb-3">
+            <Hash className="w-4 h-4 text-slate-400" />
+            <h2 className="text-xs font-bold uppercase tracking-wider text-slate-400">Issue Documents</h2>
           </div>
-          <div>
-            <h3 className="text-base font-bold text-slate-900 mb-1">Marksheet Management</h3>
-            <p className="text-sm text-slate-500 max-w-xs">
-              View and manage all blockchain-anchored marksheets issued by the college.
-            </p>
+          <div className="space-y-2">
+            <QuickActionCard
+              href="/admin/marksheets"
+              icon={FileText}
+              label="Issue Marksheet"
+              description="Blockchain-anchored semester marksheet"
+              accent="#2563EB"
+              delay={0.1}
+            />
+            <QuickActionCard
+              href="/admin/degrees"
+              icon={GraduationCap}
+              label="Issue Final Degree"
+              description="Permanent degree record on DegreeRegistry"
+              accent="#D97706"
+              delay={0.15}
+            />
+            <QuickActionCard
+              href="/admin/courses"
+              icon={BookOpen}
+              label="Issue Course Certificate"
+              description="Workshops, seminars, and short-term courses"
+              accent="#0D9488"
+              delay={0.2}
+            />
           </div>
-        </Link>
+        </div>
+
+        {/* System column */}
+        <div>
+          <div className="flex items-center gap-2 mb-3">
+            <Shield className="w-4 h-4 text-slate-400" />
+            <h2 className="text-xs font-bold uppercase tracking-wider text-slate-400">System</h2>
+          </div>
+          <div className="space-y-2">
+            {isSuperAdmin && (
+              <QuickActionCard
+                href="/admin/users"
+                icon={Users}
+                label="Manage Admins"
+                description="Add, edit, or remove admin users"
+                accent="#6366F1"
+                delay={0.1}
+              />
+            )}
+            <QuickActionCard
+              href="/admin/network"
+              icon={Activity}
+              label="Network Status"
+              description="View blockchain node and contract health"
+              accent="#059669"
+              delay={0.15}
+            />
+          </div>
+
+          {/* Blockchain info card */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.4 }}
+            className="mt-3 rounded-xl p-4 border"
+            style={{ background: '#0A0F1E', borderColor: 'rgba(255,255,255,0.06)' }}
+          >
+            <div className="flex items-center justify-between mb-3">
+              <span className="text-[10px] font-bold uppercase tracking-wider" style={{ color: 'rgba(255,255,255,0.3)' }}>
+                Active Contracts
+              </span>
+              <span className="flex items-center gap-1 text-[10px] font-bold" style={{ color: '#34D399' }}>
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                Sepolia
+              </span>
+            </div>
+            <div className="space-y-2">
+              {[
+                { label: 'CertificateRegistry', icon: FileText, color: '#2563EB' },
+                { label: 'DegreeRegistry', icon: GraduationCap, color: '#D97706' },
+                { label: 'CourseRegistry', icon: BookOpen, color: '#0D9488' },
+                { label: 'QRScanLogger', icon: Activity, color: '#6366F1' },
+              ].map(c => (
+                <div key={c.label} className="flex items-center gap-2.5">
+                  <c.icon className="w-3 h-3 shrink-0" style={{ color: c.color }} />
+                  <span className="text-xs font-mono flex-1 truncate" style={{ color: 'rgba(255,255,255,0.55)' }}>{c.label}</span>
+                  <span className="w-1.5 h-1.5 rounded-full" style={{ background: '#34D399' }} />
+                </div>
+              ))}
+            </div>
+          </motion.div>
+        </div>
       </div>
     </div>
   )

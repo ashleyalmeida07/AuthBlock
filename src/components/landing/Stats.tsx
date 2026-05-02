@@ -2,79 +2,89 @@
 
 import React from 'react'
 import { Container } from '@/components/ui'
-import { CheckCircle } from 'lucide-react'
+import { Shield, FileCheck, Clock, Globe } from 'lucide-react'
 
-const backtestCards = [
+const stats = [
   {
-    label: 'Authblock Verified',
-    value: '100,234',
-    change: '+4.81%',
-    changeColor: 'text-emerald-600',
-    subtitle: 'Average across 50+ institutions',
-    badge: { text: '100% verification rate', color: 'bg-emerald-500 text-white' },
-    highlight: true,
+    value: '100%',
+    label: 'Tamper Detection Rate',
+    sub: 'Zero successful forgeries since launch',
+    icon: Shield,
+    accent: '#2563EB',
+    accentBg: '#EFF6FF',
   },
   {
-    label: 'Manual Only (no blockchain)',
-    value: '98,150',
-    change: '+3.19% integrity',
-    changeColor: 'text-emerald-600',
-    subtitle: 'Base manual check only (no blockchain link)',
-    badge: null,
-    highlight: false,
+    value: '< 3s',
+    label: 'Verification Time',
+    sub: 'QR scan to on-chain result',
+    icon: Clock,
+    accent: '#059669',
+    accentBg: '#ECFDF5',
   },
   {
-    label: 'Worst case scenario',
-    value: '97,500',
-    change: '+0.26% integrity',
-    changeColor: 'text-emerald-600',
-    subtitle: 'Even the worst window was tamper-proof',
-    badge: { text: '$0 fraud detected', color: 'bg-emerald-500 text-white' },
-    highlight: false,
+    value: '3',
+    label: 'Document Types Supported',
+    sub: 'Marksheet · Final Degree · Course Certificate',
+    icon: FileCheck,
+    accent: '#D97706',
+    accentBg: '#FFFBEB',
+  },
+  {
+    value: '∞',
+    label: 'Permanent On-Chain Record',
+    sub: 'Credentials live on Ethereum forever',
+    icon: Globe,
+    accent: '#0D9488',
+    accentBg: '#F0FDFA',
   },
 ]
 
 export function Stats() {
   return (
-    <section className="relative py-24 bg-slate-50">
+    <section className="relative py-20 bg-white">
+      <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-slate-200 to-transparent" />
+
       <Container>
-        {/* Section Header */}
+        {/* Header */}
         <div className="text-center mb-12">
-          <div className="text-xs font-bold text-blue-600 uppercase tracking-[0.2em] mb-4">BACKTEST PROOF</div>
-          <h2 className="text-3xl md:text-4xl lg:text-[2.75rem] font-bold text-slate-900 tracking-tight">
-            What would&apos;ve happened with real data
+          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-slate-50 border border-slate-200 mb-4">
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+            <span className="text-xs font-bold text-slate-600 uppercase tracking-[0.15em]">By The Numbers</span>
+          </div>
+          <h2 className="text-3xl md:text-4xl font-bold text-slate-900 tracking-tight">
+            Built to be trusted
           </h2>
+          <p className="text-slate-500 mt-3 text-base max-w-lg mx-auto">
+            Every metric here is backed by the Ethereum blockchain — not marketing claims.
+          </p>
         </div>
 
-        {/* Backtest Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto mb-10">
-          {backtestCards.map((card) => (
+        {/* 4-column stat grid */}
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+          {stats.map((s) => (
             <div
-              key={card.label}
-              className={`rounded-2xl p-8 text-center transition-all duration-300 ${
-                card.highlight
-                  ? 'bg-gradient-to-br from-blue-50 to-cyan-50 border-2 border-blue-200 shadow-lg'
-                  : 'bg-white border border-slate-200 hover:border-blue-200 hover:shadow-md'
-              }`}
+              key={s.label}
+              className="bg-white border border-slate-200 rounded-xl p-6 hover:border-slate-300 hover:shadow-sm transition-all duration-200"
             >
-              <div className="text-xs font-medium text-blue-600 mb-3 uppercase tracking-wider">{card.label}</div>
-              <div className="text-4xl md:text-5xl font-bold text-slate-900 mb-2">${card.value}</div>
-              <div className={`text-sm font-semibold ${card.changeColor} mb-2`}>{card.change}</div>
-              <div className="text-xs text-slate-500 mb-4">{card.subtitle}</div>
-              {card.badge && (
-                <div className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold ${card.badge.color}`}>
-                  <CheckCircle className="w-3 h-3" />
-                  {card.badge.text}
-                </div>
-              )}
+              <div className="w-9 h-9 rounded-lg flex items-center justify-center mb-4" style={{ background: s.accentBg }}>
+                <s.icon className="w-4.5 h-4.5 w-[18px] h-[18px]" style={{ color: s.accent }} />
+              </div>
+              <div className="text-3xl font-black text-slate-900 tracking-tight mb-1">{s.value}</div>
+              <div className="text-sm font-semibold text-slate-700 mb-1">{s.label}</div>
+              <div className="text-xs text-slate-400 leading-relaxed">{s.sub}</div>
             </div>
           ))}
         </div>
 
-        {/* Footnote */}
-        <p className="text-center text-xs text-slate-400 max-w-3xl mx-auto">
-          Data: Institutional verification records + blockchain hash validations (Ethereum, Polygon). March 2024 – March 2026. 552 rolling 6-month windows tested.
-        </p>
+        {/* Ethereum proof strip */}
+        <div className="mt-8 flex items-center justify-center gap-3 py-4 px-6 bg-slate-900 rounded-xl max-w-2xl mx-auto">
+          <div className="w-6 h-6 rounded-full bg-slate-700 flex items-center justify-center shrink-0">
+            <span className="text-white text-xs font-bold">Ξ</span>
+          </div>
+          <p className="text-sm text-slate-300">
+            All credentials are permanently registered on <span className="text-white font-semibold">Ethereum Sepolia</span> — publicly verifiable by anyone, forever.
+          </p>
+        </div>
       </Container>
     </section>
   )

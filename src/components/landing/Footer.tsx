@@ -143,16 +143,21 @@ export function Footer() {
         </div>
       </Container>
 
-      {/* Bottom section */}
       <div className="border-t border-slate-800">
         <Container className="py-6">
           <div className="flex flex-col md:flex-row items-center justify-between gap-4">
             <p className="text-slate-500 text-sm">
               &copy; {new Date().getFullYear()} Authblock. All rights reserved.
             </p>
-            <div className="flex items-center gap-2 text-sm text-slate-500">
-              <span>Built for</span>
-              <span className="text-blue-400 font-medium">Fr. Conceicao Rodrigues College of Engineering</span>
+            <div className="flex items-center gap-4 text-sm text-slate-500">
+              <span className="hidden md:inline">Built for <span className="text-blue-400 font-medium">Fr. Conceicao Rodrigues College of Engineering</span></span>
+              <Link
+                href="/admin/login"
+                className="flex items-center gap-1.5 text-xs text-slate-600 hover:text-slate-400 transition-colors border border-slate-700 hover:border-slate-600 px-3 py-1.5 rounded-full"
+              >
+                <span className="w-1.5 h-1.5 rounded-full bg-slate-600" />
+                Admin
+              </Link>
             </div>
           </div>
         </Container>

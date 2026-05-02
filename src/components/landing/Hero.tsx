@@ -160,153 +160,66 @@ export function Hero({ isLoggedIn = false }: { isLoggedIn?: boolean }) {
       <div className="absolute inset-0 bg-gradient-to-b from-white/80 via-transparent to-white/80" style={{ zIndex: 2 }} />
 
       <Container className="relative z-10">
-        <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-start">
-          {/* ─── Left Content ─── */}
-          <div className="max-w-xl pt-8">
-            {/* Badge */}
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-blue-50 border border-blue-200 rounded-full mb-8">
-              <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse" />
-              <span className="text-xs font-semibold text-blue-700 tracking-wide">Blockchain Verified on Ethereum</span>
-            </div>
+        <div className="max-w-3xl mx-auto text-center pt-8 pb-12">
 
-            {/* Main Heading */}
-            <h1 className="text-4xl sm:text-5xl lg:text-[3.5rem] font-bold text-slate-900 leading-[1.1] mb-6 tracking-tight">
-              Secure your academic
-              <br />
-              credentials without
-              <br />
-              <span className="text-slate-900">the risk.</span>
-            </h1>
-
-            {/* Description */}
-            <p className="text-lg text-slate-600 mb-8 leading-relaxed max-w-md">
-              Issue tamper-proof certificates. Pick a credential — degree, diploma, transcript.
-              If it's verified, share it globally. If it's tampered, the blockchain catches it.
-            </p>
-
-            {/* CTA Buttons */}
-            <div className="flex flex-wrap gap-3 mb-10">
-              <Link
-                href={isLoggedIn ? "/dashboard" : "/login"}
-                className="inline-flex items-center gap-2 px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition-all duration-200 hover:shadow-lg hover:shadow-blue-600/25"
-              >
-                <Image src="/logo.png" alt="" width={16} height={16} className="w-4 h-4" />
-                {isLoggedIn ? "Dashboard" : "Login"}
-                <ArrowRight className="w-4 h-4" />
-              </Link>
-              <Link
-                href="/verify"
-                className="inline-flex items-center gap-2 px-6 py-3 bg-white text-slate-700 font-semibold rounded-lg border border-slate-200 hover:border-slate-300 hover:bg-slate-50 transition-all duration-200"
-              >
-                Verify Certificate
-              </Link>
-            </div>
-
-            {/* Stats Banner */}
-            <div className="inline-flex items-center gap-2 px-5 py-3 bg-slate-900 text-white rounded-xl text-sm font-medium">
-              <span className="text-emerald-400 font-bold">1,234</span>
-              <span className="text-slate-300">certificates issued by</span>
-              <span className="text-white font-bold">50+</span>
-              <span className="text-slate-300">institutions.</span>
-              <span className="text-slate-400 mx-1">|</span>
-              <span className="text-emerald-400 font-bold">$0 fraud</span>
-              <span className="text-slate-300">— ever.</span>
-            </div>
+          {/* Badge */}
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-blue-50 border border-blue-200 rounded-full mb-8">
+            <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse" />
+            <span className="text-xs font-semibold text-blue-700 tracking-wide">Blockchain Verified on Ethereum</span>
           </div>
 
-          {/* ─── Right Content — Terminal Dashboard ─── */}
-          <div className="relative">
-            <div className="terminal-card">
-              {/* Terminal header bar */}
-              <div className="terminal-header">
-                <div className="flex items-center gap-2">
-                  <div className="terminal-dot terminal-dot-red" />
-                  <div className="terminal-dot terminal-dot-yellow" />
-                  <div className="terminal-dot terminal-dot-green" />
-                  <span className="text-xs text-slate-500 ml-3 font-medium">
-                    authblock-terminal — Live Verification Feed
-                  </span>
-                </div>
-                <span className="text-[10px] text-slate-400 font-mono">16:30:22 PM</span>
-              </div>
+          {/* Main Heading */}
+          <h1 className="text-4xl sm:text-5xl lg:text-[3.75rem] font-bold text-slate-900 leading-[1.1] mb-6 tracking-tight">
+            Secure your academic<br />
+            credentials without<br />
+            <span className="text-blue-600">the risk.</span>
+          </h1>
 
-              {/* Dashboard content */}
-              <div className="p-5">
-                {/* Top credential row */}
-                <div className="flex items-center gap-2 mb-4">
-                  <Image src="/logo.png" alt="" width={16} height={16} className="w-4 h-4" />
-                  <span className="text-xs font-bold text-slate-900 uppercase tracking-wider">Certificates</span>
-                  <span className="ml-auto text-xl font-bold text-slate-900">1,234</span>
-                  <span className="text-xs text-emerald-600 font-semibold bg-emerald-50 px-2 py-0.5 rounded-full">▲ 1.62%</span>
-                </div>
+          {/* Description */}
+          <p className="text-lg text-slate-500 mb-10 leading-relaxed max-w-xl mx-auto">
+            Issue tamper-proof certificates anchored on the Ethereum blockchain.
+            If it's verified, share it globally. If it's tampered, the chain catches it instantly.
+          </p>
 
-                {/* Main Chart area */}
-                <div className="mb-4 bg-slate-50 rounded-xl p-3">
-                  <MiniChart
-                    points={[20, 25, 22, 30, 28, 35, 32, 40, 38, 45, 42, 50, 48, 55, 52, 58, 55, 60]}
-                    color="#0066FF"
-                    height={80}
-                  />
-                </div>
+          {/* CTA Buttons */}
+          <div className="flex flex-wrap gap-3 justify-center">
+            <Link
+              href={isLoggedIn ? "/dashboard" : "/login"}
+              className="inline-flex items-center gap-2 px-7 py-3.5 bg-blue-600 text-white font-semibold rounded-xl hover:bg-blue-700 transition-all duration-200 hover:shadow-lg hover:shadow-blue-600/25 text-sm"
+            >
+              <Image src="/logo.png" alt="" width={16} height={16} className="w-4 h-4" />
+              {isLoggedIn ? "Dashboard" : "Get Started"}
+              <ArrowRight className="w-4 h-4" />
+            </Link>
+            <Link
+              href="/verify"
+              className="inline-flex items-center gap-2 px-7 py-3.5 bg-white text-slate-700 font-semibold rounded-xl border border-slate-200 hover:border-slate-300 hover:bg-slate-50 transition-all duration-200 text-sm"
+            >
+              Verify Certificate
+            </Link>
+          </div>
 
-                {/* Stats row */}
-                <div className="grid grid-cols-3 gap-3 mb-4">
-                  <div className="text-center">
-                    <div className="text-xs text-slate-500 uppercase tracking-wider mb-0.5">Total</div>
-                    <div className="text-sm font-bold text-blue-600">2.0M</div>
-                  </div>
-                  <div className="text-center border-x border-slate-100">
-                    <div className="text-xs text-slate-500 uppercase tracking-wider mb-0.5">Verified</div>
-                    <div className="text-sm font-bold text-slate-900">1.8M</div>
-                  </div>
-                  <div className="text-center">
-                    <div className="text-xs text-slate-500 uppercase tracking-wider mb-0.5">Success Rate</div>
-                    <div className="text-sm font-bold text-emerald-600">0.0045%</div>
-                  </div>
-                </div>
-
-                {/* Terminal prompt */}
-                <div className="bg-slate-900 rounded-lg px-3 py-2 font-mono text-xs text-slate-400">
-                  <span className="text-emerald-400">{'>'}</span>{' '}
-                  <span className="text-slate-300">verify.authblock</span>{' '}
-                  <span className="text-blue-400">$</span>
-                  <span className="animate-blink text-white ml-0.5">_</span>
-                </div>
-              </div>
-            </div>
-
-            {/* ─── Credential Mini Cards (2×2) ─── */}
-            <div className="grid grid-cols-2 gap-3 mt-4">
-              {credentials.map((cred) => (
-                <div key={cred.name} className="mini-chart-card">
-                  <div className="flex items-center justify-between mb-2">
-                    <div className="flex items-center gap-1.5">
-                      <span className="text-[9px] font-bold text-blue-600 uppercase tracking-wider">{cred.category}</span>
-                    </div>
-                    <span className={`text-[10px] font-semibold ${cred.up ? 'text-emerald-600' : 'text-red-500'}`}>
-                      {cred.up ? '▲' : '▼'} {cred.change}
-                    </span>
-                  </div>
-                  <div className="text-sm font-bold text-slate-900 mb-1">{cred.name}</div>
-                  <div className="text-lg font-bold text-slate-900">{cred.count}</div>
-                  <div className="mt-2 opacity-70">
-                    <MiniChart points={cred.points} color={cred.color} height={28} />
-                  </div>
-                  <div className="text-[9px] text-blue-500 mt-1.5 font-medium">Blockchain verified credentials</div>
-                </div>
-              ))}
-            </div>
-
-            {/* Decorative Elements */}
-            <div className="absolute -top-6 -right-6 w-32 h-32 bg-blue-500/5 rounded-full blur-3xl" />
-            <div className="absolute -bottom-6 -left-6 w-40 h-40 bg-cyan-500/5 rounded-full blur-3xl" />
+          {/* Trust row */}
+          <div className="mt-10 flex flex-wrap items-center justify-center gap-6 text-xs text-slate-400">
+            <span className="flex items-center gap-1.5">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" /> Tamper-Proof
+            </span>
+            <span className="flex items-center gap-1.5">
+              <span className="w-1.5 h-1.5 rounded-full bg-blue-400" /> Ethereum Secured
+            </span>
+            <span className="flex items-center gap-1.5">
+              <span className="w-1.5 h-1.5 rounded-full bg-amber-400" /> Instantly Verifiable
+            </span>
+            <span className="flex items-center gap-1.5">
+              <span className="w-1.5 h-1.5 rounded-full bg-teal-400" /> Permanent Record
+            </span>
           </div>
         </div>
 
         {/* Scroll indicator */}
-        <div className="flex justify-center mt-16">
+        <div className="flex justify-center pb-8">
           <div className="animate-bounce-subtle">
-            <svg className="w-5 h-5 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <svg className="w-5 h-5 text-slate-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
             </svg>
           </div>
