@@ -345,13 +345,7 @@
     background: linear-gradient(180deg, #f8fafc, #ffffff);
   }
 
-  .terminal-dot {
-    @apply w-3 h-3 rounded-full;
-  }
 
-  .terminal-dot-red { @apply bg-red-400; }
-  .terminal-dot-yellow { @apply bg-yellow-400; }
-  .terminal-dot-green { @apply bg-green-400; }
 
   /* Mini chart card */
   .mini-chart-card {

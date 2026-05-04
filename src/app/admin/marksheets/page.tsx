@@ -411,29 +411,42 @@ function MarksheetsContent({ currentUser }: { currentUser: AdminRecord }) {
             </div>
           )}
 
-          {successLink && (
-            <motion.div initial={{ scale: 0.95 }} animate={{ scale: 1 }} className="mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-5 bg-emerald-50 border border-emerald-200 rounded-2xl text-emerald-800">
-              <div className="flex items-center gap-3">
-                <CheckCircle className="w-6 h-6 text-emerald-500" />
-                <div>
-                  <h4 className="font-bold">Success!</h4>
-                  <p className="text-sm opacity-80">{successLink.includes('http') ? 'Saved to Supabase storage and recorded in database.' : successLink}</p>
+          <AnimatePresence>
+            {successLink && (
+              <motion.div 
+                initial={{ opacity: 0, y: 50, scale: 0.9 }} 
+                animate={{ opacity: 1, y: 0, scale: 1 }} 
+                exit={{ opacity: 0, scale: 0.9, y: 20 }}
+                className="fixed bottom-6 right-6 z-50 flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-5 bg-white border border-slate-200 rounded-2xl shadow-2xl shadow-slate-200/60 max-w-lg"
+              >
+                <div className="flex items-center gap-3">
+                  <CheckCircle className="w-6 h-6 text-emerald-500" />
+                  <div>
+                    <h4 className="font-bold text-slate-900">Success!</h4>
+                    <p className="text-sm text-slate-500">{successLink.includes('http') ? 'Saved to storage and recorded in database.' : successLink}</p>
+                  </div>
                 </div>
-              </div>
-              {successLink.includes('http') && (
-                <div className="flex flex-col sm:flex-row gap-2 shrink-0 border-t sm:border-l sm:border-t-0 border-emerald-200/50 pt-3 sm:pt-0 sm:pl-4 mt-3 sm:mt-0">
-                  <a href={successLink} target="_blank" rel="noreferrer" className="btn-primary !bg-emerald-600 hover:!bg-emerald-700 border-none shadow-emerald-500/30 text-xs py-2 px-3 h-auto">
-                    View PDF
-                  </a>
+                <div className="flex flex-col sm:flex-row gap-2 shrink-0 border-t sm:border-l sm:border-t-0 border-slate-100 pt-3 sm:pt-0 sm:pl-4 mt-3 sm:mt-0">
+                  {successLink.includes('http') && (
+                    <a href={successLink} target="_blank" rel="noreferrer" className="btn-primary !bg-emerald-600 hover:!bg-emerald-700 border-none shadow-emerald-500/30 text-xs py-2 px-3 h-auto">
+                      View PDF
+                    </a>
+                  )}
                   {successTx && (
                     <a href={`https://sepolia.etherscan.io/tx/${successTx}`} target="_blank" rel="noreferrer" className="btn-secondary !bg-white !text-blue-600 !border-blue-100 hover:!border-blue-300 text-xs py-2 px-3 h-auto shadow-sm">
                       <ExternalLink className="w-3.5 h-3.5 mr-1 inline-block" /> Etherscan
                     </a>
                   )}
+                  <button 
+                    onClick={() => { setSuccessLink(''); setSuccessTx(''); }}
+                    className="text-slate-600 hover:text-slate-900 bg-slate-100 hover:bg-slate-200 px-3 py-2 rounded-lg text-xs font-bold transition-colors"
+                  >
+                    Dismiss
+                  </button>
                 </div>
-              )}
-            </motion.div>
-          )}
+              </motion.div>
+            )}
+          </AnimatePresence>
 
           {activeTab === 'manual' ? (
             <form onSubmit={handleManualSubmit} className="glass-card p-6 md:p-8">
@@ -576,7 +589,7 @@ function MarksheetsContent({ currentUser }: { currentUser: AdminRecord }) {
               </div>
 
               <div className="flex justify-end pt-6 border-t border-slate-100">
-                <button type="submit" disabled={isSubmitting} className="btn-primary min-w-[200px] flex items-center justify-center gap-2 py-3.5 shadow-blue-500/30">
+                <button type="submit" disabled={isSubmitting} className="min-w-[200px] flex items-center justify-center gap-2 py-3 px-8 font-semibold text-white rounded-lg transition-colors bg-blue-600 hover:bg-blue-700 border border-blue-700 disabled:opacity-60">
                   {isSubmitting ? <Loader2 className="w-5 h-5 animate-spin" /> : <FileSignature className="w-5 h-5" />}
                   {isSubmitting ? 'Generating PDF...' : 'Issue Marksheet'}
                 </button>

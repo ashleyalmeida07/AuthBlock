@@ -114,39 +114,31 @@ function DashboardContent({ admin }: { admin: AdminRecord }) {
         initial={{ opacity: 0, y: -8 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4 }}
-        className="rounded-xl overflow-hidden"
-        style={{ background: '#0A0F1E' }}
+        className="rounded-2xl overflow-hidden bg-white border border-slate-200 shadow-sm"
       >
-        <div className="relative px-6 py-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-          {/* Subtle grid overlay */}
-          <div className="absolute inset-0 pointer-events-none opacity-[0.03]"
-            style={{
-              backgroundImage: 'linear-gradient(rgba(255,255,255,0.5) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.5) 1px, transparent 1px)',
-              backgroundSize: '32px 32px'
-            }}
-          />
+        <div className="relative px-8 py-7 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div className="relative z-10">
-            <div className="flex items-center gap-2 mb-2">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-              <span className="text-[10px] font-bold tracking-[0.2em] uppercase" style={{ color: 'rgba(255,255,255,0.35)' }}>
+            <div className="flex items-center gap-2 mb-3">
+              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+              <span className="text-xs font-bold tracking-[0.15em] uppercase text-slate-500">
                 Admin Portal · Sepolia Testnet
               </span>
             </div>
-            <h1 className="text-xl font-bold text-white">
+            <h1 className="text-2xl font-bold text-slate-900 tracking-tight">
               Good {now.getHours() < 12 ? 'morning' : now.getHours() < 17 ? 'afternoon' : 'evening'}, {admin.name.split(' ')[0]}
             </h1>
-            <p className="text-sm mt-0.5" style={{ color: 'rgba(255,255,255,0.4)' }}>
+            <p className="text-sm mt-1.5 font-medium text-slate-500">
               {admin.position ? `${admin.position} · ` : ''}
-              <span style={{ color: isSuperAdmin ? '#FCD34D' : 'rgba(255,255,255,0.4)' }}>
+              <span className={isSuperAdmin ? 'text-amber-600' : 'text-slate-500'}>
                 {isSuperAdmin ? '⬡ Superadmin' : '◯ Admin'}
               </span>
             </p>
           </div>
 
           {/* Email chip */}
-          <div className="relative z-10 shrink-0 rounded-lg px-4 py-3 text-sm" style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.08)' }}>
-            <div className="text-[10px] font-bold uppercase tracking-wider mb-0.5" style={{ color: 'rgba(255,255,255,0.3)' }}>Signed in as</div>
-            <div className="font-mono text-xs text-white truncate max-w-[220px]">{admin.email}</div>
+          <div className="relative z-10 shrink-0 rounded-xl px-5 py-4 bg-slate-50 border border-slate-100 shadow-sm">
+            <div className="text-[10px] font-bold uppercase tracking-[0.1em] text-slate-400 mb-1">Signed in as</div>
+            <div className="font-mono text-sm font-semibold text-slate-700 truncate max-w-[240px]">{admin.email}</div>
           </div>
         </div>
       </motion.div>
@@ -236,29 +228,30 @@ function DashboardContent({ admin }: { admin: AdminRecord }) {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.4 }}
-            className="mt-3 rounded-xl p-4 border"
-            style={{ background: '#0A0F1E', borderColor: 'rgba(255,255,255,0.06)' }}
+            className="mt-3 rounded-xl p-5 border border-slate-200 bg-white shadow-sm"
           >
-            <div className="flex items-center justify-between mb-3">
-              <span className="text-[10px] font-bold uppercase tracking-wider" style={{ color: 'rgba(255,255,255,0.3)' }}>
+            <div className="flex items-center justify-between mb-4">
+              <span className="text-[10px] font-bold uppercase tracking-[0.15em] text-slate-400">
                 Active Contracts
               </span>
-              <span className="flex items-center gap-1 text-[10px] font-bold" style={{ color: '#34D399' }}>
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+              <span className="flex items-center gap-1.5 px-2 py-1 bg-emerald-50 text-[10px] font-bold text-emerald-600 rounded-md">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
                 Sepolia
               </span>
             </div>
-            <div className="space-y-2">
+            <div className="space-y-3">
               {[
                 { label: 'CertificateRegistry', icon: FileText, color: '#2563EB' },
                 { label: 'DegreeRegistry', icon: GraduationCap, color: '#D97706' },
                 { label: 'CourseRegistry', icon: BookOpen, color: '#0D9488' },
                 { label: 'QRScanLogger', icon: Activity, color: '#6366F1' },
               ].map(c => (
-                <div key={c.label} className="flex items-center gap-2.5">
-                  <c.icon className="w-3 h-3 shrink-0" style={{ color: c.color }} />
-                  <span className="text-xs font-mono flex-1 truncate" style={{ color: 'rgba(255,255,255,0.55)' }}>{c.label}</span>
-                  <span className="w-1.5 h-1.5 rounded-full" style={{ background: '#34D399' }} />
+                <div key={c.label} className="flex items-center gap-3">
+                  <div className="w-6 h-6 rounded bg-slate-50 flex items-center justify-center shrink-0">
+                    <c.icon className="w-3.5 h-3.5" style={{ color: c.color }} />
+                  </div>
+                  <span className="text-xs font-mono font-medium flex-1 truncate text-slate-600">{c.label}</span>
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
                 </div>
               ))}
             </div>

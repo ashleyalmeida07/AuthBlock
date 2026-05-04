@@ -7,11 +7,11 @@ import { Container } from '@/components/ui'
 import { Menu, X, LogOut } from 'lucide-react'
 
 const navLinks = [
-  { name: 'FEATURES', href: '/#features', dot: '◆', dotColor: 'text-blue-500' },
-  { name: 'HOW IT WORKS', href: '/#how-it-works', dot: '■', dotColor: 'text-slate-900' },
-  { name: 'CREDENTIALS', href: '/#credentials', dot: '▲', dotColor: 'text-blue-500' },
-  { name: 'SCAN QR', href: '/scan', dot: '●', dotColor: 'text-emerald-500' },
-  { name: 'ABOUT', href: '/#about', dot: '◆', dotColor: 'text-blue-500' },
+  { name: 'FEATURES', href: '/#features', dotColor: 'text-blue-500' },
+  { name: 'HOW IT WORKS', href: '/#how-it-works', dotColor: 'text-slate-900' },
+  { name: 'CREDENTIALS', href: '/#credentials', dotColor: 'text-blue-500' },
+  { name: 'SCAN QR', href: '/scan', dotColor: 'text-emerald-500' },
+  { name: 'ABOUT', href: '/#about', dotColor: 'text-blue-500' },
 ]
 
 export function Navbar({ isLoggedIn: _isLoggedIn, user: _user }: { isLoggedIn?: boolean, user?: any }) {
@@ -41,8 +41,8 @@ export function Navbar({ isLoggedIn: _isLoggedIn, user: _user }: { isLoggedIn?: 
   return (
     <nav
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isScrolled
-          ? 'bg-white/90 backdrop-blur-xl border-b border-slate-100 shadow-sm'
-          : 'bg-white/70 backdrop-blur-sm'
+        ? 'bg-white/90 backdrop-blur-xl border-b border-slate-100 shadow-sm'
+        : 'bg-white/70 backdrop-blur-sm'
         }`}
     >
       <Container>
@@ -63,7 +63,6 @@ export function Navbar({ isLoggedIn: _isLoggedIn, user: _user }: { isLoggedIn?: 
                 href={link.href}
                 className="group flex items-center gap-1.5 px-3 py-2 text-slate-500 hover:text-slate-900 transition-colors duration-200 text-xs font-semibold tracking-wider"
               >
-                <span className={`${link.dotColor} text-[8px] group-hover:scale-125 transition-transform`}>{link.dot}</span>
                 {link.name}
               </Link>
             ))}
@@ -124,7 +123,6 @@ export function Navbar({ isLoggedIn: _isLoggedIn, user: _user }: { isLoggedIn?: 
                   className="flex items-center gap-2 text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition-colors py-3 px-4 rounded-lg text-sm font-medium"
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
-                  <span className={`${link.dotColor} text-[8px]`}>{link.dot}</span>
                   {link.name}
                 </Link>
               ))}

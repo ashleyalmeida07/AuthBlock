@@ -123,11 +123,7 @@ function ManageAdminsContent({ currentUser }: { currentUser: AdminRecord }) {
           <div className="glass-card overflow-hidden sticky top-6">
             {/* Terminal-style Header */}
             <div className="terminal-header bg-slate-50">
-              <div className="flex items-center gap-2">
-                <div className="terminal-dot terminal-dot-red" />
-                <div className="terminal-dot terminal-dot-yellow" />
-                <div className="terminal-dot terminal-dot-green" />
-              </div>
+              {/* Removed dots */}
               <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest font-mono">
                 new_admin.sh
               </div>

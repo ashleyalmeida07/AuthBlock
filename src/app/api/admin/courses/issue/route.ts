@@ -91,9 +91,8 @@ export async function POST(req: Request) {
     const GREEN = rgb(0.05, 0.50, 0.15)
     const TEAL = rgb(0.0, 0.46, 0.53)
 
-    // White background + top accent
+    // White background
     page.drawRectangle({ x: 0, y: 0, width: cw, height: ch, color: WHITE })
-    page.drawRectangle({ x: 0, y: ch - 10, width: cw, height: 10, color: TEAL })
 
     // Header
     const headerY = ch - 55
@@ -215,7 +214,6 @@ export async function POST(req: Request) {
     page.drawText(`Verify at: ${baseUrl}/verify`, {
       x: (cw - 100) / 2, y: 8, size: 7, font: fontReg, color: TEAL
     })
-    page.drawRectangle({ x: 0, y: 0, width: cw, height: 6, color: TEAL })
 
     const pdfBytes = await pdfDoc.save()
     console.log('[Course Issue] PDF generated, size:', pdfBytes.length, 'bytes')
