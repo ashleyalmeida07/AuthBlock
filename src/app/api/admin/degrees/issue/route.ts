@@ -99,184 +99,190 @@ export async function POST(req: Request) {
     const templateImg = await degreePdfDoc.embedPng(templateBytes)
     degreePage.drawImage(templateImg, { x: 0, y: 0, width: dw, height: dh })
 
-    // Student name - on blank line after "This is to certify that"
+    // Student name - centered on the blank line
     const nameText = s(student_name).toUpperCase()
     const nameWidth = fontBold.widthOfTextAtSize(nameText, 15)
     degreePage.drawText(nameText, {
-      x: (dw - nameWidth) / 2, y: 350, size: 15, font: fontBold, color: BLACK
+      x: (dw - nameWidth) / 2, y: 307, size: 15, font: fontBold, color: BLACK
     })
 
-    // Degree title - on blank line after "has been awarded the Degree of"
+    // Degree title - centered below "has been awarded the Degree of"
     const degreeText = s(degree_title)
-    const degreeWidth = fontBold.widthOfTextAtSize(degreeText, 14)
+    const degreeWidth = fontBold.widthOfTextAtSize(degreeText, 13)
     degreePage.drawText(degreeText, {
-      x: (dw - degreeWidth) / 2, y: 268, size: 14, font: fontBold, color: BLACK
+      x: (dw - degreeWidth) / 2, y: 264, size: 13, font: fontBold, color: BLACK
     })
 
-    // Branch - on blank line after "in the Faculty of"
+    // Branch - centered below "in the Faculty of"
     const branchText = s(branch)
-    const branchWidth = fontBold.widthOfTextAtSize(branchText, 13)
+    const branchWidth = fontBold.widthOfTextAtSize(branchText, 12)
     degreePage.drawText(branchText, {
-      x: (dw - branchWidth) / 2, y: 218, size: 13, font: fontBold, color: BLACK
+      x: (dw - branchWidth) / 2, y: 227, size: 12, font: fontBold, color: BLACK
     })
 
-    // Classification + CGPI - below "having successfully completed..."
+    // Classification + CGPI - smaller italic text
     if (classification || final_cgpi) {
       const classText = `${s(classification)}${final_cgpi ? '  -  CGPI: ' + s(final_cgpi) : ''}`
-      const classWidth = fontItalic.widthOfTextAtSize(classText, 10)
+      const classWidth = fontItalic.widthOfTextAtSize(classText, 9)
       degreePage.drawText(classText, {
-        x: (dw - classWidth) / 2, y: 168, size: 10, font: fontItalic, color: DARK
+        x: (dw - classWidth) / 2, y: 195, size: 9, font: fontItalic, color: DARK
       })
     }
 
     // Date (bottom-left)
     const dateText = s(convocation_date) || new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' })
-    degreePage.drawText(dateText, { x: 110, y: 68, size: 9, font: fontBold, color: BLACK })
+    degreePage.drawText(dateText, { x: 153, y: 37, size: 8, font: fontBold, color: BLACK })
 
     // Sr. No. (bottom-right)
-    degreePage.drawText(s(serial_no), { x: 665, y: 68, size: 9, font: fontBold, color: BLACK })
+    degreePage.drawText(s(serial_no), { x: 678, y: 37, size: 8, font: fontBold, color: BLACK })
 
     // QR Code (small, bottom-right corner)
-    degreePage.drawImage(qrImageDeg, { x: dw - 95, y: 42, width: 50, height: 50 })
+    degreePage.drawImage(qrImageDeg, { x: dw - 90, y: 20, width: 45, height: 45 })
 
     const degreePdfBytes = await degreePdfDoc.save()
     console.log('[Degree Issue] Degree PDF generated, size:', degreePdfBytes.length, 'bytes')
 
     // ============================================================
-    // PAGE 2: BLOCKCHAIN VERIFICATION CERTIFICATE
+    // PART 2: BLOCKCHAIN VERIFICATION CERTIFICATE (separate PDF)
     // ============================================================
-    const certPage = pdfDoc.addPage([595.28, 841.89])
+    const certPdfDoc = await PDFDocument.create()
+    const certPage = certPdfDoc.addPage([595.28, 841.89])
     const cw = 595.28
     const ch = 841.89
 
+    const fB  = await certPdfDoc.embedFont(StandardFonts.HelveticaBold)
+    const fR  = await certPdfDoc.embedFont(StandardFonts.Helvetica)
+    const qrImageCert = await certPdfDoc.embedPng(qrBuffer)
+
     const LGREY = rgb(0.4, 0.4, 0.4)
-    const BLUE = rgb(0.09, 0.39, 0.93)
+    const BLUE  = rgb(0.09, 0.39, 0.93)
     const WHITE = rgb(1, 1, 1)
 
     certPage.drawRectangle({ x: 0, y: 0, width: cw, height: ch, color: WHITE })
     certPage.drawRectangle({ x: 0, y: ch - 8, width: cw, height: 8, color: BLUE })
 
     // Header
-    certPage.drawText('AUTHBLOCK', { x: 40, y: ch - 50, size: 26, font: fontBold, color: BLUE })
+    certPage.drawText('AUTHBLOCK', { x: 40, y: ch - 50, size: 26, font: fB, color: BLUE })
     certPage.drawText('Blockchain Certification Authority · Fr. Conceicao Rodrigues College of Engineering', {
-      x: 40, y: ch - 66, size: 8.5, font: fontReg, color: LGREY
+      x: 40, y: ch - 66, size: 8.5, font: fR, color: LGREY
     })
     certPage.drawRectangle({ x: 40, y: ch - 80, width: cw - 80, height: 1, color: rgb(0.85, 0.90, 1) })
 
     // Title
-    certPage.drawText('BLOCKCHAIN VERIFICATION CERTIFICATE', { x: 40, y: ch - 104, size: 14, font: fontBold, color: BLACK })
-    certPage.drawText('Degree — Cryptographically Secured on Ethereum (Sepolia)', {
-      x: 40, y: ch - 120, size: 8.5, font: fontReg, color: LGREY
+    certPage.drawText('BLOCKCHAIN VERIFICATION CERTIFICATE', { x: 40, y: ch - 104, size: 14, font: fB, color: BLACK })
+    certPage.drawText('Degree - Cryptographically Secured on Ethereum Blockchain', {
+      x: 40, y: ch - 120, size: 8.5, font: fR, color: LGREY
     })
 
     // Certificate ID band
     certPage.drawRectangle({ x: 40, y: ch - 148, width: cw - 80, height: 20, color: rgb(0.95, 0.97, 1) })
     certPage.drawRectangle({ x: 40, y: ch - 148, width: cw - 80, height: 20, borderColor: rgb(0.85, 0.90, 1), borderWidth: 0.8 })
-    certPage.drawText('Certificate ID:', { x: 48, y: ch - 142, size: 8.5, font: fontBold, color: BLUE })
-    certPage.drawText(certificateId, { x: 118, y: ch - 142, size: 8.5, font: fontBold, color: DARK })
+    certPage.drawText('Certificate ID:', { x: 48, y: ch - 142, size: 8.5, font: fB, color: BLUE })
+    certPage.drawText(certificateId, { x: 118, y: ch - 142, size: 8.5, font: fB, color: DARK })
 
-    // Student Information
+    // Student Info
     let yPos = ch - 178
-    certPage.drawText('STUDENT INFORMATION', { x: 40, y: yPos, size: 10, font: fontBold, color: BLUE })
+    certPage.drawText('STUDENT INFORMATION', { x: 40, y: yPos, size: 10, font: fB, color: BLUE })
     certPage.drawRectangle({ x: 40, y: yPos - 4, width: cw - 80, height: 0.6, color: rgb(0.85, 0.90, 1) })
     yPos -= 20
 
-    certPage.drawText('Full Name', { x: 40, y: yPos, size: 7.5, font: fontReg, color: LGREY })
-    certPage.drawText('Serial No.', { x: 320, y: yPos, size: 7.5, font: fontReg, color: LGREY })
+    certPage.drawText('Full Name', { x: 40, y: yPos, size: 7.5, font: fR, color: LGREY })
+    certPage.drawText('Serial No.', { x: 320, y: yPos, size: 7.5, font: fR, color: LGREY })
     yPos -= 13
-    certPage.drawText(s(student_name), { x: 40, y: yPos, size: 12, font: fontBold, color: BLACK })
-    certPage.drawText(s(serial_no) || '—', { x: 320, y: yPos, size: 12, font: fontBold, color: BLACK })
+    certPage.drawText(s(student_name), { x: 40, y: yPos, size: 12, font: fB, color: BLACK })
+    certPage.drawText(s(serial_no) || '-', { x: 320, y: yPos, size: 12, font: fB, color: BLACK })
     yPos -= 20
 
-    certPage.drawText('PRN Number', { x: 40, y: yPos, size: 7.5, font: fontReg, color: LGREY })
-    certPage.drawText('Branch / Programme', { x: 320, y: yPos, size: 7.5, font: fontReg, color: LGREY })
+    certPage.drawText('PRN Number', { x: 40, y: yPos, size: 7.5, font: fR, color: LGREY })
+    certPage.drawText('Branch / Programme', { x: 320, y: yPos, size: 7.5, font: fR, color: LGREY })
     yPos -= 13
-    certPage.drawText(s(prn_no), { x: 40, y: yPos, size: 12, font: fontBold, color: BLACK })
-    certPage.drawText(s(branch), { x: 320, y: yPos, size: 12, font: fontBold, color: BLACK })
+    certPage.drawText(s(prn_no), { x: 40, y: yPos, size: 12, font: fB, color: BLACK })
+    certPage.drawText(s(branch), { x: 320, y: yPos, size: 12, font: fB, color: BLACK })
     yPos -= 26
 
     // Degree Details
-    certPage.drawText('DEGREE DETAILS', { x: 40, y: yPos, size: 10, font: fontBold, color: BLUE })
+    certPage.drawText('DEGREE DETAILS', { x: 40, y: yPos, size: 10, font: fB, color: BLUE })
     certPage.drawRectangle({ x: 40, y: yPos - 4, width: cw - 80, height: 0.6, color: rgb(0.85, 0.90, 1) })
     yPos -= 20
 
-    certPage.drawText('Degree Title', { x: 40, y: yPos, size: 7.5, font: fontReg, color: LGREY })
+    certPage.drawText('Degree Title', { x: 40, y: yPos, size: 7.5, font: fR, color: LGREY })
     yPos -= 13
-    certPage.drawText(s(degree_title), { x: 40, y: yPos, size: 13, font: fontBold, color: BLACK })
+    certPage.drawText(s(degree_title), { x: 40, y: yPos, size: 13, font: fB, color: BLACK })
     yPos -= 20
 
-    certPage.drawText('Enrollment Year', { x: 40, y: yPos, size: 7.5, font: fontReg, color: LGREY })
-    certPage.drawText('Year of Passing', { x: 170, y: yPos, size: 7.5, font: fontReg, color: LGREY })
-    certPage.drawText('Convocation Date', { x: 320, y: yPos, size: 7.5, font: fontReg, color: LGREY })
+    certPage.drawText('Enrollment Year', { x: 40, y: yPos, size: 7.5, font: fR, color: LGREY })
+    certPage.drawText('Year of Passing', { x: 170, y: yPos, size: 7.5, font: fR, color: LGREY })
+    certPage.drawText('Convocation Date', { x: 320, y: yPos, size: 7.5, font: fR, color: LGREY })
     yPos -= 13
-    certPage.drawText(s(enrollment_year), { x: 40, y: yPos, size: 11, font: fontBold, color: BLACK })
-    certPage.drawText(s(year_of_passing), { x: 170, y: yPos, size: 11, font: fontBold, color: BLACK })
-    certPage.drawText(s(convocation_date) || '—', { x: 320, y: yPos, size: 11, font: fontBold, color: BLACK })
+    certPage.drawText(s(enrollment_year), { x: 40, y: yPos, size: 11, font: fB, color: BLACK })
+    certPage.drawText(s(year_of_passing), { x: 170, y: yPos, size: 11, font: fB, color: BLACK })
+    certPage.drawText(s(convocation_date) || '-', { x: 320, y: yPos, size: 11, font: fB, color: BLACK })
     yPos -= 24
 
-    certPage.drawText('Final CGPI', { x: 40, y: yPos, size: 8, font: fontBold, color: LGREY })
-    certPage.drawText('Classification', { x: 170, y: yPos, size: 8, font: fontBold, color: LGREY })
+    certPage.drawText('Final CGPI', { x: 40, y: yPos, size: 8, font: fB, color: LGREY })
+    certPage.drawText('Classification', { x: 170, y: yPos, size: 8, font: fB, color: LGREY })
     yPos -= 16
-    certPage.drawText(s(final_cgpi) || '—', { x: 40, y: yPos, size: 20, font: fontBold, color: BLUE })
-    certPage.drawText(s(classification), { x: 170, y: yPos, size: 14, font: fontBold, color: DARK })
+    certPage.drawText(s(final_cgpi) || '-', { x: 40, y: yPos, size: 20, font: fB, color: BLUE })
+    certPage.drawText(s(classification), { x: 170, y: yPos, size: 14, font: fB, color: DARK })
     yPos -= 28
 
     // Blockchain Verification
-    certPage.drawText('BLOCKCHAIN VERIFICATION', { x: 40, y: yPos, size: 10, font: fontBold, color: BLUE })
+    certPage.drawText('BLOCKCHAIN VERIFICATION', { x: 40, y: yPos, size: 10, font: fB, color: BLUE })
     certPage.drawRectangle({ x: 40, y: yPos - 4, width: cw - 80, height: 0.6, color: rgb(0.85, 0.90, 1) })
     yPos -= 20
 
-    certPage.drawText('Issue Date', { x: 40, y: yPos, size: 7.5, font: fontReg, color: LGREY })
+    certPage.drawText('Issue Date', { x: 40, y: yPos, size: 7.5, font: fR, color: LGREY })
     yPos -= 13
     certPage.drawText(new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' }), {
-      x: 40, y: yPos, size: 11, font: fontBold, color: BLACK
+      x: 40, y: yPos, size: 11, font: fB, color: BLACK
     })
     yPos -= 20
 
-    certPage.drawText('Data Hash (SHA-256)', { x: 40, y: yPos, size: 7.5, font: fontReg, color: LGREY })
+    certPage.drawText('Data Hash (SHA-256)', { x: 40, y: yPos, size: 7.5, font: fR, color: LGREY })
     yPos -= 12
-    certPage.drawText(dataHash, { x: 40, y: yPos, size: 7, font: fontReg, color: DARK })
+    certPage.drawText(dataHash, { x: 40, y: yPos, size: 7, font: fR, color: DARK })
     yPos -= 16
 
-    certPage.drawText('Transaction Hash (Sepolia)', { x: 40, y: yPos, size: 7.5, font: fontReg, color: LGREY })
+    certPage.drawText('Transaction Hash (Blockchain)', { x: 40, y: yPos, size: 7.5, font: fR, color: LGREY })
     yPos -= 12
-    certPage.drawText(tx_hash_data || 'N/A', { x: 40, y: yPos, size: 7, font: fontReg, color: DARK })
+    certPage.drawText(tx_hash_data || 'N/A', { x: 40, y: yPos, size: 7, font: fR, color: DARK })
     yPos -= 18
 
-    certPage.drawText('[OK] Degree Secured on Ethereum Blockchain (Sepolia)', {
-      x: 40, y: yPos, size: 9, font: fontBold, color: BLUE
+    certPage.drawText('[OK] Degree Secured on Ethereum Blockchain', {
+      x: 40, y: yPos, size: 9, font: fB, color: BLUE
     })
 
-    // QR Code on verification page
+    // QR Code
     const qrSize = 105
     const qrX = (cw - qrSize) / 2
     const qrY = 55
     certPage.drawRectangle({ x: 40, y: yPos - 8, width: cw - 80, height: 0.6, color: rgb(0.85, 0.90, 1) })
     certPage.drawText('SCAN TO VERIFY DEGREE AUTHENTICITY', {
-      x: (cw - 170) / 2, y: qrY + qrSize + 10, size: 8.5, font: fontBold, color: BLUE
+      x: (cw - 170) / 2, y: qrY + qrSize + 10, size: 8.5, font: fB, color: BLUE
     })
-    certPage.drawImage(qrImage, { x: qrX, y: qrY, width: qrSize, height: qrSize })
+    certPage.drawImage(qrImageCert, { x: qrX, y: qrY, width: qrSize, height: qrSize })
     certPage.drawText('Scan QR code to verify this degree on the blockchain', {
-      x: (cw - 225) / 2, y: qrY - 12, size: 7.5, font: fontReg, color: LGREY
+      x: (cw - 225) / 2, y: qrY - 12, size: 7.5, font: fR, color: LGREY
     })
 
     // Footer
     certPage.drawRectangle({ x: 40, y: 30, width: cw - 80, height: 0.6, color: rgb(0.85, 0.90, 1) })
     certPage.drawText('This is a digitally signed blockchain certificate issued by Authblock.', {
-      x: 40, y: 18, size: 7, font: fontReg, color: LGREY
+      x: 40, y: 18, size: 7, font: fR, color: LGREY
     })
     certPage.drawText(`Verify at: ${baseUrl}/verify`, {
-      x: (cw - 100) / 2, y: 8, size: 7, font: fontReg, color: BLUE
+      x: (cw - 100) / 2, y: 8, size: 7, font: fR, color: BLUE
     })
     certPage.drawRectangle({ x: 0, y: 0, width: cw, height: 5, color: BLUE })
 
-    const pdfBytes = await pdfDoc.save()
-    console.log('[Degree Issue] PDF generated, size:', pdfBytes.length, 'bytes')
+    const certPdfBytes = await certPdfDoc.save()
+    console.log('[Degree Issue] Certificate PDF generated, size:', certPdfBytes.length, 'bytes')
 
-    // ── Generate PDF hash ────────────────────────────────────────
-    const pdfHash = '0x' + crypto.createHash('sha256').update(pdfBytes).digest('hex')
+    // ── Hash both PDFs ────────────────────────────────────────────
+    const degreeHash = '0x' + crypto.createHash('sha256').update(degreePdfBytes).digest('hex')
+    const pdfHash    = '0x' + crypto.createHash('sha256').update(certPdfBytes).digest('hex')
 
-    // ── Register PDF hash on blockchain ──────────────────────────
+    // ── Register cert PDF hash on blockchain ─────────────────────
     let tx_hash_pdf: string | null = null
     try {
       const { contract } = await getDegreeBlockchainContract()
@@ -284,26 +290,28 @@ export async function POST(req: Request) {
       const tx = await contract.registerHash(pdfHash)
       const receipt = await tx.wait()
       tx_hash_pdf = receipt.hash
-      console.log('[Blockchain] ✓ Degree PDF hash stored! TX:', tx_hash_pdf)
+      console.log('[Blockchain] Degree PDF hash stored! TX:', tx_hash_pdf)
     } catch (e: any) {
       console.error('[Blockchain] Failed to store degree PDF hash:', e)
       throw new Error('Failed to register degree PDF hash: ' + e.message)
     }
 
-    // ── Upload to S3 ─────────────────────────────────────────────
-    const s3Key = `degrees/${certificateId}.pdf`
-    const pdfUrl = await uploadToS3(s3Key, pdfBytes, 'application/pdf')
-    console.log('[S3] ✓ Degree certificate uploaded:', pdfUrl)
+    // ── Upload both PDFs to S3 ────────────────────────────────────
+    const [degreeUrl, certUrl] = await Promise.all([
+      uploadToS3(`degrees/${certificateId}-degree.pdf`, degreePdfBytes, 'application/pdf'),
+      uploadToS3(`degrees/${certificateId}-certificate.pdf`, certPdfBytes, 'application/pdf'),
+    ])
+    console.log('[S3] Degree PDF uploaded:', degreeUrl)
+    console.log('[S3] Certificate PDF uploaded:', certUrl)
 
-    // ── Save to database ─────────────────────────────────────────
+    // ── Save to database ──────────────────────────────────────────
     // @ts-ignore
     const db = sql()
 
-    // Auto-register student
     await db`
       INSERT INTO users (prn_no, full_name, student_email)
       VALUES (${prn_no}, ${student_name}, ${student_email || null})
-      ON CONFLICT (prn_no) DO UPDATE 
+      ON CONFLICT (prn_no) DO UPDATE
       SET student_email = COALESCE(users.student_email, EXCLUDED.student_email)
     `
 
@@ -317,7 +325,7 @@ export async function POST(req: Request) {
       ) VALUES (
         ${serial_no || null}, ${student_name}, ${prn_no}, ${branch || null}, ${degree_title},
         ${enrollment_year || null}, ${year_of_passing || null}, ${final_cgpi || null}, ${classification || null}, ${convocation_date || null},
-        ${pdfUrl}, ${issued_by || null},
+        ${certUrl}, ${issued_by || null},
         ${pdfHash}, ${dataHash}, ${tx_hash_pdf}, ${tx_hash_data},
         ${certificateId}, ${verificationUrl}, ${JSON.stringify(degreeData)}
       )
@@ -325,23 +333,23 @@ export async function POST(req: Request) {
     `
 
     const newId = result && result[0] ? result[0].id : null
-    console.log('[Database] ✓ Saved to degrees table with ID:', newId)
+    console.log('[Database] Saved to degrees table with ID:', newId)
 
-    // Fire-and-forget email notification
+    // Fire-and-forget email
     if (student_email) {
       publishIssuanceNotification({
         studentName: String(student_name),
         studentEmail: String(student_email),
         prnNo: String(prn_no),
         serialNo: String(serial_no || ''),
-        examination: `Final Degree — ${degree_title}`,
+        examination: `Final Degree - ${degree_title}`,
         branch: String(branch || ''),
         session: String(year_of_passing || ''),
         sgpi: '',
         cgpi: String(final_cgpi || ''),
         remarks: String(classification || ''),
-        marksheetUrl: pdfUrl,
-        certificateUrl: pdfUrl,
+        marksheetUrl: degreeUrl,
+        certificateUrl: certUrl,
         certificateId,
         verificationUrl,
         issueDate: new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' }),
@@ -355,9 +363,11 @@ export async function POST(req: Request) {
       id: newId,
       certificate: {
         id: certificateId,
-        url: pdfUrl,
+        url: certUrl,
+        degree_url: degreeUrl,
         data_hash: dataHash,
         pdf_hash: pdfHash,
+        degree_hash: degreeHash,
         tx_data: tx_hash_data,
         tx_pdf: tx_hash_pdf,
         verification_url: verificationUrl
@@ -369,3 +379,4 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: err.message }, { status: 500 })
   }
 }
+

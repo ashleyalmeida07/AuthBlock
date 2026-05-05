@@ -30,7 +30,11 @@ function MarksheetsContent({ currentUser }: { currentUser: AdminRecord }) {
   const [loadingHistory, setLoadingHistory] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
 
-  // Terminal processing state
+  // Processing steps state (manual issuance timeline)
+  const [processingSteps, setProcessingSteps] = useState<{ label: string; status: 'pending' | 'active' | 'done' | 'error' }[]>([])
+  const [showProcessing, setShowProcessing] = useState(false)
+
+  // Terminal processing state (bulk)
   const [terminalLogs, setTerminalLogs] = useState<TerminalLog[]>([])
   const [terminalActive, setTerminalActive] = useState(false)
   const [terminalComplete, setTerminalComplete] = useState(false)
@@ -52,6 +56,10 @@ function MarksheetsContent({ currentUser }: { currentUser: AdminRecord }) {
     setTerminalSuccessCount(0)
     setTerminalErrorCount(0)
   }, [])
+
+  const updateStep = (index: number, status: 'active' | 'done' | 'error') => {
+    setProcessingSteps(prev => prev.map((s, i) => i === index ? { ...s, status } : s))
+  }
 
   // Manual Form State
   const [formData, setFormData] = useState({
@@ -81,7 +89,28 @@ function MarksheetsContent({ currentUser }: { currentUser: AdminRecord }) {
     setSuccessLink('')
     setSuccessTx('')
 
+    const steps = [
+      { label: 'Connecting to AuthBlock API...', status: 'pending' as const },
+      { label: 'Generating data hash (SHA-256)...', status: 'pending' as const },
+      { label: 'Registering hash on Ethereum blockchain...', status: 'pending' as const },
+      { label: 'Generating marksheet PDF...', status: 'pending' as const },
+      { label: 'Uploading to cloud storage...', status: 'pending' as const },
+      { label: 'Saving to database...', status: 'pending' as const },
+    ]
+    setProcessingSteps(steps)
+    setShowProcessing(true)
+
     try {
+      updateStep(0, 'active')
+      await new Promise(r => setTimeout(r, 400))
+      updateStep(0, 'done')
+
+      updateStep(1, 'active')
+      await new Promise(r => setTimeout(r, 300))
+      updateStep(1, 'done')
+
+      updateStep(2, 'active')
+
       // Auto compute manual entry CP x GP:
       const processedSubjects = formData.subjects.map(s => {
          let calc_cpgp = ''
@@ -105,11 +134,27 @@ function MarksheetsContent({ currentUser }: { currentUser: AdminRecord }) {
       })
 
       const data = await res.json()
-      if (!res.ok) throw new Error(data.error || 'Failed to issue marksheet')
+      if (!res.ok) {
+        updateStep(2, 'error')
+        throw new Error(data.error || 'Failed to issue marksheet')
+      }
+
+      updateStep(2, 'done')
+
+      updateStep(3, 'active')
+      await new Promise(r => setTimeout(r, 300))
+      updateStep(3, 'done')
+
+      updateStep(4, 'active')
+      await new Promise(r => setTimeout(r, 300))
+      updateStep(4, 'done')
+
+      updateStep(5, 'active')
+      await new Promise(r => setTimeout(r, 200))
+      updateStep(5, 'done')
 
       setSuccessLink(data.marksheet?.url || data.certificate?.url || '')
       setSuccessTx(data.certificate?.tx_data || '')
-      // Reset form on success
       setFormData({
         serial_no: '',
         student_name: '',
@@ -124,10 +169,12 @@ function MarksheetsContent({ currentUser }: { currentUser: AdminRecord }) {
         date: '',
         subjects: [{ code: '', title: '', credits: '', grade: '', gp: '', cpgp: '' }]
       })
-      fetchHistory() // Refresh history
+      fetchHistory()
+      setTimeout(() => setShowProcessing(false), 2000)
 
     } catch (err: any) {
       setError(err.message)
+      setTimeout(() => setShowProcessing(false), 3000)
     } finally {
       setIsSubmitting(false)
     }
@@ -360,10 +407,10 @@ function MarksheetsContent({ currentUser }: { currentUser: AdminRecord }) {
         <div>
           <h1 className="text-3xl md:text-4xl font-bold text-slate-900 tracking-tight flex items-center gap-3">
             <FileText className="w-8 h-8 text-blue-600" />
-            Issue Certificates
+            Issue Marksheets
           </h1>
           <p className="text-base text-slate-500 mt-2">
-            Generate blockchain-verified certificates and store them securely.
+            Generate blockchain-verified marksheets and store them securely.
           </p>
         </div>
       </motion.div>
@@ -588,10 +635,47 @@ function MarksheetsContent({ currentUser }: { currentUser: AdminRecord }) {
                 </div>
               </div>
 
+              {/* Processing Timeline */}
+              <AnimatePresence>
+                {showProcessing && (
+                  <motion.div
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: 'auto' }}
+                    exit={{ opacity: 0, height: 0 }}
+                    className="mb-6 bg-slate-50 border border-slate-200 rounded-xl p-5"
+                  >
+                    <h4 className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-4">Issuance Progress</h4>
+                    <div className="space-y-3">
+                      {processingSteps.map((step, i) => (
+                        <div key={i} className="flex items-center gap-3">
+                          <div className="flex-shrink-0">
+                            {step.status === 'done' ? (
+                              <CheckCircle className="w-4.5 h-4.5 text-emerald-500" />
+                            ) : step.status === 'active' ? (
+                              <Loader2 className="w-4.5 h-4.5 text-blue-500 animate-spin" />
+                            ) : step.status === 'error' ? (
+                              <AlertCircle className="w-4.5 h-4.5 text-red-500" />
+                            ) : (
+                              <div className="w-4.5 h-4.5 rounded-full border-2 border-slate-200" />
+                            )}
+                          </div>
+                          <span className={`text-sm font-medium ${
+                            step.status === 'done' ? 'text-emerald-700' :
+                            step.status === 'active' ? 'text-blue-700' :
+                            step.status === 'error' ? 'text-red-700' :
+                            'text-slate-400'
+                          }`}>{step.label}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+
               <div className="flex justify-end pt-6 border-t border-slate-100">
                 <button type="submit" disabled={isSubmitting} className="min-w-[200px] flex items-center justify-center gap-2 py-3 px-8 font-semibold text-white rounded-lg transition-colors bg-blue-600 hover:bg-blue-700 border border-blue-700 disabled:opacity-60">
                   {isSubmitting ? <Loader2 className="w-5 h-5 animate-spin" /> : <FileSignature className="w-5 h-5" />}
-                  {isSubmitting ? 'Generating PDF...' : 'Issue Marksheet'}
+                  {isSubmitting ? 'Generating...' : 'Issue Marksheet'}
                 </button>
               </div>
             </form>

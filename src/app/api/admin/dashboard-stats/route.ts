@@ -1,38 +1,30 @@
 import { NextResponse } from 'next/server'
 import { sql } from '@/lib/db'
 
-/** Safe count — returns 0 if the table doesn't exist yet (42P01 = undefined_table) */
-async function safeCount(db: ReturnType<typeof sql>, query: () => Promise<any[]>): Promise<number> {
-  try {
-    const res = await query()
-    return res[0]?.count || 0
-  } catch (err: any) {
-    if (err?.code === '42P01') return 0   // table not migrated yet
-    throw err
-  }
-}
-
 export async function GET() {
-  const db = sql()
-
   try {
-    const [
-      marksheetsIssued,
-      degreesIssued,
-      coursesIssued,
-      verifiedMarksheets,
-      verifiedDegrees,
-      verifiedCourses,
-      adminUsers,
-    ] = await Promise.all([
-      safeCount(db, () => db`SELECT COUNT(*)::int as count FROM marksheets`),
-      safeCount(db, () => db`SELECT COUNT(*)::int as count FROM degrees`),
-      safeCount(db, () => db`SELECT COUNT(*)::int as count FROM courses`),
-      safeCount(db, () => db`SELECT COUNT(*)::int as count FROM marksheets WHERE tx_hash_pdf IS NOT NULL OR tx_hash_data IS NOT NULL`),
-      safeCount(db, () => db`SELECT COUNT(*)::int as count FROM degrees WHERE tx_hash_pdf IS NOT NULL OR tx_hash_data IS NOT NULL`),
-      safeCount(db, () => db`SELECT COUNT(*)::int as count FROM courses WHERE tx_hash_pdf IS NOT NULL OR tx_hash_data IS NOT NULL`),
-      safeCount(db, () => db`SELECT COUNT(*)::int as count FROM admin`),
+    // @ts-ignore
+    const db = sql()
+
+    const [ms, deg, crs, msOnChain, degOnChain, crsOnChain, admins] = await Promise.all([
+      db`SELECT COUNT(*)::int AS c FROM marksheets`.catch(() => [{ c: 0 }]),
+      db`SELECT COUNT(*)::int AS c FROM degrees`.catch(() => [{ c: 0 }]),
+      db`SELECT COUNT(*)::int AS c FROM courses`.catch(() => [{ c: 0 }]),
+      db`SELECT COUNT(*)::int AS c FROM marksheets WHERE tx_hash_pdf IS NOT NULL OR tx_hash_data IS NOT NULL`.catch(() => [{ c: 0 }]),
+      db`SELECT COUNT(*)::int AS c FROM degrees WHERE tx_hash_pdf IS NOT NULL OR tx_hash_data IS NOT NULL`.catch(() => [{ c: 0 }]),
+      db`SELECT COUNT(*)::int AS c FROM courses WHERE tx_hash_pdf IS NOT NULL OR tx_hash_data IS NOT NULL`.catch(() => [{ c: 0 }]),
+      db`SELECT COUNT(*)::int AS c FROM admin`.catch(() => [{ c: 0 }]),
     ])
+
+    const marksheetsIssued  = Number(ms[0]?.c)       || 0
+    const degreesIssued     = Number(deg[0]?.c)      || 0
+    const coursesIssued     = Number(crs[0]?.c)      || 0
+    const verifiedOnChain   = (Number(msOnChain[0]?.c) || 0)
+                            + (Number(degOnChain[0]?.c) || 0)
+                            + (Number(crsOnChain[0]?.c) || 0)
+    const adminUsers        = Number(admins[0]?.c)   || 0
+
+    console.log('[dashboard-stats] Counts:', { marksheetsIssued, degreesIssued, coursesIssued, verifiedOnChain, adminUsers })
 
     return NextResponse.json({
       success: true,
@@ -41,7 +33,7 @@ export async function GET() {
         marksheetsIssued,
         degreesIssued,
         coursesIssued,
-        verifiedOnChain: verifiedMarksheets + verifiedDegrees + verifiedCourses,
+        verifiedOnChain,
         adminUsers,
       }
     })
@@ -50,3 +42,4 @@ export async function GET() {
     return NextResponse.json({ error: 'Failed to fetch dashboard statistics' }, { status: 500 })
   }
 }
+

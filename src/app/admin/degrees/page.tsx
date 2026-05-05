@@ -2,11 +2,15 @@
 
 import React, { useState, useEffect, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
+// @ts-ignore
+import Papa from 'papaparse'
+import * as XLSX from 'xlsx'
 import {
   GraduationCap, FileSignature, AlertCircle, Loader2,
-  CheckCircle, Search, History, Download, ExternalLink
+  CheckCircle, Search, History, Download, ExternalLink, UploadCloud, FileText
 } from 'lucide-react'
 import AdminShell, { type AdminRecord } from '@/components/admin/AdminShell'
+import ProcessingTerminal, { type TerminalLog } from '@/components/admin/ProcessingTerminal'
 
 // ── Shared sub-components ──────────────────────────────────────────
 
@@ -30,10 +34,10 @@ function Field({ label, children }: { label: string; children: React.ReactNode }
 // ── Main Component ────────────────────────────────────────────────
 
 function DegreesContent({ currentUser }: { currentUser: AdminRecord }) {
-  const [activeTab, setActiveTab] = useState<'manual' | 'history'>('manual')
+  const [activeTab, setActiveTab] = useState<'manual' | 'bulk' | 'history'>('manual')
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [error, setError] = useState('')
-  const [successData, setSuccessData] = useState<{ url: string; tx: string } | null>(null)
+  const [successData, setSuccessData] = useState<{ url: string; degree_url: string; tx: string } | null>(null)
   const [history, setHistory] = useState<any[]>([])
   const [loadingHistory, setLoadingHistory] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
@@ -41,6 +45,15 @@ function DegreesContent({ currentUser }: { currentUser: AdminRecord }) {
   // Processing steps state
   const [processingSteps, setProcessingSteps] = useState<{ label: string; status: 'pending' | 'active' | 'done' | 'error' }[]>([])
   const [showProcessing, setShowProcessing] = useState(false)
+
+  // Terminal processing state (bulk)
+  const [terminalLogs, setTerminalLogs] = useState<TerminalLog[]>([])
+  const [terminalActive, setTerminalActive] = useState(false)
+  const [terminalComplete, setTerminalComplete] = useState(false)
+  const [terminalCurrentIndex, setTerminalCurrentIndex] = useState(0)
+  const [terminalTotalCount, setTerminalTotalCount] = useState(0)
+  const [terminalSuccessCount, setTerminalSuccessCount] = useState(0)
+  const [terminalErrorCount, setTerminalErrorCount] = useState(0)
 
   const [formData, setFormData] = useState({
     serial_no: '',
@@ -72,7 +85,7 @@ function DegreesContent({ currentUser }: { currentUser: AdminRecord }) {
     const steps = [
       { label: 'Connecting to AuthBlock API...', status: 'pending' as const },
       { label: 'Generating data hash (SHA-256)...', status: 'pending' as const },
-      { label: 'Registering hash on Ethereum (Sepolia)...', status: 'pending' as const },
+      { label: 'Registering hash on Ethereum blockchain...', status: 'pending' as const },
       { label: 'Generating degree certificate PDF...', status: 'pending' as const },
       { label: 'Uploading to cloud storage...', status: 'pending' as const },
       { label: 'Saving to database...', status: 'pending' as const },
@@ -118,7 +131,7 @@ function DegreesContent({ currentUser }: { currentUser: AdminRecord }) {
       await new Promise(r => setTimeout(r, 200))
       updateStep(5, 'done')
 
-      setSuccessData({ url: data.certificate?.url || '', tx: data.certificate?.tx_data || '' })
+      setSuccessData({ url: data.certificate?.url || '', degree_url: data.certificate?.degree_url || '', tx: data.certificate?.tx_data || '' })
       setFormData({
         serial_no: '', student_name: '', student_email: '', prn_no: '',
         branch: '', degree_title: 'Bachelor of Engineering',
@@ -135,6 +148,138 @@ function DegreesContent({ currentUser }: { currentUser: AdminRecord }) {
     } finally {
       setIsSubmitting(false)
     }
+  }
+
+  const addLog = useCallback((message: string, status: TerminalLog['status'], txHash?: string) => {
+    setTerminalLogs(prev => [...prev, { id: Date.now() + Math.random(), message, status, timestamp: new Date(), txHash }])
+  }, [])
+
+  const resetTerminal = useCallback(() => {
+    setTerminalActive(false)
+    setTerminalComplete(false)
+    setTerminalLogs([])
+    setTerminalCurrentIndex(0)
+    setTerminalTotalCount(0)
+    setTerminalSuccessCount(0)
+    setTerminalErrorCount(0)
+  }, [])
+
+  // --- Bulk CSV/XLSX handler ---
+  async function handleBulkUpload(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0]
+    if (!file) return
+    setIsSubmitting(true)
+    setError('')
+    setSuccessData(null)
+
+    const fileExt = file.name.split('.').pop()?.toLowerCase()
+    let rows: any[] = []
+
+    try {
+      if (fileExt === 'csv') {
+        const text = await file.text()
+        const parsed = Papa.parse(text, { header: true, skipEmptyLines: true })
+        rows = parsed.data
+      } else if (fileExt === 'xlsx' || fileExt === 'xls') {
+        const buffer = await file.arrayBuffer()
+        const workbook = XLSX.read(buffer, { type: 'array' })
+        const sheet = workbook.Sheets[workbook.SheetNames[0]]
+        rows = XLSX.utils.sheet_to_json(sheet)
+      } else {
+        throw new Error('Please upload a .csv or .xlsx file')
+      }
+
+      const validRows = rows.filter((r: any) => r.student_name?.toString().trim() && r.prn_no?.toString().trim())
+      if (validRows.length === 0) throw new Error('No valid rows found. Ensure student_name and prn_no columns exist.')
+
+      setTerminalTotalCount(validRows.length)
+      setTerminalActive(true)
+      setTerminalComplete(false)
+      setTerminalLogs([])
+      setTerminalCurrentIndex(0)
+      setTerminalSuccessCount(0)
+      setTerminalErrorCount(0)
+
+      await new Promise(r => setTimeout(r, 300))
+      addLog(`Starting bulk degree issuance for ${validRows.length} student(s)…`, 'info')
+      addLog('Connecting to AuthBlock API…', 'info')
+      await new Promise(r => setTimeout(r, 400))
+      addLog('Connection established. Beginning degree generation.', 'info')
+
+      let successCount = 0
+      let errorCount = 0
+
+      for (let idx = 0; idx < validRows.length; idx++) {
+        const row = validRows[idx]
+        const sName = row.student_name?.toString().trim()
+        const sPrn = row.prn_no?.toString().trim()
+        const rowLabel = `[${idx + 1}/${validRows.length}]`
+
+        setTerminalCurrentIndex(idx + 1)
+        addLog(`${rowLabel} Generating degree for ${sName || 'Unknown'} (PRN: ${sPrn || 'N/A'})…`, 'processing')
+
+        try {
+          const payload = {
+            serial_no: row.serial_no || '',
+            student_name: sName,
+            student_email: row.student_email?.toString().trim() || '',
+            prn_no: sPrn,
+            branch: row.branch || '',
+            degree_title: row.degree_title || 'Bachelor of Engineering',
+            enrollment_year: row.enrollment_year || '',
+            year_of_passing: row.year_of_passing || '',
+            final_cgpi: row.final_cgpi || '',
+            classification: row.classification || '',
+            convocation_date: row.convocation_date || '',
+            issued_by: currentUser.id
+          }
+
+          const res = await fetch('/api/admin/degrees/issue', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+          })
+
+          if (res.ok) {
+            successCount++
+            setTerminalSuccessCount(successCount)
+            const data = await res.json()
+            addLog(`${rowLabel} ✓ Degree issued for ${sName}`, 'success', data.certificate?.tx_data)
+          } else {
+            errorCount++
+            setTerminalErrorCount(errorCount)
+            const errData = await res.json().catch(() => ({}))
+            addLog(`${rowLabel} ✗ Failed for ${sName} — ${errData.error || 'Server error'}`, 'error')
+          }
+        } catch (rowErr: any) {
+          errorCount++
+          setTerminalErrorCount(errorCount)
+          addLog(`${rowLabel} ✗ Exception for ${sName}: ${rowErr.message}`, 'error')
+        }
+      }
+
+      setTerminalComplete(true)
+      if (successCount > 0) {
+        addLog(`\nBulk processing complete: ${successCount} succeeded, ${errorCount} failed.`, 'info')
+        fetchHistory()
+      } else {
+        addLog('No valid degrees were issued.', 'error')
+      }
+    } catch (err: any) {
+      setError(err.message)
+      if (terminalActive) setTerminalComplete(true)
+    } finally {
+      setIsSubmitting(false)
+    }
+  }
+
+  function downloadDegreeTemplate() {
+    const headers = ['serial_no', 'student_name', 'student_email', 'prn_no', 'branch', 'degree_title', 'enrollment_year', 'year_of_passing', 'final_cgpi', 'classification', 'convocation_date']
+    const row = ['05', 'JOHN DOE', 'john@example.com', '20230164000000', 'Computer Engineering', 'Bachelor of Engineering', '2020', '2024', '9.5', 'First Class with Distinction', '15 March 2026']
+    const ws = XLSX.utils.aoa_to_sheet([headers, row])
+    const wb = XLSX.utils.book_new()
+    XLSX.utils.book_append_sheet(wb, ws, 'Template')
+    XLSX.writeFile(wb, 'Degree_Upload_Template.xlsx')
   }
 
   useEffect(() => {
@@ -185,7 +330,7 @@ function DegreesContent({ currentUser }: { currentUser: AdminRecord }) {
         {/* Live badge */}
         <div className="flex items-center gap-2 px-4 py-2 rounded-full border text-xs font-bold bg-emerald-50 border-emerald-200 text-emerald-800">
           <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-          DegreeRegistry · Sepolia
+          DegreeRegistry · Live
         </div>
       </motion.div>
 
@@ -200,6 +345,16 @@ function DegreesContent({ currentUser }: { currentUser: AdminRecord }) {
           }`}
         >
           <FileSignature className="w-4 h-4" /> Manual Entry
+        </button>
+        <button
+          onClick={() => setActiveTab('bulk')}
+          className={`flex items-center gap-2 px-6 py-4 font-bold transition-all text-sm uppercase tracking-wide border-b-2 ${
+            activeTab === 'bulk'
+              ? 'border-amber-600 text-amber-700'
+              : 'border-transparent text-slate-400 hover:text-slate-600'
+          }`}
+        >
+          <UploadCloud className="w-4 h-4" /> Bulk CSV Upload
         </button>
         <button
           onClick={() => setActiveTab('history')}
@@ -278,14 +433,20 @@ function DegreesContent({ currentUser }: { currentUser: AdminRecord }) {
                 <CheckCircle className="w-6 h-6 text-blue-500" />
                 <div>
                   <h4 className="font-bold">Degree Certificate Issued!</h4>
-                  <p className="text-sm opacity-80">Secured on Ethereum (Sepolia) and uploaded to S3.</p>
+                  <p className="text-sm opacity-80">Secured on Ethereum and uploaded to cloud storage.</p>
                 </div>
               </div>
               <div className="flex flex-col sm:flex-row gap-2 shrink-0 border-t sm:border-l sm:border-t-0 border-blue-200/50 pt-3 sm:pt-0 sm:pl-4 mt-3 sm:mt-0">
+                {successData.degree_url && (
+                  <a href={successData.degree_url} target="_blank" rel="noreferrer"
+                    className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-bold transition-colors">
+                    <Download className="w-3.5 h-3.5" /> Degree PDF
+                  </a>
+                )}
                 {successData.url && (
                   <a href={successData.url} target="_blank" rel="noreferrer"
-                    className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-bold transition-colors">
-                    <Download className="w-3.5 h-3.5" /> View PDF
+                    className="inline-flex items-center gap-2 px-4 py-2 bg-white border border-blue-200 text-blue-700 hover:border-blue-400 rounded-xl text-xs font-bold transition-colors">
+                    <Download className="w-3.5 h-3.5" /> Certificate
                   </a>
                 )}
                 {successData.tx && (
@@ -429,8 +590,48 @@ function DegreesContent({ currentUser }: { currentUser: AdminRecord }) {
                 </button>
               </div>
             </form>
-          ) : (
-            /* ── History Tab ── */
+          ) : activeTab === 'bulk' ? (
+            terminalActive ? (
+              <ProcessingTerminal
+                logs={terminalLogs}
+                currentIndex={terminalCurrentIndex}
+                totalCount={terminalTotalCount}
+                isComplete={terminalComplete}
+                successCount={terminalSuccessCount}
+                errorCount={terminalErrorCount}
+                onReset={resetTerminal}
+              />
+            ) : (
+            <div className="glass-card p-12 text-center rounded-3xl border-dashed">
+              <div className="w-16 h-16 bg-amber-50 rounded-2xl flex items-center justify-center mx-auto mb-6">
+                <GraduationCap className="w-8 h-8 text-amber-500" />
+              </div>
+              <h2 className="text-2xl font-bold text-slate-900 mb-2">Bulk Degree Issuance</h2>
+              <p className="text-slate-500 max-w-md mx-auto mb-8">
+                Upload a .CSV or .XLSX containing student data to issue multiple degree certificates concurrently.
+              </p>
+
+              <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+                <label className="bg-blue-600 hover:bg-blue-700 text-white transition-all font-semibold rounded-xl cursor-pointer flex items-center justify-center gap-2 py-3.5 px-8 min-w-[200px]">
+                  <UploadCloud className="w-5 h-5" /> Choose File
+                  <input type="file" accept=".csv,.xlsx,.xls" className="hidden" onChange={handleBulkUpload} disabled={isSubmitting} />
+                </label>
+                <button onClick={downloadDegreeTemplate} type="button" className="flex items-center gap-2 py-3.5 px-8 font-semibold text-slate-700 bg-white border border-slate-200 hover:border-slate-300 rounded-xl transition-colors min-w-[200px] justify-center">
+                  <Download className="w-5 h-5" /> Download Template
+                </button>
+              </div>
+
+              <div className="mt-8 text-left max-w-lg mx-auto bg-slate-50 rounded-xl p-4 border border-slate-200">
+                <h3 className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-3">Required Columns</h3>
+                <div className="flex flex-wrap gap-1.5">
+                  {['serial_no','student_name','student_email','prn_no','branch','degree_title','enrollment_year','year_of_passing','final_cgpi','classification','convocation_date'].map(col => (
+                    <span key={col} className="text-[10px] font-mono font-bold bg-white border border-slate-200 px-2 py-1 rounded text-slate-600">{col}</span>
+                  ))}
+                </div>
+              </div>
+            </div>
+            )
+          ) : activeTab === 'history' ? (
             <div className="glass-card overflow-hidden">
               <div className="p-4 bg-blue-50 border-b border-blue-100 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <h2 className="font-bold text-blue-900 flex items-center gap-2">
@@ -504,6 +705,12 @@ function DegreesContent({ currentUser }: { currentUser: AdminRecord }) {
                           <td className="px-6 py-4 text-right">
                             <div className="flex items-center gap-2 justify-end flex-wrap">
                               {d.pdf_url && (
+                                <a href={d.pdf_url.replace('-certificate.pdf', '-degree.pdf').replace(/\/([^/]+)\.pdf$/, '/$1.pdf')} target="_blank" rel="noreferrer"
+                                  className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-amber-50 text-amber-700 hover:bg-amber-600 hover:text-white rounded-lg text-xs font-bold transition-colors border border-amber-200">
+                                  <Download className="w-3.5 h-3.5" /> Degree
+                                </a>
+                              )}
+                              {d.pdf_url && (
                                 <a href={d.pdf_url} target="_blank" rel="noreferrer"
                                   className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-blue-50 text-blue-700 hover:bg-blue-600 hover:text-white rounded-lg text-xs font-bold transition-colors border border-blue-200">
                                   <Download className="w-3.5 h-3.5" /> Certificate
@@ -527,7 +734,7 @@ function DegreesContent({ currentUser }: { currentUser: AdminRecord }) {
                 </table>
               </div>
             </div>
-          )}
+          ) : null}
         </motion.div>
       </AnimatePresence>
     </div>

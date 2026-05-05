@@ -13,7 +13,7 @@ function StatCard({
   label, value, icon: Icon, accent, sub, delay = 0
 }: {
   label: string
-  value: number | string
+  value: React.ReactNode
   icon: React.ElementType
   accent: string
   sub?: string
@@ -121,7 +121,7 @@ function DashboardContent({ admin }: { admin: AdminRecord }) {
             <div className="flex items-center gap-2 mb-3">
               <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
               <span className="text-xs font-bold tracking-[0.15em] uppercase text-slate-500">
-                Admin Portal · Sepolia Testnet
+                Admin Portal · Blockchain Network
               </span>
             </div>
             <h1 className="text-2xl font-bold text-slate-900 tracking-tight">
@@ -236,7 +236,7 @@ function DashboardContent({ admin }: { admin: AdminRecord }) {
               </span>
               <span className="flex items-center gap-1.5 px-2 py-1 bg-emerald-50 text-[10px] font-bold text-emerald-600 rounded-md">
                 <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                Sepolia
+                Live
               </span>
             </div>
             <div className="space-y-3">

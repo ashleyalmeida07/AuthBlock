@@ -16,7 +16,9 @@ import {
   Link2,
   AlertCircle,
   FileText,
-  MapPin
+  MapPin,
+  CheckCircle2,
+  Clock
 } from 'lucide-react'
 
 interface CertificateVerificationProps {
@@ -85,19 +87,21 @@ export default function CertificateVerification({ certId, hash, tx }: Certificat
     return (
       <div className="min-h-screen bg-slate-50 flex items-center justify-center">
         <div className="text-center">
-          <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+          <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4 animate-pulse">
             <Loader2 className="w-8 h-8 text-blue-600 animate-spin" />
           </div>
-          <h2 className="text-xl font-bold text-slate-900 mb-2">Verifying Marksheet</h2>
-          <p className="text-slate-600">Checking blockchain authenticity...</p>
+          <h2 className="text-xl font-bold text-slate-900 mb-2">Verifying Credential</h2>
+          <p className="text-slate-500 text-sm">Checking blockchain authenticity...</p>
         </div>
       </div>
     )
   }
 
+  const isVerified = result?.verified
+
   return (
-    <div className="min-h-screen bg-slate-50 py-8 px-4">
-      <div className="max-w-4xl mx-auto">
+    <div className="min-h-screen bg-[#f8fafc] py-8 px-4">
+      <div className="max-w-3xl mx-auto">
 
         {/* Header */}
         <motion.div
@@ -105,137 +109,110 @@ export default function CertificateVerification({ certId, hash, tx }: Certificat
           animate={{ opacity: 1, y: 0 }}
           className="text-center mb-8"
         >
-          <div className="inline-flex items-center gap-2 px-4 py-2 bg-blue-50 border border-blue-200 rounded-full text-blue-700 font-medium text-sm mb-4">
-            <Award className="w-4 h-4" />
-            Authblock Marksheet Verification
+          <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-blue-50 border border-blue-200 rounded-full text-blue-700 font-bold text-xs uppercase tracking-widest mb-4">
+            <ShieldCheck className="w-3.5 h-3.5" />
+            AuthBlock Verification
           </div>
-          <h1 className="text-3xl md:text-4xl font-bold text-slate-900 mb-2">
-            Marksheet Verification
+          <h1 className="text-3xl md:text-4xl font-extrabold text-slate-900 tracking-tight mb-2">
+            Credential Verification
           </h1>
-          <p className="text-slate-600 max-w-2xl mx-auto">
-            Blockchain-verified Semester Grade Card from Fr. Conceicao Rodrigues College of Engineering
+          <p className="text-slate-500 max-w-xl mx-auto text-sm">
+            Blockchain-verified academic credential from Fr. Conceicao Rodrigues College of Engineering
           </p>
         </motion.div>
 
-        {/* Verification Result */}
+        {/* Main Card */}
         <motion.div
-          initial={{ opacity: 0, scale: 0.95 }}
+          initial={{ opacity: 0, scale: 0.97 }}
           animate={{ opacity: 1, scale: 1 }}
-          className={`bg-white rounded-2xl shadow-xl border overflow-hidden ${
-            result?.verified ? 'border-emerald-200' : 'border-red-200'
-          }`}
+          className="bg-white rounded-2xl border border-slate-200 overflow-hidden"
         >
-          {/* Status Header */}
-          <div className={`p-6 text-center ${
-            result?.verified
-              ? 'bg-gradient-to-r from-emerald-50 to-green-50'
-              : 'bg-gradient-to-r from-red-50 to-rose-50'
+          {/* Status Banner */}
+          <div className={`px-6 py-8 text-center ${
+            isVerified
+              ? 'bg-emerald-50 border-b border-emerald-100'
+              : 'bg-red-50 border-b border-red-100'
           }`}>
-            <div className={`w-16 h-16 mx-auto rounded-full flex items-center justify-center mb-4 ${
-              result?.verified ? 'bg-emerald-500 text-white' : 'bg-red-500 text-white'
-            }`}>
-              {result?.verified ? <ShieldCheck className="w-8 h-8" /> : <XCircle className="w-8 h-8" />}
-            </div>
+            <motion.div
+              initial={{ scale: 0 }}
+              animate={{ scale: 1 }}
+              transition={{ type: 'spring', damping: 15, delay: 0.1 }}
+              className={`w-16 h-16 mx-auto rounded-full flex items-center justify-center mb-4 ${
+                isVerified ? 'bg-emerald-500 text-white' : 'bg-red-500 text-white'
+              }`}
+            >
+              {isVerified ? <ShieldCheck className="w-8 h-8" /> : <XCircle className="w-8 h-8" />}
+            </motion.div>
 
-            <h2 className={`text-2xl font-bold mb-2 ${
-              result?.verified ? 'text-emerald-900' : 'text-red-900'
+            <h2 className={`text-2xl font-extrabold mb-1 ${
+              isVerified ? 'text-emerald-900' : 'text-red-900'
             }`}>
-              {result?.verified ? 'Marksheet Verified ✓' : 'Verification Failed'}
+              {isVerified ? 'Credential Verified' : 'Verification Failed'}
             </h2>
 
-            <p className={`text-sm ${result?.verified ? 'text-emerald-700' : 'text-red-700'}`}>
-              {result?.verified
-                ? 'This marksheet is authentic and its data is secured on the Ethereum blockchain'
-                : result?.error || 'Marksheet could not be verified'
+            <p className={`text-sm font-medium ${isVerified ? 'text-emerald-600' : 'text-red-600'}`}>
+              {isVerified
+                ? 'This credential is authentic and anchored on the Ethereum blockchain'
+                : result?.error || 'Credential could not be verified'
               }
             </p>
           </div>
 
           {/* Certificate Details */}
-          {result?.verified && result?.certificate && (
-            <div className="p-6">
+          {isVerified && result?.certificate && (
+            <div className="divide-y divide-slate-100">
 
-              {/* Student Information */}
-              <div className="mb-8">
-                <h3 className="text-lg font-bold text-slate-900 mb-4 flex items-center gap-2">
-                  <User className="w-5 h-5 text-blue-600" />
-                  Student Information
+              {/* Student Info */}
+              <div className="p-6">
+                <h3 className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-4 flex items-center gap-2">
+                  <User className="w-3.5 h-3.5" /> Student Information
                 </h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="bg-slate-50 p-4 rounded-xl">
-                    <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Student Name</label>
-                    <div className="text-lg font-bold text-slate-900">{formatValue(result.certificate.student_name)}</div>
-                  </div>
-                  <div className="bg-slate-50 p-4 rounded-xl">
-                    <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">PRN Number</label>
-                    <div className="text-lg font-mono font-bold text-slate-900">{formatValue(result.certificate.prn_no)}</div>
-                  </div>
-                  <div className="bg-slate-50 p-4 rounded-xl">
-                    <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Serial Number</label>
-                    <div className="text-lg font-mono font-bold text-slate-900">{formatValue(result.certificate.serial_no)}</div>
-                  </div>
-                  <div className="bg-slate-50 p-4 rounded-xl">
-                    <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Branch</label>
-                    <div className="text-lg font-bold text-slate-900">{formatValue(result.certificate.branch)}</div>
-                  </div>
+                <div className="grid grid-cols-2 gap-3">
+                  <InfoCell label="Student Name" value={result.certificate.student_name} />
+                  <InfoCell label="PRN Number" value={result.certificate.prn_no} mono />
+                  <InfoCell label="Serial Number" value={result.certificate.serial_no} mono />
+                  <InfoCell label="Branch" value={result.certificate.branch} />
                 </div>
               </div>
 
               {/* Academic Details */}
-              <div className="mb-8">
-                <h3 className="text-lg font-bold text-slate-900 mb-4 flex items-center gap-2">
-                  <GraduationCap className="w-5 h-5 text-purple-600" />
-                  Academic Details
+              <div className="p-6">
+                <h3 className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-4 flex items-center gap-2">
+                  <GraduationCap className="w-3.5 h-3.5" /> Academic Details
                 </h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="bg-slate-50 p-4 rounded-xl">
-                    <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Examination</label>
-                    <div className="text-base font-semibold text-slate-900">{formatValue(result.certificate.examination)}</div>
-                  </div>
-                  <div className="bg-slate-50 p-4 rounded-xl">
-                    <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Session</label>
-                    <div className="text-base font-semibold text-slate-900">{formatValue(result.certificate.session)}</div>
-                  </div>
-                  <div className="bg-slate-50 p-4 rounded-xl">
-                    <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">SGPI</label>
-                    <div className="text-xl font-bold text-emerald-600">{formatValue(result.certificate.sgpi)}</div>
-                  </div>
-                  <div className="bg-slate-50 p-4 rounded-xl">
-                    <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">CGPI</label>
-                    <div className="text-xl font-bold text-emerald-600">{formatValue(result.certificate.cgpi)}</div>
-                  </div>
-                  <div className="bg-slate-50 p-4 rounded-xl md:col-span-2">
-                    <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Result</label>
-                    <div className="text-lg font-bold text-slate-900">{formatValue(result.certificate.remarks)}</div>
+                <div className="grid grid-cols-2 gap-3">
+                  <InfoCell label="Examination" value={result.certificate.examination} />
+                  <InfoCell label="Session" value={result.certificate.session || result.certificate.session_name} />
+                  <InfoCell label="SGPI" value={result.certificate.sgpi} highlight />
+                  <InfoCell label="CGPI" value={result.certificate.cgpi} highlight />
+                  <div className="col-span-2">
+                    <InfoCell label="Result" value={result.certificate.remarks} />
                   </div>
                 </div>
               </div>
 
-              {/* Marksheet Verified Fields (what was hashed) */}
+              {/* Verified Fields Table */}
               {result.certificate.ocr_coordinate_map && result.certificate.ocr_coordinate_map.length > 0 && (
-                <div className="mb-8">
-                  <h3 className="text-lg font-bold text-slate-900 mb-4 flex items-center gap-2">
-                    <MapPin className="w-5 h-5 text-amber-600" />
-                    Verified Marksheet Fields (Blockchain Anchored Data)
+                <div className="p-6">
+                  <h3 className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-2 flex items-center gap-2">
+                    <MapPin className="w-3.5 h-3.5" /> Blockchain-Anchored Fields
                   </h3>
-                  <p className="text-sm text-slate-500 mb-4">
-                    The following field values were hashed and anchored to the Ethereum blockchain.
-                    Any tampering of these values on the marksheet will cause verification to fail.
-                    Their exact coordinates on the page are also recorded for OCR-based text extraction during verification.
+                  <p className="text-xs text-slate-400 mb-4">
+                    These exact values were hashed and stored on Ethereum. Any alteration will cause verification to fail.
                   </p>
-                  <div className="overflow-x-auto rounded-xl border border-slate-200">
+                  <div className="rounded-xl border border-slate-200 overflow-hidden">
                     <table className="w-full text-sm">
-                      <thead className="bg-slate-100">
-                        <tr>
-                          <th className="text-left px-4 py-3 font-bold text-slate-600 uppercase tracking-wider text-xs">Field</th>
-                          <th className="text-left px-4 py-3 font-bold text-slate-600 uppercase tracking-wider text-xs">Value (Anchored on Blockchain)</th>
+                      <thead>
+                        <tr className="bg-slate-50">
+                          <th className="text-left px-4 py-2.5 text-[10px] font-bold text-slate-500 uppercase tracking-wider">Field</th>
+                          <th className="text-left px-4 py-2.5 text-[10px] font-bold text-slate-500 uppercase tracking-wider">Anchored Value</th>
                         </tr>
                       </thead>
                       <tbody>
                         {result.certificate.ocr_coordinate_map.map((entry: any, idx: number) => (
-                          <tr key={idx} className={idx % 2 === 0 ? 'bg-white' : 'bg-slate-50'}>
-                            <td className="px-4 py-2 font-semibold text-slate-700">{entry.field}</td>
-                            <td className="px-4 py-2 font-mono text-slate-900">{entry.value}</td>
+                          <tr key={idx} className={idx % 2 === 0 ? 'bg-white' : 'bg-slate-50/50'}>
+                            <td className="px-4 py-2 font-semibold text-slate-600 text-xs">{entry.field}</td>
+                            <td className="px-4 py-2 font-mono text-slate-900 text-xs">{entry.value}</td>
                           </tr>
                         ))}
                       </tbody>
@@ -245,104 +222,54 @@ export default function CertificateVerification({ certId, hash, tx }: Certificat
               )}
 
               {/* Verification Checks */}
-              <div className="mb-8">
-                <h3 className="text-lg font-bold text-slate-900 mb-4 flex items-center gap-2">
-                  <ShieldCheck className="w-5 h-5 text-emerald-600" />
-                  Verification Checks
+              <div className="p-6">
+                <h3 className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-4 flex items-center gap-2">
+                  <CheckCircle2 className="w-3.5 h-3.5" /> Integrity Checks
                 </h3>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-                  <div className="bg-slate-50 p-4 rounded-xl border border-slate-200">
-                    <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Hash Validation</label>
-                    <div className={result.verification?.hash_valid ? 'text-emerald-700 font-bold' : 'text-red-700 font-bold'}>
-                      {result.verification?.hash_valid ? '✓ Valid' : '✗ Invalid'}
-                    </div>
-                  </div>
-                  <div className="bg-slate-50 p-4 rounded-xl border border-slate-200">
-                    <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Transaction Validation</label>
-                    <div className={result.verification?.transaction_valid ? 'text-emerald-700 font-bold' : 'text-red-700 font-bold'}>
-                      {result.verification?.transaction_valid ? '✓ Valid' : '✗ Invalid'}
-                    </div>
-                  </div>
-                  <div className="bg-slate-50 p-4 rounded-xl border border-slate-200">
-                    <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Blockchain Anchor</label>
-                    <div className={result.verification?.on_blockchain ? 'text-emerald-700 font-bold' : 'text-red-700 font-bold'}>
-                      {result.verification?.on_blockchain ? '✓ Confirmed' : '✗ Missing'}
-                    </div>
-                  </div>
+                <div className="grid grid-cols-3 gap-3 mb-5">
+                  <CheckBadge label="Hash" valid={result.verification?.hash_valid} />
+                  <CheckBadge label="Transaction" valid={result.verification?.transaction_valid} />
+                  <CheckBadge label="Blockchain" valid={result.verification?.on_blockchain} />
                 </div>
 
-                <div className="grid grid-cols-1 gap-4">
-                  <div className="bg-emerald-50 border border-emerald-200 p-4 rounded-xl">
-                    <label className="block text-xs font-bold text-emerald-700 uppercase tracking-wider mb-2">Expected Hash (from QR)</label>
-                    <div className="font-mono text-sm break-all text-slate-700">{formatValue(result.verification?.expected_hash)}</div>
-                  </div>
-                  <div className="bg-emerald-50 border border-emerald-200 p-4 rounded-xl">
-                    <label className="block text-xs font-bold text-emerald-700 uppercase tracking-wider mb-2">Stored Marksheet Data Hash (DB)</label>
-                    <div className="font-mono text-sm break-all text-slate-700">{formatValue(result.verification?.stored_data_hash)}</div>
-                  </div>
-                  <div className="bg-indigo-50 border border-indigo-200 p-4 rounded-xl">
-                    <label className="block text-xs font-bold text-indigo-700 uppercase tracking-wider mb-2">Expected Transaction (from QR)</label>
-                    <div className="font-mono text-sm break-all text-slate-700">{formatValue(result.verification?.expected_tx)}</div>
-                  </div>
-                  <div className="bg-indigo-50 border border-indigo-200 p-4 rounded-xl">
-                    <label className="block text-xs font-bold text-indigo-700 uppercase tracking-wider mb-2">Stored Transaction Hash (DB)</label>
-                    <div className="font-mono text-sm break-all text-slate-700">{formatValue(result.verification?.stored_tx)}</div>
-                  </div>
+                <div className="space-y-2.5">
+                  <HashRow label="Expected Hash (QR)" value={result.verification?.expected_hash} color="emerald" />
+                  <HashRow label="Stored Data Hash (DB)" value={result.verification?.stored_data_hash} color="emerald" />
+                  <HashRow label="Expected TX (QR)" value={result.verification?.expected_tx} color="blue" />
+                  <HashRow label="Stored TX Hash (DB)" value={result.verification?.stored_tx} color="blue" />
                 </div>
               </div>
 
               {/* Blockchain Anchors */}
-              <div className="mb-8">
-                <h3 className="text-lg font-bold text-slate-900 mb-4 flex items-center gap-2">
-                  <Hash className="w-5 h-5 text-indigo-600" />
-                  Marksheet Blockchain Anchors
+              <div className="p-6">
+                <h3 className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-4 flex items-center gap-2">
+                  <Hash className="w-3.5 h-3.5" /> Blockchain Anchors
                 </h3>
-                <div className="grid grid-cols-1 gap-4">
-                  <div className="bg-blue-50 border border-blue-200 p-4 rounded-xl">
-                    <label className="block text-xs font-bold text-blue-600 uppercase tracking-wider mb-2">
-                      Marksheet Data Hash (Coordinate Map SHA-256)
-                    </label>
-                    <div className="font-mono text-sm break-all text-slate-700">{formatValue(result.blockchain?.data_hash)}</div>
-                  </div>
-
-                  <div className="bg-blue-50 border border-blue-200 p-4 rounded-xl">
-                    <label className="block text-xs font-bold text-blue-600 uppercase tracking-wider mb-2">
-                      Marksheet PDF Hash (SHA-256)
-                    </label>
-                    <div className="font-mono text-sm break-all text-slate-700">{formatValue(result.blockchain?.pdf_hash)}</div>
-                  </div>
+                <div className="space-y-3">
+                  <HashRow label="Data Hash (SHA-256)" value={result.blockchain?.data_hash} color="slate" />
+                  <HashRow label="PDF Hash (SHA-256)" value={result.blockchain?.pdf_hash} color="slate" />
 
                   {result.blockchain?.tx_hash_data && (
-                    <div className="bg-indigo-50 border border-indigo-200 p-4 rounded-xl">
-                      <label className="block text-xs font-bold text-indigo-600 uppercase tracking-wider mb-2">Data Hash Transaction</label>
-                      <div className="font-mono text-sm break-all text-slate-700 mb-3">{result.blockchain.tx_hash_data}</div>
+                    <div className="bg-slate-50 rounded-xl p-4 border border-slate-200">
+                      <p className="text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">Data Hash Transaction</p>
+                      <p className="font-mono text-xs text-slate-700 break-all mb-2">{result.blockchain.tx_hash_data}</p>
                       {result.blockchain?.etherscan_data_url && (
-                        <a
-                          href={result.blockchain.etherscan_data_url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="inline-flex items-center gap-2 text-sm font-medium text-indigo-600 hover:text-indigo-800 transition-colors"
-                        >
-                          <ExternalLink className="w-4 h-4" />
-                          View Data TX on Etherscan
+                        <a href={result.blockchain.etherscan_data_url} target="_blank" rel="noopener noreferrer"
+                          className="inline-flex items-center gap-1.5 text-xs font-bold text-blue-600 hover:text-blue-800 transition-colors">
+                          <ExternalLink className="w-3 h-3" /> View on Etherscan
                         </a>
                       )}
                     </div>
                   )}
 
                   {result.blockchain?.tx_hash_pdf && (
-                    <div className="bg-indigo-50 border border-indigo-200 p-4 rounded-xl">
-                      <label className="block text-xs font-bold text-indigo-600 uppercase tracking-wider mb-2">PDF Hash Transaction</label>
-                      <div className="font-mono text-sm break-all text-slate-700 mb-3">{result.blockchain.tx_hash_pdf}</div>
+                    <div className="bg-slate-50 rounded-xl p-4 border border-slate-200">
+                      <p className="text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">PDF Hash Transaction</p>
+                      <p className="font-mono text-xs text-slate-700 break-all mb-2">{result.blockchain.tx_hash_pdf}</p>
                       {result.blockchain?.etherscan_pdf_url && (
-                        <a
-                          href={result.blockchain.etherscan_pdf_url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="inline-flex items-center gap-2 text-sm font-medium text-indigo-600 hover:text-indigo-800 transition-colors"
-                        >
-                          <ExternalLink className="w-4 h-4" />
-                          View PDF TX on Etherscan
+                        <a href={result.blockchain.etherscan_pdf_url} target="_blank" rel="noopener noreferrer"
+                          className="inline-flex items-center gap-1.5 text-xs font-bold text-blue-600 hover:text-blue-800 transition-colors">
+                          <ExternalLink className="w-3 h-3" /> View on Etherscan
                         </a>
                       )}
                     </div>
@@ -350,137 +277,123 @@ export default function CertificateVerification({ certId, hash, tx }: Certificat
                 </div>
               </div>
 
-              {/* Certificate Metadata */}
-              <div className="border-t border-slate-200 pt-6">
-                <h3 className="text-lg font-bold text-slate-900 mb-4 flex items-center gap-2">
-                  <Calendar className="w-5 h-5 text-amber-600" />
-                  Certificate Information
+              {/* Metadata */}
+              <div className="p-6">
+                <h3 className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-4 flex items-center gap-2">
+                  <Calendar className="w-3.5 h-3.5" /> Certificate Metadata
                 </h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                  <div className="bg-slate-50 p-4 rounded-xl">
-                    <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Certificate ID</label>
-                    <div className="font-mono text-sm font-semibold text-slate-900">{formatValue(result.certificate.id)}</div>
-                  </div>
-                  <div className="bg-slate-50 p-4 rounded-xl">
-                    <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Issue Date</label>
-                    <div className="text-sm font-semibold text-slate-900">{formatDate(result.certificate.issued_at)}</div>
-                  </div>
-                  <div className="bg-slate-50 p-4 rounded-xl">
-                    <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Issued By</label>
-                    <div className="text-sm font-semibold text-slate-900">{formatValue(result.certificate.issued_by || 'FRCRCE Admin')}</div>
-                  </div>
-                  <div className="bg-slate-50 p-4 rounded-xl">
-                    <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">On-chain Timestamp</label>
-                    <div className="text-sm font-semibold text-slate-900">{formatDate(result.verification?.blockchain_timestamp)}</div>
-                  </div>
+                <div className="grid grid-cols-2 gap-3 mb-4">
+                  <InfoCell label="Certificate ID" value={result.certificate.id || result.certificate.certificate_id} mono />
+                  <InfoCell label="Issue Date" value={formatDate(result.certificate.issued_at)} />
+                  <InfoCell label="Issued By" value={result.certificate.issued_by || 'FRCRCE Admin'} />
+                  <InfoCell label="On-chain Timestamp" value={formatDate(result.verification?.blockchain_timestamp)} />
                 </div>
 
                 {/* Document Links */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                <div className="flex flex-wrap gap-3 mt-4">
                   {result.certificate?.marksheet_url && (
-                    <div className="bg-slate-50 p-4 rounded-xl">
-                      <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Marksheet PDF</label>
-                      <a
-                        href={result.certificate.marksheet_url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="inline-flex items-center gap-2 text-sm font-medium text-blue-700 hover:text-blue-900 transition-colors"
-                      >
-                        <FileText className="w-4 h-4" />
-                        View Marksheet
-                      </a>
-                    </div>
+                    <a href={result.certificate.marksheet_url} target="_blank" rel="noopener noreferrer"
+                      className="inline-flex items-center gap-1.5 px-3 py-2 bg-slate-50 border border-slate-200 hover:border-blue-300 rounded-lg text-xs font-bold text-slate-600 hover:text-blue-700 transition-colors">
+                      <FileText className="w-3.5 h-3.5" /> View Marksheet
+                    </a>
                   )}
                   {result.certificate?.certificate_url && (
-                    <div className="bg-slate-50 p-4 rounded-xl">
-                      <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Authblock Certificate</label>
-                      <a
-                        href={result.certificate.certificate_url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="inline-flex items-center gap-2 text-sm font-medium text-blue-700 hover:text-blue-900 transition-colors"
-                      >
-                        <Award className="w-4 h-4" />
-                        View Certificate
-                      </a>
-                    </div>
-                  )}
-                </div>
-
-                <div className="bg-slate-50 p-4 rounded-xl mb-4">
-                  <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Verification URL</label>
-                  {result.certificate?.verification_url ? (
-                    <a
-                      href={result.certificate.verification_url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center gap-2 text-sm font-medium text-blue-700 hover:text-blue-900 transition-colors break-all"
-                    >
-                      <ExternalLink className="w-4 h-4" />
-                      {result.certificate.verification_url}
+                    <a href={result.certificate.certificate_url} target="_blank" rel="noopener noreferrer"
+                      className="inline-flex items-center gap-1.5 px-3 py-2 bg-slate-50 border border-slate-200 hover:border-blue-300 rounded-lg text-xs font-bold text-slate-600 hover:text-blue-700 transition-colors">
+                      <Award className="w-3.5 h-3.5" /> View Certificate
                     </a>
-                  ) : (
-                    <div className="text-sm font-semibold text-slate-900">Not available</div>
+                  )}
+                  {result.certificate?.verification_url && (
+                    <a href={result.certificate.verification_url} target="_blank" rel="noopener noreferrer"
+                      className="inline-flex items-center gap-1.5 px-3 py-2 bg-slate-50 border border-slate-200 hover:border-blue-300 rounded-lg text-xs font-bold text-slate-600 hover:text-blue-700 transition-colors">
+                      <Link2 className="w-3.5 h-3.5" /> Verification Link
+                    </a>
                   )}
                 </div>
               </div>
             </div>
           )}
 
-          {/* Error Details */}
-          {!result?.verified && result?.error && (
-            <div className="p-6 border-t border-red-200">
+          {/* Error Details (failed verification) */}
+          {!isVerified && result?.error && (
+            <div className="p-6">
               <div className="bg-red-50 border border-red-200 rounded-xl p-4">
-                <div className="flex items-center gap-3 mb-3">
-                  <AlertCircle className="w-5 h-5 text-red-500" />
-                  <h4 className="font-bold text-red-900">Verification Details</h4>
+                <div className="flex items-center gap-2 mb-2">
+                  <AlertCircle className="w-4 h-4 text-red-500" />
+                  <h4 className="font-bold text-red-900 text-sm">Details</h4>
                 </div>
                 <p className="text-red-700 text-sm">{result.error}</p>
 
                 {result.verification && (
-                  <div className="mt-4 space-y-2">
-                    <div className="flex items-center justify-between text-sm">
-                      <span className="text-slate-600">Hash validation:</span>
-                      <span className={result.verification.hash_valid ? 'text-emerald-600 font-medium' : 'text-red-600 font-medium'}>
-                        {result.verification.hash_valid ? '✓ Valid' : '✗ Invalid'}
-                      </span>
-                    </div>
-                    <div className="flex items-center justify-between text-sm">
-                      <span className="text-slate-600">Transaction validation:</span>
-                      <span className={result.verification.transaction_valid ? 'text-emerald-600 font-medium' : 'text-red-600 font-medium'}>
-                        {result.verification.transaction_valid ? '✓ Valid' : '✗ Invalid'}
-                      </span>
-                    </div>
-                    <div className="flex items-center justify-between text-sm">
-                      <span className="text-slate-600">Blockchain verification:</span>
-                      <span className={result.verification.on_blockchain ? 'text-emerald-600 font-medium' : 'text-red-600 font-medium'}>
-                        {result.verification.on_blockchain ? '✓ Found' : '✗ Not found'}
-                      </span>
-                    </div>
+                  <div className="mt-4 space-y-1.5">
+                    <VerifyRow label="Hash validation" valid={result.verification.hash_valid} />
+                    <VerifyRow label="Transaction validation" valid={result.verification.transaction_valid} />
+                    <VerifyRow label="Blockchain verification" valid={result.verification.on_blockchain} />
                   </div>
                 )}
               </div>
             </div>
           )}
 
-          {/* Action Footer */}
-          <div className="bg-slate-50 p-6 border-t border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-4">
-            <div className="text-sm text-slate-600 text-center sm:text-left">
-              <div className="flex items-center gap-2">
-                <Link2 className="w-4 h-4" />
-                Powered by Authblock & Ethereum Blockchain
-              </div>
-            </div>
+          {/* Footer */}
+          <div className="bg-slate-50 px-6 py-4 border-t border-slate-200 flex items-center justify-between">
+            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest flex items-center gap-1.5">
+              <Link2 className="w-3 h-3" /> AuthBlock · Ethereum Blockchain
+            </p>
             <button
               onClick={verifyCertificate}
-              className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium"
+              className="flex items-center gap-1.5 px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white rounded-lg text-xs font-bold transition-colors"
             >
-              <RefreshCcw className="w-4 h-4" />
-              Verify Again
+              <RefreshCcw className="w-3 h-3" /> Verify Again
             </button>
           </div>
         </motion.div>
       </div>
+    </div>
+  )
+}
+
+/* ── Helper Components ──────────────────────────────────────────── */
+
+function InfoCell({ label, value, mono, highlight }: { label: string; value: unknown; mono?: boolean; highlight?: boolean }) {
+  const v = value === null || value === undefined || value === '' ? 'Not available' : String(value)
+  return (
+    <div className="bg-slate-50 rounded-xl px-4 py-3 border border-slate-100">
+      <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">{label}</p>
+      <p className={`text-sm font-bold ${highlight ? 'text-emerald-600 text-lg' : 'text-slate-900'} ${mono ? 'font-mono' : ''} break-all`}>{v}</p>
+    </div>
+  )
+}
+
+function CheckBadge({ label, valid }: { label: string; valid?: boolean }) {
+  return (
+    <div className={`rounded-xl px-4 py-3 border text-center ${valid ? 'bg-emerald-50 border-emerald-200' : 'bg-red-50 border-red-200'}`}>
+      <p className="text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">{label}</p>
+      <p className={`text-xs font-bold ${valid ? 'text-emerald-700' : 'text-red-700'}`}>
+        {valid ? '✓ Valid' : '✗ Invalid'}
+      </p>
+    </div>
+  )
+}
+
+function HashRow({ label, value, color }: { label: string; value: unknown; color: string }) {
+  const v = value === null || value === undefined || value === '' ? 'Not available' : String(value)
+  const bg = color === 'emerald' ? 'bg-emerald-50 border-emerald-100' : color === 'blue' ? 'bg-blue-50 border-blue-100' : 'bg-slate-50 border-slate-200'
+  return (
+    <div className={`${bg} rounded-xl px-4 py-3 border`}>
+      <p className="text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">{label}</p>
+      <p className="font-mono text-xs text-slate-700 break-all">{v}</p>
+    </div>
+  )
+}
+
+function VerifyRow({ label, valid }: { label: string; valid?: boolean }) {
+  return (
+    <div className="flex items-center justify-between text-xs">
+      <span className="text-slate-600">{label}</span>
+      <span className={valid ? 'text-emerald-600 font-bold' : 'text-red-600 font-bold'}>
+        {valid ? '✓ Valid' : '✗ Invalid'}
+      </span>
     </div>
   )
 }

@@ -62,7 +62,7 @@ function CoursesContent({ currentUser }: { currentUser: AdminRecord }) {
     const steps = [
       { label: 'Connecting to AuthBlock API...', status: 'pending' as const },
       { label: 'Generating data hash (SHA-256)...', status: 'pending' as const },
-      { label: 'Registering hash on Ethereum (Sepolia)...', status: 'pending' as const },
+      { label: 'Registering hash on Ethereum blockchain...', status: 'pending' as const },
       { label: 'Generating course certificate PDF...', status: 'pending' as const },
       { label: 'Uploading to cloud storage...', status: 'pending' as const },
       { label: 'Saving to database...', status: 'pending' as const },
@@ -184,7 +184,7 @@ function CoursesContent({ currentUser }: { currentUser: AdminRecord }) {
         </div>
         <div className="flex items-center gap-2 px-4 py-2 rounded-full border text-xs font-bold bg-emerald-50 border-emerald-200 text-emerald-800">
           <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-          CourseRegistry · Sepolia
+          CourseRegistry · Live
         </div>
       </motion.div>
 
@@ -270,7 +270,7 @@ function CoursesContent({ currentUser }: { currentUser: AdminRecord }) {
                 <CheckCircle className="w-6 h-6 text-blue-600" />
                 <div>
                   <h4 className="font-bold">Course Certificate Issued!</h4>
-                  <p className="text-sm opacity-80">Secured on Ethereum (Sepolia) and uploaded to S3.</p>
+                  <p className="text-sm opacity-80">Secured on Ethereum and uploaded to cloud storage.</p>
                 </div>
               </div>
               <div className="flex flex-col sm:flex-row gap-2 shrink-0 border-t sm:border-l sm:border-t-0 border-blue-200/50 pt-3 sm:pt-0 sm:pl-4 mt-3 sm:mt-0">

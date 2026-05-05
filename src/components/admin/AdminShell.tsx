@@ -48,7 +48,7 @@ const NAV_SECTIONS = [
     items: [
       { icon: Users,          label: 'Manage Admins',   href: '/admin/users',      accent: '#2563EB', superOnly: true },
       { icon: ActivitySquare, label: 'Network Status',  href: '/admin/network',    accent: '#2563EB', superOnly: true },
-      { icon: Settings,       label: 'Settings',        href: '/admin/settings',   accent: '#2563EB', soon: true },
+      { icon: Settings,       label: 'Settings',        href: '/admin/settings',   accent: '#2563EB' },
     ]
   }
 ]
