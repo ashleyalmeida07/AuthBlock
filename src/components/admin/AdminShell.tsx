@@ -124,7 +124,7 @@ export default function AdminShell({ children }: AdminShellProps) {
                   return (
                     <Link
                       key={item.label}
-                      href={item.soon ? '#' : item.href}
+                      href={item.href}
                       onClick={() => setSidebarOpen(false)}
                       className={`flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-150 group relative ${
                         isActive ? 'text-blue-700 bg-blue-50/80' : 'text-slate-500 hover:text-slate-900 hover:bg-slate-50'
@@ -138,12 +138,7 @@ export default function AdminShell({ children }: AdminShellProps) {
                         className={`w-4 h-4 shrink-0 transition-colors ${isActive ? 'text-blue-600' : 'text-slate-400 group-hover:text-slate-500'}`}
                       />
                       <span className="flex-1">{item.label}</span>
-                      {item.soon && (
-                        <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-slate-100 text-slate-400">
-                          SOON
-                        </span>
-                      )}
-                      {isActive && !item.soon && (
+                      {isActive && (
                         <ChevronRight className="w-3 h-3 opacity-50 text-blue-600" />
                       )}
                     </Link>
