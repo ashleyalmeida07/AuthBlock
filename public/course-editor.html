@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Course Certificate — Canvas Editor</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { display:flex; height:100vh; background:#111; color:#eee; font-family:'Segoe UI',sans-serif; overflow:hidden; }
+  #left  { flex:1; display:flex; align-items:center; justify-content:center; background:#1a1a1a; overflow:auto; }
+  #right { width:360px; background:#16213e; padding:14px; overflow-y:auto; border-left:2px solid #0f3460; }
+  canvas { box-shadow:0 8px 40px rgba(0,0,0,0.7); cursor:crosshair; }
+  h2 { font-size:14px; color:#0ff; margin-bottom:5px; }
+  .hint { font-size:11px; color:#556; margin-bottom:10px; line-height:1.5; }
+  .grp { background:#0d1b2a; border:1px solid #1b2838; border-radius:7px; padding:9px 11px; margin-bottom:8px; }
+  .grp.active { border-color:#0f0; }
+  .grp h4 { font-size:11px; color:#0f0; text-transform:uppercase; letter-spacing:1px; margin-bottom:5px; cursor:pointer; }
+  .grp h4 span { color:#446; font-size:9px; text-transform:none; }
+  .row { display:flex; gap:5px; margin-bottom:4px; align-items:center; }
+  .row label { font-size:11px; width:30px; color:#889; text-align:right; flex-shrink:0; }
+  .row input { flex:1; min-width:0; background:#111; border:1px solid #333; color:#eee; padding:3px 6px; border-radius:4px; font-size:12px; font-family:monospace; }
+  .row input:focus { border-color:#0ff; outline:none; }
+  .row input.txt { flex:4; }
+  .pdf-val { font-size:10px; color:#5af; margin-top:3px; font-family:monospace; }
+  .note { font-size:10px; color:#446; margin-top:2px; font-style:italic; }
+  .center-btn { background:#0f3460; border:1px solid #1b5599; color:#7af; padding:2px 6px; border-radius:4px; font-size:10px; cursor:pointer; margin-left:4px; white-space:nowrap; }
+  .center-btn:hover { background:#1b5599; }
+  .out { background:#0a0a1a; border:1px solid #222; border-radius:7px; padding:11px; margin-top:10px; }
+  .out h4 { color:#f66; font-size:11px; margin-bottom:7px; text-transform:uppercase; }
+  .out pre { font-size:11px; color:#adf; line-height:1.9; white-space:pre-wrap; font-family:monospace; }
+  .out button { margin-top:8px; background:#0ff; color:#000; border:none; padding:7px; border-radius:5px; font-weight:700; cursor:pointer; font-size:12px; width:100%; }
+  .out button:hover { background:#0f0; }
+</style>
+</head>
+<body>
+<div id="left"><canvas id="cv"></canvas></div>
+<div id="right">
+  <h2>📜 Course Certificate Editor</h2>
+  <p class="hint">✅ Exact PDF coords. Drag fields on canvas.<br>
+  <b>X=null</b> = centered. Click <b>[⊕ center]</b> to toggle centering.</p>
+  <div id="ctrls"></div>
+  <div class="out">
+    <h4>📋 PDF Coordinates</h4>
+    <pre id="out"></pre>
+    <button onclick="doCopy()">Copy to Clipboard</button>
+  </div>
+</div>
+
+<script>
+const PDF_W = 841.89, PDF_H = 595.28;
+const DISP_W = 820;
+const DISP_H = Math.round(DISP_W * PDF_H / PDF_W);
+const cv = document.getElementById('cv');
+cv.width = DISP_W; cv.height = DISP_H;
+const ctx = cv.getContext('2d');
+const SX = DISP_W / PDF_W;
+const SY = DISP_H / PDF_H;
+
+// All positions in PDF points (y=0 at BOTTOM).
+// x=null means centered. All fields now have editable X.
+// Based on visible template layout from screenshot:
+const F = [
+  { id:'name',     lbl:'Student Name',     txt:'Ashley Almeida',
+    note:'student_name',
+    centered:true, x:421, pdfY:355, fs:18, bold:true,  ital:false },
+  { id:'course',   lbl:'Course Name',      txt:'Introduction to Java Spring Framework 101',
+    note:'course_name',
+    centered:true, x:421, pdfY:290, fs:14, bold:true,  ital:false },
+  { id:'dates',    lbl:'Date Range',       txt:'conducted from 01 April 2025 to 08 April 2025',
+    note:'start_date + end_date',
+    centered:true, x:421, pdfY:258, fs:10, bold:false, ital:true  },
+  { id:'duration', lbl:'Duration',         txt:'with a total duration of 30 Hours.',
+    note:'duration',
+    centered:true, x:421, pdfY:234, fs:10, bold:false, ital:true  },
+  { id:'dept',     lbl:'Department',       txt:'The program was organized by Dept. of Computer Engineering, FRCRCE.',
+    note:'department',
+    centered:true, x:421, pdfY:210, fs:9,  bold:false, ital:false },
+  { id:'grade',    lbl:'Grade',            txt:'Grade: A+',
+    note:'grade',
+    centered:true, x:421, pdfY:170, fs:13, bold:true,  ital:false },
+  { id:'date',     lbl:'Issue Date',       txt:'8th May, 2025',
+    note:'issue date (bottom-left)',
+    centered:false, x:80, pdfY:50,  fs:11, bold:true,  ital:false },
+  { id:'serial',   lbl:'Serial / PRN No.', txt:'CERT-2025-001',
+    note:'serial_no / prn (bottom-right)',
+    centered:false, x:640, pdfY:50, fs:11, bold:true,  ital:false },
+];
+
+// Load template
+const tplImg = new Image();
+let tplLoaded = false;
+tplImg.onload = () => { tplLoaded = true; render(); };
+tplImg.onerror = () => {
+  ctx.fillStyle='#fffef2'; ctx.fillRect(0,0,DISP_W,DISP_H);
+  ctx.strokeStyle='#c8a96e'; ctx.lineWidth=6; ctx.strokeRect(3,3,DISP_W-6,DISP_H-6);
+  ctx.fillStyle='#c44'; ctx.font='13px sans-serif';
+  ctx.fillText('⚠ Template not found', 16, 26);
+  tplLoaded=false; render();
+};
+fetch('/FRCRCE_Certificate_Template.png')
+  .then(r=>r.blob()).then(b=>{ tplImg.src=URL.createObjectURL(b); })
+  .catch(()=>{ tplImg.src='/FRCRCE_Certificate_Template.png'; });
+
+function cvY(pdfY) { return DISP_H - pdfY * SY; }
+let selectedId = F[0].id;
+
+function getX(f) {
+  if (f.centered) {
+    ctx.font = `${f.bold&&f.ital?'bold italic':f.bold?'bold':f.ital?'italic':''} ${f.fs*SX}px "Times New Roman",serif`;
+    return (DISP_W - ctx.measureText(f.txt).width) / 2;
+  }
+  return f.x * SX;
+}
+
+function render() {
+  ctx.clearRect(0,0,DISP_W,DISP_H);
+  if (tplLoaded) ctx.drawImage(tplImg, 0, 0, DISP_W, DISP_H);
+  F.forEach(f => {
+    const fs = f.fs * SX;
+    const style = f.bold&&f.ital?'bold italic':f.bold?'bold':f.ital?'italic':'';
+    ctx.font = `${style} ${fs}px "Times New Roman",serif`;
+    ctx.textBaseline = 'alphabetic';
+    ctx.fillStyle = selectedId===f.id ? '#0044ff' : '#111';
+    const tw = ctx.measureText(f.txt).width;
+    const cx = f.centered ? (DISP_W-tw)/2 : f.x*SX;
+    const cy = cvY(f.pdfY);
+    ctx.fillText(f.txt, cx, cy);
+    if (selectedId===f.id) {
+      ctx.strokeStyle='#0088ff'; ctx.lineWidth=1.5; ctx.setLineDash([4,3]);
+      ctx.strokeRect(cx-2, cy-fs, tw+4, fs+4); ctx.setLineDash([]);
+    }
+  });
+}
+
+cv.addEventListener('mousedown', e => {
+  const r = cv.getBoundingClientRect();
+  const mx = e.clientX-r.left, my = e.clientY-r.top;
+  for (let i=F.length-1; i>=0; i--) {
+    const f = F[i];
+    const fs = f.fs*SX;
+    const style = f.bold?'bold':'';
+    ctx.font = `${style} ${fs}px "Times New Roman",serif`;
+    const tw = ctx.measureText(f.txt).width;
+    const cx = f.centered ? (DISP_W-tw)/2 : f.x*SX;
+    const cy = cvY(f.pdfY);
+    if (mx>=cx-5 && mx<=cx+tw+5 && my>=cy-fs && my<=cy+4) {
+      selectedId=f.id; selectField(f.id); startDrag(e,f,mx,my); return;
+    }
+  }
+});
+
+function startDrag(e0, f, smx, smy) {
+  const ox=f.x, opy=f.pdfY;
+  const mv = e => {
+    const r=cv.getBoundingClientRect();
+    const mx=e.clientX-r.left, my=e.clientY-r.top;
+    const dx=(mx-smx)/SX, dy=-(my-smy)/SY;
+    // Dragging horizontally disables centering
+    if (Math.abs(dx) > 3 && f.centered) {
+      // Calculate current centered x then offset
+      ctx.font = `${f.bold?'bold':''} ${f.fs*SX}px "Times New Roman",serif`;
+      const tw = ctx.measureText(f.txt).width;
+      const centeredX = (DISP_W - tw) / 2 / SX;
+      f.x = Math.round(centeredX + dx);
+      f.centered = false;
+      document.getElementById('cb_'+f.id).textContent = '⊕ center';
+    } else if (!f.centered) {
+      f.x = Math.round(ox+dx);
+    }
+    f.pdfY = Math.round(opy+dy);
+    const xEl = document.getElementById('ix_'+f.id);
+    if (xEl) xEl.value = f.centered ? 'centered' : f.x;
+    document.getElementById('iy_'+f.id).value = f.pdfY;
+    updatePdfVal(f); render(); genOutput();
+  };
+  const up = () => { document.removeEventListener('mousemove',mv); document.removeEventListener('mouseup',up); };
+  document.addEventListener('mousemove',mv);
+  document.addEventListener('mouseup',up);
+}
+
+const ctrls = document.getElementById('ctrls');
+F.forEach(f => {
+  const g = document.createElement('div');
+  g.className = 'grp'+(f.id===selectedId?' active':'');
+  g.id = 'g_'+f.id;
+  g.innerHTML = `
+    <h4 onclick="selectField('${f.id}')">${f.lbl} <span>(click)</span></h4>
+    <div class="row"><label>Txt</label><input class="txt" type="text" value="${f.txt}" oninput="updTxt('${f.id}',this.value)"></div>
+    <div class="row">
+      <label>X</label>
+      <input type="text" id="ix_${f.id}" value="${f.centered?'centered':f.x}" oninput="updX('${f.id}',this.value)">
+      <button class="center-btn" id="cb_${f.id}" onclick="toggleCenter('${f.id}')">${f.centered?'✓ centered':'⊕ center'}</button>
+    </div>
+    <div class="row">
+      <label>Y</label><input type="number" id="iy_${f.id}" value="${f.pdfY}" oninput="updPos('${f.id}')">
+      <label>Sz</label><input type="number" id="if_${f.id}" value="${f.fs}" oninput="updPos('${f.id}')" style="width:42px;flex:none">
+    </div>
+    <div class="pdf-val" id="pv_${f.id}"></div>
+    <div class="note">${f.note}</div>
+  `;
+  ctrls.appendChild(g);
+  updatePdfVal(f);
+});
+
+function toggleCenter(id) {
+  const f = F.find(f=>f.id===id);
+  f.centered = !f.centered;
+  if (!f.centered) {
+    // Set x to current visual center position
+    ctx.font = `${f.bold?'bold':''} ${f.fs*SX}px "Times New Roman",serif`;
+    const tw = ctx.measureText(f.txt).width;
+    f.x = Math.round((DISP_W - tw) / 2 / SX);
+  }
+  document.getElementById('ix_'+id).value = f.centered ? 'centered' : f.x;
+  document.getElementById('cb_'+id).textContent = f.centered ? '✓ centered' : '⊕ center';
+  updatePdfVal(f); render(); genOutput();
+}
+function updX(id, val) {
+  const f = F.find(f=>f.id===id);
+  if (val.toLowerCase()==='centered') { f.centered=true; }
+  else { f.centered=false; f.x=parseInt(val)||0; }
+  updatePdfVal(f); render(); genOutput();
+}
+function selectField(id) {
+  selectedId=id;
+  document.querySelectorAll('.grp').forEach(g=>g.classList.remove('active'));
+  document.getElementById('g_'+id)?.classList.add('active');
+  document.getElementById('g_'+id)?.scrollIntoView({behavior:'smooth',block:'nearest'});
+  render();
+}
+function updTxt(id,txt) { F.find(f=>f.id===id).txt=txt; render(); genOutput(); }
+function updPos(id) {
+  const f=F.find(f=>f.id===id);
+  f.pdfY=+document.getElementById('iy_'+id).value||0;
+  f.fs=+document.getElementById('if_'+id).value||10;
+  updatePdfVal(f); render(); genOutput();
+}
+function updatePdfVal(f) {
+  const el=document.getElementById('pv_'+f.id); if(!el) return;
+  el.textContent = `→ PDF: ${f.centered?'centered':'x='+f.x}, y=${f.pdfY}, size=${f.fs}`;
+}
+function genOutput() {
+  document.getElementById('out').textContent = F.map(f=>
+    `${f.lbl}: ${f.centered?'centered':'x='+f.x}, y=${f.pdfY}, size=${f.fs}`
+  ).join('\n');
+}
+function doCopy() {
+  navigator.clipboard.writeText(document.getElementById('out').textContent).then(()=>{
+    const b=document.querySelector('.out button');
+    b.textContent='✅ Copied!'; setTimeout(()=>b.textContent='Copy to Clipboard',1500);
+  });
+}
+genOutput(); render();
+</script>
+</body>
+</html>

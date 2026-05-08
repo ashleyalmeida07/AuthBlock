@@ -8,18 +8,18 @@ import Link from 'next/link'
 import Image from 'next/image'
 
 export default function LoginPage() {
-  const router  = useRouter()
-  const [prn, setPrn]           = useState('')
+  const router = useRouter()
+  const [prn, setPrn] = useState('')
   const [fullName, setFullName] = useState('')
   const [isLoading, setIsLoading] = useState(false)
-  const [error, setError]       = useState('')
+  const [error, setError] = useState('')
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
     setError('')
     setIsLoading(true)
     try {
-      const res  = await fetch('/api/auth/login', {
+      const res = await fetch('/api/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ prn_no: prn.trim(), full_name: fullName.trim() }),
@@ -73,9 +73,6 @@ export default function LoginPage() {
           {/* Verified badge card */}
           <div className="bg-white border border-slate-200 rounded-xl p-4 shadow-sm">
             <div className="flex items-center gap-3 mb-2.5">
-              <div className="w-8 h-8 rounded-full bg-emerald-50 border border-emerald-100 flex items-center justify-center shrink-0">
-                <ShieldCheck className="w-4 h-4 text-emerald-600" />
-              </div>
               <div>
                 <p className="text-xs font-bold text-slate-800">Blockchain Verified</p>
                 <p className="text-[10px] text-slate-400">Sepolia Ethereum Network</p>

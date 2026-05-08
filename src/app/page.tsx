@@ -5,7 +5,6 @@ import {
   HowItWorks,
   Features,
   Stats,
-  Stakeholders,
   CTA,
   Footer
 } from '@/components/landing'
@@ -37,8 +36,6 @@ export default function LandingPage() {
       {/* Features — 4 column grid */}
       <Features />
 
-      {/* Credential cards — 3×2 */}
-      <Stakeholders />
 
       {/* CTA */}
       <CTA isLoggedIn={isLoggedIn} />

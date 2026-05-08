@@ -2,6 +2,8 @@ import { NextResponse } from 'next/server'
 import { PDFDocument, rgb, StandardFonts } from 'pdf-lib'
 import { uploadToS3 } from '@/lib/s3'
 import { sql } from '@/lib/db'
+import fs from 'fs'
+import path from 'path'
 import crypto from 'crypto'
 import QRCode from 'qrcode'
 import { getCourseBlockchainContract } from '@/lib/blockchain'
@@ -73,7 +75,78 @@ export async function POST(req: Request) {
       margin: 2
     })
 
-    // ── Generate Course Certificate PDF ──────────────────────────
+    // ── PART 1: FRCRCE CERTIFICATE (Template Overlay) ──────────────
+    const templatePdfDoc = await PDFDocument.create()
+    // Certificate template is landscape
+    const tw = 841.89
+    const th = 595.28
+    const templatePage = templatePdfDoc.addPage([tw, th])
+
+    const fontBoldT = await templatePdfDoc.embedFont(StandardFonts.TimesRomanBold)
+    const fontRegT = await templatePdfDoc.embedFont(StandardFonts.TimesRoman)
+    const fontItalicT = await templatePdfDoc.embedFont(StandardFonts.TimesRomanItalic)
+    const qrImageTemplate = await templatePdfDoc.embedPng(qrBuffer)
+
+    const s = (v: any): string => String(v ?? '')
+    const BLACK = rgb(0, 0, 0)
+    const DARK = rgb(0.15, 0.15, 0.15)
+
+    // Load and draw FRCRCE_Certificate_Template.png
+    const certTemplatePath = path.join(process.cwd(), 'public', 'FRCRCE_Certificate_Template.png')
+    const certTemplateBytes = fs.readFileSync(certTemplatePath)
+    const certTemplateImg = await templatePdfDoc.embedPng(certTemplateBytes)
+    templatePage.drawImage(certTemplateImg, { x: 0, y: 0, width: tw, height: th })
+
+    // ── Course template text overlay (canvas editor coordinates) ──────────
+
+    // Student Name — centered, y=283, size=18
+    const nameTextT = s(student_name)
+    const nameWidthT = fontBoldT.widthOfTextAtSize(nameTextT, 18)
+    templatePage.drawText(nameTextT, {
+      x: (tw - nameWidthT) / 2, y: 283, size: 18, font: fontBoldT, color: BLACK
+    })
+
+    // Course Name — centered, y=244, size=14
+    const courseText = s(course_name)
+    const courseWidthT = fontBoldT.widthOfTextAtSize(courseText, 14)
+    templatePage.drawText(courseText, {
+      x: (tw - courseWidthT) / 2, y: 244, size: 14, font: fontBoldT, color: BLACK
+    })
+
+    // Date Range — "conducted from ___ to ___" — x=307, y=216, size=10
+    if (start_date || end_date) {
+      const dateRangeText = `${s(start_date) || '—'}  to  ${s(end_date) || '—'}`
+      templatePage.drawText(dateRangeText, { x: 307, y: 216, size: 10, font: fontBoldT, color: BLACK })
+    }
+
+    // Duration — "with a total duration of ___" — x=415, y=194, size=10
+    if (duration) {
+      templatePage.drawText(s(duration) + ' Hours', { x: 415, y: 194, size: 10, font: fontBoldT, color: BLACK })
+    }
+
+    // Department — "The program was organized by ___" — x=385, y=172, size=9
+    const deptText = s(instructor_name) || 'Department of Computer Engineering, FRCRCE'
+    templatePage.drawText(deptText, { x: 385, y: 172, size: 9, font: fontBoldT, color: BLACK })
+
+    // Grade — x=412, y=149, size=13
+    if (grade) {
+      templatePage.drawText(s(grade), { x: 412, y: 149, size: 13, font: fontBoldT, color: DARK })
+    }
+
+    // Issue Date — x=87, y=118, size=12
+    const dateTextT = new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' })
+    templatePage.drawText(dateTextT, { x: 87, y: 118, size: 12, font: fontBoldT, color: BLACK })
+
+    // PRN / Serial No. — x=655, y=120, size=12
+    templatePage.drawText(s(prn_no), { x: 655, y: 120, size: 12, font: fontBoldT, color: BLACK })
+
+    // QR Code (small, bottom-right corner)
+    templatePage.drawImage(qrImageTemplate, { x: tw - 82, y: 12, width: 48, height: 48 })
+
+    const templatePdfBytes = await templatePdfDoc.save()
+    console.log('[Course Issue] FRCRCE Template PDF generated, size:', templatePdfBytes.length, 'bytes')
+
+    // ── PART 2: AUTHBLOCK VERIFICATION CERTIFICATE ───────────────
     const pdfDoc = await PDFDocument.create()
     const page = pdfDoc.addPage([595.28, 841.89])
     const cw = 595.28
@@ -83,9 +156,6 @@ export async function POST(req: Request) {
     const fontReg = await pdfDoc.embedFont(StandardFonts.Helvetica)
     const qrImage = await pdfDoc.embedPng(qrBuffer)
 
-    const s = (v: any): string => String(v ?? '')
-    const BLACK = rgb(0, 0, 0)
-    const DARK = rgb(0.13, 0.13, 0.13)
     const LGREY = rgb(0.35, 0.35, 0.35)
     const WHITE = rgb(1, 1, 1)
     const GREEN = rgb(0.05, 0.50, 0.15)
@@ -159,7 +229,6 @@ export async function POST(req: Request) {
     if (description) {
       page.drawText('Description', { x: 40, y: yPos, size: 8, font: fontReg, color: LGREY })
       yPos -= 13
-      // Truncate long descriptions for PDF
       const descText = String(description).substring(0, 200)
       page.drawText(descText, { x: 40, y: yPos, size: 9, font: fontReg, color: DARK })
       yPos -= 22
@@ -216,29 +285,35 @@ export async function POST(req: Request) {
     })
 
     const pdfBytes = await pdfDoc.save()
-    console.log('[Course Issue] PDF generated, size:', pdfBytes.length, 'bytes')
+    console.log('[Course Issue] AuthBlock cert PDF generated, size:', pdfBytes.length, 'bytes')
 
-    // ── Generate PDF hash ────────────────────────────────────────
+    // ── Generate PDF hashes ──────────────────────────────
+    const templateHash = '0x' + crypto.createHash('sha256').update(templatePdfBytes).digest('hex')
     const pdfHash = '0x' + crypto.createHash('sha256').update(pdfBytes).digest('hex')
+    console.log('[Course Issue] Template cert hash:', templateHash.substring(0, 20) + '...')
+    console.log('[Course Issue] AuthBlock cert hash:', pdfHash.substring(0, 20) + '...')
 
-    // ── Register PDF hash on blockchain ──────────────────────────
+    // ── Register TEMPLATE PDF hash on blockchain (user uploads this) ──
     let tx_hash_pdf: string | null = null
     try {
       const { contract } = await getCourseBlockchainContract()
-      console.log('[Blockchain] Registering course PDF hash...')
-      const tx = await contract.registerHash(pdfHash)
+      console.log('[Blockchain] Registering course template PDF hash...')
+      const tx = await contract.registerHash(templateHash)
       const receipt = await tx.wait()
       tx_hash_pdf = receipt.hash
-      console.log('[Blockchain] ✓ Course PDF hash stored! TX:', tx_hash_pdf)
+      console.log('[Blockchain] ✓ Course template hash stored! TX:', tx_hash_pdf)
     } catch (e: any) {
       console.error('[Blockchain] Failed to store course PDF hash:', e)
       throw new Error('Failed to register course PDF hash: ' + e.message)
     }
 
-    // ── Upload to S3 ─────────────────────────────────────────────
-    const s3Key = `courses/${certificateId}.pdf`
-    const pdfUrl = await uploadToS3(s3Key, pdfBytes, 'application/pdf')
-    console.log('[S3] ✓ Course certificate uploaded:', pdfUrl)
+    // ── Upload BOTH PDFs to S3 ───────────────────────────────────
+    const [templateUrl, certUrl] = await Promise.all([
+      uploadToS3(`courses/${certificateId}-certificate.pdf`, templatePdfBytes, 'application/pdf'),
+      uploadToS3(`courses/${certificateId}-authblock.pdf`, pdfBytes, 'application/pdf'),
+    ])
+    console.log('[S3] ✓ FRCRCE template certificate:', templateUrl)
+    console.log('[S3] ✓ AuthBlock verification cert:', certUrl)
 
     // ── Save to database ─────────────────────────────────────────
     // @ts-ignore
@@ -262,8 +337,8 @@ export async function POST(req: Request) {
       ) VALUES (
         ${student_name}, ${prn_no}, ${course_name}, ${course_type || null}, ${duration || null},
         ${instructor_name || null}, ${start_date || null}, ${end_date || null}, ${grade || null}, ${description || null},
-        ${pdfUrl}, ${issued_by || null},
-        ${pdfHash}, ${dataHash}, ${tx_hash_pdf}, ${tx_hash_data},
+        ${templateUrl}, ${issued_by || null},
+        ${templateHash}, ${dataHash}, ${tx_hash_pdf}, ${tx_hash_data},
         ${certificateId}, ${verificationUrl}, ${JSON.stringify(courseData)}
       )
       RETURNING id
@@ -285,8 +360,8 @@ export async function POST(req: Request) {
         sgpi: '',
         cgpi: '',
         remarks: String(grade || ''),
-        marksheetUrl: pdfUrl,
-        certificateUrl: pdfUrl,
+        marksheetUrl: templateUrl,
+        certificateUrl: certUrl,
         certificateId,
         verificationUrl,
         issueDate: new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' }),
@@ -300,7 +375,8 @@ export async function POST(req: Request) {
       id: newId,
       certificate: {
         id: certificateId,
-        url: pdfUrl,
+        url: certUrl,
+        template_url: templateUrl,
         data_hash: dataHash,
         pdf_hash: pdfHash,
         tx_data: tx_hash_data,

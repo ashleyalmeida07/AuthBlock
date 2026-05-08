@@ -504,19 +504,19 @@ function MarksheetsContent({ currentUser }: { currentUser: AdminRecord }) {
                   
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Marksheet No.</label>
+                      <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Marksheet No.<span className="text-red-500 ml-0.5">*</span></label>
                       <input type="text" required className="input font-medium font-mono text-purple-600" 
                         value={formData.serial_no} onChange={e => setFormData({...formData, serial_no: e.target.value})} />
                     </div>
                     <div>
-                      <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">PRN No.</label>
+                      <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">PRN No.<span className="text-red-500 ml-0.5">*</span></label>
                       <input type="text" required className="input font-medium font-mono"
                         value={formData.prn_no} onChange={e => setFormData({...formData, prn_no: e.target.value})} />
                     </div>
                   </div>
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Student Full Name</label>
+                      <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Student Full Name<span className="text-red-500 ml-0.5">*</span></label>
                       <input type="text" required className="input font-medium" 
                         value={formData.student_name} onChange={e => setFormData({...formData, student_name: e.target.value})} />
                     </div>
@@ -528,12 +528,12 @@ function MarksheetsContent({ currentUser }: { currentUser: AdminRecord }) {
                   </div>
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">SGPI</label>
+                      <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">SGPI<span className="text-red-500 ml-0.5">*</span></label>
                       <input type="text" required className="input font-medium"
                         value={formData.sgpi} onChange={e => setFormData({...formData, sgpi: e.target.value})} />
                     </div>
                     <div>
-                      <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">CGPI</label>
+                      <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">CGPI<span className="text-red-500 ml-0.5">*</span></label>
                       <input type="text" required className="input font-medium"
                         value={formData.cgpi} onChange={e => setFormData({...formData, cgpi: e.target.value})} />
                     </div>
@@ -544,28 +544,28 @@ function MarksheetsContent({ currentUser }: { currentUser: AdminRecord }) {
                 <div className="space-y-5">
                   <h3 className="text-lg font-bold text-slate-900 border-b border-slate-100 pb-2">Course Information</h3>
                   <div>
-                    <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Examination</label>
+                    <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Examination<span className="text-red-500 ml-0.5">*</span></label>
                     <input type="text" required className="input font-medium bg-slate-50"
                       value={formData.examination} onChange={e => setFormData({...formData, examination: e.target.value})} />
                   </div>
                   <div>
-                    <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Branch</label>
+                    <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Branch<span className="text-red-500 ml-0.5">*</span></label>
                     <input type="text" required className="input font-medium bg-slate-50"
                       value={formData.branch} onChange={e => setFormData({...formData, branch: e.target.value})} />
                   </div>
                   <div>
-                    <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Session</label>
+                    <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Session<span className="text-red-500 ml-0.5">*</span></label>
                     <input type="text" required className="input font-medium bg-slate-50"
                       value={formData.session_name} onChange={e => setFormData({...formData, session_name: e.target.value})} />
                   </div>
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Remarks</label>
+                      <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Remarks<span className="text-red-500 ml-0.5">*</span></label>
                       <input type="text" required className="input font-medium bg-slate-50"
                         value={formData.remarks} onChange={e => setFormData({...formData, remarks: e.target.value})} />
                     </div>
                     <div>
-                      <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Date</label>
+                      <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Date<span className="text-red-500 ml-0.5">*</span></label>
                       <input type="text" required className="input font-medium bg-slate-50"
                         value={formData.date} onChange={e => setFormData({...formData, date: e.target.value})} />
                     </div>

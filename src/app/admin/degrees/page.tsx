@@ -14,18 +14,18 @@ import ProcessingTerminal, { type TerminalLog } from '@/components/admin/Process
 
 // ── Shared sub-components ──────────────────────────────────────────
 
-function Label({ children }: { children: React.ReactNode }) {
+function Label({ required, children }: { required?: boolean; children: React.ReactNode }) {
   return (
     <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
-      {children}
+      {children}{required && <span className="text-red-500 ml-0.5">*</span>}
     </label>
   )
 }
 
-function Field({ label, children }: { label: string; children: React.ReactNode }) {
+function Field({ label, required, children }: { label: string; required?: boolean; children: React.ReactNode }) {
   return (
     <div>
-      <Label>{label}</Label>
+      <Label required={required}>{label}</Label>
       {children}
     </div>
   )
@@ -480,14 +480,14 @@ function DegreesContent({ currentUser }: { currentUser: AdminRecord }) {
                       <input type="text" className="input font-medium font-mono text-blue-700"
                         value={formData.serial_no} onChange={set('serial_no')} />
                     </Field>
-                    <Field label="PRN No.">
+                    <Field label="PRN No." required>
                       <input type="text" required className="input font-medium font-mono"
                         value={formData.prn_no} onChange={set('prn_no')} />
                     </Field>
                   </div>
 
                   <div className="grid grid-cols-2 gap-4">
-                    <Field label="Full Name">
+                    <Field label="Full Name" required>
                       <input type="text" required className="input font-medium"
                         value={formData.student_name} onChange={set('student_name')} />
                     </Field>
@@ -497,13 +497,13 @@ function DegreesContent({ currentUser }: { currentUser: AdminRecord }) {
                     </Field>
                   </div>
 
-                  <Field label="Branch / Programme">
+                  <Field label="Branch / Programme" required>
                     <input type="text" required className="input font-medium"
                       placeholder="e.g. Computer Engineering"
                       value={formData.branch} onChange={set('branch')} />
                   </Field>
 
-                  <Field label="Degree Title">
+                  <Field label="Degree Title" required>
                     <select required className="input font-medium bg-white"
                       value={formData.degree_title} onChange={set('degree_title')}>
                       <option>Bachelor of Engineering</option>
@@ -526,22 +526,22 @@ function DegreesContent({ currentUser }: { currentUser: AdminRecord }) {
                   </h3>
 
                   <div className="grid grid-cols-2 gap-4">
-                    <Field label="Enrollment Year">
+                    <Field label="Enrollment Year" required>
                       <input type="text" required className="input font-medium" placeholder="e.g. 2020"
                         value={formData.enrollment_year} onChange={set('enrollment_year')} />
                     </Field>
-                    <Field label="Year of Passing">
+                    <Field label="Year of Passing" required>
                       <input type="text" required className="input font-medium" placeholder="e.g. 2024"
                         value={formData.year_of_passing} onChange={set('year_of_passing')} />
                     </Field>
                   </div>
 
                   <div className="grid grid-cols-2 gap-4">
-                    <Field label="Final CGPI">
+                    <Field label="Final CGPI" required>
                       <input type="text" required className="input font-medium" placeholder="e.g. 9.31"
                         value={formData.final_cgpi} onChange={set('final_cgpi')} />
                     </Field>
-                    <Field label="Classification">
+                    <Field label="Classification" required>
                       <select required className="input font-medium bg-white"
                         value={formData.classification} onChange={set('classification')}>
                         <option value="">Select...</option>

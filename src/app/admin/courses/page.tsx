@@ -8,10 +8,12 @@ import {
 } from 'lucide-react'
 import AdminShell, { type AdminRecord } from '@/components/admin/AdminShell'
 
-function Field({ label, children }: { label: string; children: React.ReactNode }) {
+function Field({ label, required, children }: { label: string; required?: boolean; children: React.ReactNode }) {
   return (
     <div>
-      <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">{label}</label>
+      <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
+        {label}{required && <span className="text-red-500 ml-0.5">*</span>}
+      </label>
       {children}
     </div>
   )
@@ -23,7 +25,7 @@ function CoursesContent({ currentUser }: { currentUser: AdminRecord }) {
   const [activeTab, setActiveTab] = useState<'manual' | 'history'>('manual')
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [error, setError] = useState('')
-  const [successData, setSuccessData] = useState<{ url: string; tx: string } | null>(null)
+  const [successData, setSuccessData] = useState<{ url: string; template_url: string; tx: string } | null>(null)
   const [history, setHistory] = useState<any[]>([])
   const [loadingHistory, setLoadingHistory] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
@@ -55,6 +57,8 @@ function CoursesContent({ currentUser }: { currentUser: AdminRecord }) {
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
+    if (!formData.grade) { setError('Please select a Grade / Result before issuing.'); return }
+    if (!formData.course_name.trim()) { setError('Course Name is required.'); return }
     setIsSubmitting(true)
     setError('')
     setSuccessData(null)
@@ -107,7 +111,7 @@ function CoursesContent({ currentUser }: { currentUser: AdminRecord }) {
       await new Promise(r => setTimeout(r, 200))
       updateStep(5, 'done')
 
-      setSuccessData({ url: data.certificate?.url || '', tx: data.certificate?.tx_data || '' })
+      setSuccessData({ url: data.certificate?.url || '', template_url: data.certificate?.template_url || '', tx: data.certificate?.tx_data || '' })
       setFormData({
         student_name: '', student_email: '', prn_no: '',
         course_name: '', course_type: 'Workshop', duration: '',
@@ -274,10 +278,16 @@ function CoursesContent({ currentUser }: { currentUser: AdminRecord }) {
                 </div>
               </div>
               <div className="flex flex-col sm:flex-row gap-2 shrink-0 border-t sm:border-l sm:border-t-0 border-blue-200/50 pt-3 sm:pt-0 sm:pl-4 mt-3 sm:mt-0">
+                {successData.template_url && (
+                  <a href={successData.template_url} target="_blank" rel="noreferrer"
+                    className="inline-flex items-center gap-2 px-4 py-2 text-white rounded-xl text-xs font-bold transition-colors bg-blue-600 hover:bg-blue-700">
+                    <Download className="w-3.5 h-3.5" /> Course Certificate
+                  </a>
+                )}
                 {successData.url && (
                   <a href={successData.url} target="_blank" rel="noreferrer"
-                    className="inline-flex items-center gap-2 px-4 py-2 text-white rounded-xl text-xs font-bold transition-colors bg-blue-600 hover:bg-blue-700">
-                    <Download className="w-3.5 h-3.5" /> View PDF
+                    className="inline-flex items-center gap-2 px-4 py-2 bg-white border rounded-xl text-xs font-bold transition-colors border-blue-200 text-blue-700 hover:border-blue-400">
+                    <Download className="w-3.5 h-3.5" /> AuthBlock Cert
                   </a>
                 )}
                 {successData.tx && (
@@ -307,11 +317,11 @@ function CoursesContent({ currentUser }: { currentUser: AdminRecord }) {
                   </h3>
 
                   <div className="grid grid-cols-2 gap-4">
-                    <Field label="PRN No.">
+                    <Field label="PRN No." required>
                       <input type="text" required className="input font-medium font-mono"
                         value={formData.prn_no} onChange={set('prn_no')} />
                     </Field>
-                    <Field label="Full Name">
+                    <Field label="Full Name" required>
                       <input type="text" required className="input font-medium"
                         value={formData.student_name} onChange={set('student_name')} />
                     </Field>
@@ -343,7 +353,7 @@ function CoursesContent({ currentUser }: { currentUser: AdminRecord }) {
                     </div>
                   </Field>
 
-                  <Field label="Grade / Result">
+                  <Field label="Grade / Result" required>
                     <div className="flex flex-wrap gap-2 mt-1">
                       {['O', 'A+', 'A', 'B+', 'B', 'Pass', 'Distinction', 'Merit'].map(g => (
                         <button
@@ -376,15 +386,15 @@ function CoursesContent({ currentUser }: { currentUser: AdminRecord }) {
                     Course Details
                   </h3>
 
-                  <Field label="Course Name">
+                  <Field label="Course Name" required>
                     <input type="text" required className="input font-medium"
                       placeholder="e.g. Machine Learning Fundamentals"
                       value={formData.course_name} onChange={set('course_name')} />
                   </Field>
 
                   <div className="grid grid-cols-2 gap-4">
-                    <Field label="Duration">
-                      <input type="text" className="input font-medium" placeholder="e.g. 40 hours"
+                    <Field label="Duration" required>
+                      <input type="text" required className="input font-medium" placeholder="e.g. 40 hours"
                         value={formData.duration} onChange={set('duration')} />
                     </Field>
                     <Field label="Instructor / Organizer">

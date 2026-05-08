@@ -4,13 +4,12 @@ import React, { useState, useEffect } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { Container } from '@/components/ui'
-import { Menu, X, LogOut } from 'lucide-react'
+import { Menu, X, LogOut, FileText } from 'lucide-react'
 
 const navLinks = [
   { name: 'FEATURES', href: '/#features', dotColor: 'text-blue-500' },
   { name: 'HOW IT WORKS', href: '/#how-it-works', dotColor: 'text-slate-900' },
-  { name: 'CREDENTIALS', href: '/#credentials', dotColor: 'text-blue-500' },
-  { name: 'SCAN QR', href: '/scan', dotColor: 'text-emerald-500' },
+  { name: 'VERIFY DOCUMENT', href: '/scan', dotColor: 'text-emerald-500' },
   { name: 'ABOUT', href: '/#about', dotColor: 'text-blue-500' },
 ]
 
@@ -66,6 +65,15 @@ export function Navbar({ isLoggedIn: _isLoggedIn, user: _user }: { isLoggedIn?: 
                 {link.name}
               </Link>
             ))}
+            {user && (
+              <Link
+                href="/dashboard"
+                className="flex items-center gap-1.5 px-3 py-2 text-blue-600 hover:text-blue-700 transition-colors duration-200 text-xs font-bold tracking-wider border-l border-slate-200 ml-1 pl-4"
+              >
+                <FileText className="w-3.5 h-3.5" />
+                MY DOCUMENTS
+              </Link>
+            )}
           </div>
 
           {/* CTA / Auth Area */}
@@ -126,6 +134,16 @@ export function Navbar({ isLoggedIn: _isLoggedIn, user: _user }: { isLoggedIn?: 
                   {link.name}
                 </Link>
               ))}
+              {user && (
+                <Link
+                  href="/dashboard"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className="flex items-center gap-2 text-blue-600 hover:text-blue-700 hover:bg-blue-50 transition-colors py-3 px-4 rounded-lg text-sm font-bold"
+                >
+                  <FileText className="w-4 h-4" />
+                  My Documents
+                </Link>
+              )}
               <div className="pt-3 mt-2 border-t border-slate-100 flex flex-col gap-2">
                 {!sessionLoaded ? null : user ? (
                   <>

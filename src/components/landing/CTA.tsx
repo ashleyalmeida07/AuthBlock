@@ -56,12 +56,12 @@ export function CTA({ isLoggedIn = false }: { isLoggedIn?: boolean }) {
                 <ArrowRight className="w-4 h-4" />
               </Link>
               <Link
-                href="/verify"
+                href="/scan"
                 className="inline-flex items-center gap-2 px-7 py-3.5 font-semibold rounded-xl text-sm transition-all"
                 style={{ background: 'rgba(255,255,255,0.07)', color: 'rgba(255,255,255,0.8)', border: '1px solid rgba(255,255,255,0.12)' }}
               >
                 <QrCode className="w-4 h-4" />
-                Verify a Certificate
+                Verify a Document
               </Link>
             </div>
 

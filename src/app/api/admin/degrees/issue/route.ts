@@ -99,45 +99,58 @@ export async function POST(req: Request) {
     const templateImg = await degreePdfDoc.embedPng(templateBytes)
     degreePage.drawImage(templateImg, { x: 0, y: 0, width: dw, height: dh })
 
-    // Student name - centered on the blank line
+    // ── Text overlay coordinates (canvas editor v2) ────────────────────────
+    // Format: Name → of → College → has been awarded → Degree → in the Faculty of → Faculty
+
+    // Student Name — centered, y=355, size=20
     const nameText = s(student_name).toUpperCase()
-    const nameWidth = fontBold.widthOfTextAtSize(nameText, 15)
+    const nameFontSize = 20
+    const nameWidth = fontBold.widthOfTextAtSize(nameText, nameFontSize)
     degreePage.drawText(nameText, {
-      x: (dw - nameWidth) / 2, y: 307, size: 15, font: fontBold, color: BLACK
+      x: (dw - nameWidth) / 2, y: 355, size: nameFontSize, font: fontBold, color: BLACK
     })
 
-    // Degree title - centered below "has been awarded the Degree of"
+    // College Name — centered, y=307, size=18
+    const collegeText = 'Fr. Conceicao Rodrigues College of Engineering'
+    const collegeFontSize = 18
+    const collegeWidth = fontItalic.widthOfTextAtSize(collegeText, collegeFontSize)
+    degreePage.drawText(collegeText, {
+      x: (dw - collegeWidth) / 2, y: 307, size: collegeFontSize, font: fontItalic, color: DARK
+    })
+
+    // Degree Title — centered, y=268, size=14
     const degreeText = s(degree_title)
-    const degreeWidth = fontBold.widthOfTextAtSize(degreeText, 13)
+    const degreeFontSize = 14
+    const degreeWidth = fontBold.widthOfTextAtSize(degreeText, degreeFontSize)
     degreePage.drawText(degreeText, {
-      x: (dw - degreeWidth) / 2, y: 264, size: 13, font: fontBold, color: BLACK
+      x: (dw - degreeWidth) / 2, y: 268, size: degreeFontSize, font: fontBold, color: BLACK
     })
 
-    // Branch - centered below "in the Faculty of"
-    const branchText = s(branch)
-    const branchWidth = fontBold.widthOfTextAtSize(branchText, 12)
-    degreePage.drawText(branchText, {
-      x: (dw - branchWidth) / 2, y: 227, size: 12, font: fontBold, color: BLACK
+    // Faculty — centered, y=219, size=14
+    const facultyText = 'Engineering and Technology'
+    const facultyFontSize = 14
+    const facultyWidth = fontBold.widthOfTextAtSize(facultyText, facultyFontSize)
+    degreePage.drawText(facultyText, {
+      x: (dw - facultyWidth) / 2, y: 219, size: facultyFontSize, font: fontBold, color: BLACK
     })
 
-    // Classification + CGPI - smaller italic text
+    // Classification + CGPI — centered, y=160, size=12
     if (classification || final_cgpi) {
-      const classText = `${s(classification)}${final_cgpi ? '  -  CGPI: ' + s(final_cgpi) : ''}`
-      const classWidth = fontItalic.widthOfTextAtSize(classText, 9)
+      const classText = `${s(classification)}${final_cgpi ? '  -  CGPI: ' + s(final_cgpi) + '/10.00' : ''}`
+      const classFontSize = 12
+      const classWidth = fontItalic.widthOfTextAtSize(classText, classFontSize)
       degreePage.drawText(classText, {
-        x: (dw - classWidth) / 2, y: 195, size: 9, font: fontItalic, color: DARK
+        x: (dw - classWidth) / 2, y: 160, size: classFontSize, font: fontItalic, color: DARK
       })
     }
 
-    // Date (bottom-left)
+    // Date — x=84, y=51, size=12
     const dateText = s(convocation_date) || new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' })
-    degreePage.drawText(dateText, { x: 153, y: 37, size: 8, font: fontBold, color: BLACK })
+    degreePage.drawText(dateText, { x: 84, y: 51, size: 12, font: fontBold, color: BLACK })
 
-    // Sr. No. (bottom-right)
-    degreePage.drawText(s(serial_no), { x: 678, y: 37, size: 8, font: fontBold, color: BLACK })
+    // Serial Number — x=657, y=48, size=12
+    degreePage.drawText(s(serial_no), { x: 657, y: 48, size: 12, font: fontBold, color: BLACK })
 
-    // QR Code (small, bottom-right corner)
-    degreePage.drawImage(qrImageDeg, { x: dw - 90, y: 20, width: 45, height: 45 })
 
     const degreePdfBytes = await degreePdfDoc.save()
     console.log('[Degree Issue] Degree PDF generated, size:', degreePdfBytes.length, 'bytes')
@@ -281,13 +294,15 @@ export async function POST(req: Request) {
     // ── Hash both PDFs ────────────────────────────────────────────
     const degreeHash = '0x' + crypto.createHash('sha256').update(degreePdfBytes).digest('hex')
     const pdfHash    = '0x' + crypto.createHash('sha256').update(certPdfBytes).digest('hex')
+    console.log('[Degree Issue] Degree PDF hash:', degreeHash.substring(0, 20) + '...')
+    console.log('[Degree Issue] Cert PDF hash:', pdfHash.substring(0, 20) + '...')
 
-    // ── Register cert PDF hash on blockchain ─────────────────────
+    // ── Register DEGREE PDF hash on blockchain (user uploads this) ──
     let tx_hash_pdf: string | null = null
     try {
       const { contract } = await getDegreeBlockchainContract()
       console.log('[Blockchain] Registering degree PDF hash...')
-      const tx = await contract.registerHash(pdfHash)
+      const tx = await contract.registerHash(degreeHash)
       const receipt = await tx.wait()
       tx_hash_pdf = receipt.hash
       console.log('[Blockchain] Degree PDF hash stored! TX:', tx_hash_pdf)
@@ -325,8 +340,8 @@ export async function POST(req: Request) {
       ) VALUES (
         ${serial_no || null}, ${student_name}, ${prn_no}, ${branch || null}, ${degree_title},
         ${enrollment_year || null}, ${year_of_passing || null}, ${final_cgpi || null}, ${classification || null}, ${convocation_date || null},
-        ${certUrl}, ${issued_by || null},
-        ${pdfHash}, ${dataHash}, ${tx_hash_pdf}, ${tx_hash_data},
+        ${degreeUrl}, ${issued_by || null},
+        ${degreeHash}, ${dataHash}, ${tx_hash_pdf}, ${tx_hash_data},
         ${certificateId}, ${verificationUrl}, ${JSON.stringify(degreeData)}
       )
       RETURNING id
@@ -363,11 +378,11 @@ export async function POST(req: Request) {
       id: newId,
       certificate: {
         id: certificateId,
-        url: certUrl,
+        url: degreeUrl,
         degree_url: degreeUrl,
+        cert_url: certUrl,
         data_hash: dataHash,
-        pdf_hash: pdfHash,
-        degree_hash: degreeHash,
+        pdf_hash: degreeHash,
         tx_data: tx_hash_data,
         tx_pdf: tx_hash_pdf,
         verification_url: verificationUrl

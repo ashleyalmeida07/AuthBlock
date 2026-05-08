@@ -69,7 +69,7 @@ export default async function DashboardPage() {
                 <span className="text-blue-600 font-bold">{totalCredentials}</span> blockchain-verified credentials
               </p>
             </div>
-            <Link href="/verify" className="flex items-center gap-2 bg-slate-900 hover:bg-slate-800 px-5 py-2.5 rounded-xl text-sm font-bold text-white transition-all active:scale-95">
+            <Link href="/scan" className="flex items-center gap-2 bg-slate-900 hover:bg-slate-800 px-5 py-2.5 rounded-xl text-sm font-bold text-white transition-all active:scale-95">
               <ShieldCheck className="w-4 h-4 text-emerald-400" />
               Verification Portal
             </Link>

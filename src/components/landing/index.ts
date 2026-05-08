@@ -4,6 +4,6 @@ export { TickerBar } from './TickerBar'
 export { Features } from './Features'
 export { HowItWorks } from './HowItWorks'
 export { Stats } from './Stats'
-export { Stakeholders } from './Stakeholders'
+
 export { CTA } from './CTA'
 export { Footer } from './Footer'

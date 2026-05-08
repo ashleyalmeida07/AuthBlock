@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Degree Certificate — Canvas Editor</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { display:flex; height:100vh; background:#111; color:#eee; font-family:'Segoe UI',sans-serif; overflow:hidden; }
+  #left  { flex:1; display:flex; align-items:center; justify-content:center; background:#1a1a1a; }
+  #right { width:360px; background:#16213e; padding:14px; overflow-y:auto; border-left:2px solid #0f3460; }
+
+  canvas { box-shadow:0 8px 40px rgba(0,0,0,0.7); cursor:crosshair; }
+
+  h2 { font-size:14px; color:#0ff; margin-bottom:6px; }
+  .hint { font-size:11px; color:#556; margin-bottom:12px; line-height:1.5; }
+
+  .grp { background:#0d1b2a; border:1px solid #1b2838; border-radius:7px; padding:9px 11px; margin-bottom:8px; }
+  .grp.active { border-color:#0f0; }
+  .grp h4 { font-size:11px; color:#0f0; text-transform:uppercase; letter-spacing:1px; margin-bottom:6px; }
+  .row { display:flex; gap:5px; margin-bottom:4px; align-items:center; }
+  .row label { font-size:11px; width:28px; color:#889; text-align:right; }
+  .row input { flex:1; background:#111; border:1px solid #333; color:#eee; padding:3px 6px; border-radius:4px; font-size:12px; font-family:monospace; }
+  .row input:focus { border-color:#0ff; outline:none; }
+  .pdf-val { font-size:10px; color:#5af; margin-top:3px; font-family:monospace; }
+
+  .out { background:#0a0a1a; border:1px solid #222; border-radius:7px; padding:11px; margin-top:12px; }
+  .out h4 { color:#f66; font-size:11px; margin-bottom:7px; text-transform:uppercase; }
+  .out pre { font-size:11px; color:#adf; line-height:1.9; white-space:pre-wrap; font-family:monospace; }
+  .out button { margin-top:8px; background:#0ff; color:#000; border:none; padding:7px; border-radius:5px; font-weight:700; cursor:pointer; font-size:12px; width:100%; }
+  .out button:hover { background:#0f0; }
+
+  #legend { font-size:10px; color:#556; margin-top:10px; line-height:1.8; }
+</style>
+</head>
+<body>
+
+<div id="left">
+  <canvas id="cv"></canvas>
+</div>
+
+<div id="right">
+  <h2>🎓 Degree Canvas Editor</h2>
+  <p class="hint">
+    ✅ Uses <strong>exact PDF coordinates</strong> — what you see = what the PDF renders.<br>
+    Click a field label to select it, then drag on the canvas.
+  </p>
+  <div id="ctrls"></div>
+  <div id="legend">
+    🖱 <b>Click</b> field label to select · <b>Drag</b> on canvas to move<br>
+    ✏️ Edit X/Y/Size manually in the inputs below each field
+  </div>
+  <div class="out">
+    <h4>📋 PDF Coordinates (copy → paste to me)</h4>
+    <pre id="out"></pre>
+    <button onclick="copy()">Copy to Clipboard</button>
+  </div>
+</div>
+
+<script>
+// ── Constants ──────────────────────────────────────────────────────────────
+const PDF_W = 841.89, PDF_H = 595.28;   // PDF page dimensions (landscape A4)
+const IMG_W = 1536,   IMG_H = 1024;     // Template PNG dimensions
+
+// Canvas display scale — fit to window
+const DISP_W = 820;
+const DISP_H = Math.round(DISP_W * PDF_H / PDF_W); // 820 * 595.28/841.89 ≈ 580
+
+const cv = document.getElementById('cv');
+cv.width  = DISP_W;
+cv.height = DISP_H;
+const ctx = cv.getContext('2d');
+
+// Scale: PDF points → canvas pixels
+const SX = DISP_W / PDF_W; // ~0.974
+const SY = DISP_H / PDF_H;
+
+// ── Fields — positions are in PDF points (y=0 at BOTTOM) ─────────────────
+// These match what pdf-lib uses directly. Adjust until they look right.
+const F = [
+  { id:'name',    lbl:'Student Name',   txt:'ASHLEY ALMEIDA',                                      x:null, pdfY:366, fs:20,  bold:true,  ital:false },
+  { id:'college', lbl:'College Name',   txt:'Fr. Conceicao Rodrigues College of Engineering',       x:null, pdfY:328, fs:18,  bold:false, ital:true  },
+  { id:'degree',  lbl:'Degree Title',   txt:'Bachelor of Engineering',                              x:null, pdfY:280, fs:14,  bold:true,  ital:false },
+  { id:'faculty', lbl:'Faculty',        txt:'Engineering and Technology',                           x:null, pdfY:233, fs:14,  bold:true,  ital:false },
+  { id:'cgpi',    lbl:'CGPI Line',      txt:'First Class with Distinction  -  CGPI: 9.32/10.00',   x:null, pdfY:176, fs:12,  bold:false, ital:true  },
+  { id:'date',    lbl:'Date',           txt:'25th May, 2024',                                       x:84,   pdfY:61,  fs:12,  bold:true,  ital:false },
+  { id:'serial',  lbl:'Serial No.',     txt:'2024 / BENG / 0546',                                   x:657,  pdfY:62,  fs:12,  bold:true,  ital:false },
+];
+// x:null means centered
+
+// ── Load template image ────────────────────────────────────────────────────
+const tplImg = new Image();
+let   tplLoaded = false;
+tplImg.onload  = () => { tplLoaded = true; render(); };
+tplImg.onerror = () => {
+  // Draw placeholder background
+  ctx.fillStyle = '#fffef8';
+  ctx.fillRect(0, 0, DISP_W, DISP_H);
+  ctx.strokeStyle = '#c8a96e';
+  ctx.lineWidth = 8;
+  ctx.strokeRect(4, 4, DISP_W-8, DISP_H-8);
+  ctx.fillStyle = '#c00';
+  ctx.font = '14px sans-serif';
+  ctx.fillText('⚠ Template image not found — text positions still accurate', 20, 30);
+  tplLoaded = false;
+  render();
+};
+// Use fetch+blob to avoid Next.js image optimization issues
+fetch('/FRCRCE_Degree_Template.png')
+  .then(r => r.blob())
+  .then(b => { tplImg.src = URL.createObjectURL(b); })
+  .catch(() => { tplImg.src = '/FRCRCE_Degree_Template.png'; });
+
+// ── Rendering ──────────────────────────────────────────────────────────────
+function cvY(pdfY) { return DISP_H - pdfY * SY; } // convert PDF y → canvas y
+
+function render() {
+  ctx.clearRect(0, 0, DISP_W, DISP_H);
+
+  // Draw template
+  if (tplLoaded) ctx.drawImage(tplImg, 0, 0, DISP_W, DISP_H);
+
+  F.forEach(f => {
+    const fontSize = f.fs * SX;
+    let style = '';
+    if (f.bold && f.ital) style = 'bold italic';
+    else if (f.bold) style = 'bold';
+    else if (f.ital) style = 'italic';
+    ctx.font = `${style} ${fontSize}px "Times New Roman", serif`;
+    ctx.fillStyle = (selectedId === f.id) ? '#0055ff' : '#000';
+    ctx.textBaseline = 'alphabetic';
+
+    const tw = ctx.measureText(f.txt).width;
+    const cx = f.x !== null ? f.x * SX : (DISP_W - tw) / 2;
+    const cy = cvY(f.pdfY);
+
+    ctx.fillText(f.txt, cx, cy);
+
+    // Selection box
+    if (selectedId === f.id) {
+      ctx.strokeStyle = '#0099ff';
+      ctx.lineWidth = 1.5;
+      ctx.setLineDash([4,3]);
+      ctx.strokeRect(cx - 3, cy - fontSize, tw + 6, fontSize + 4);
+      ctx.setLineDash([]);
+    }
+  });
+}
+
+// ── Selection & drag ───────────────────────────────────────────────────────
+let selectedId = F[0].id;
+
+cv.addEventListener('mousedown', e => {
+  const rect = cv.getBoundingClientRect();
+  const mx = e.clientX - rect.left;
+  const my = e.clientY - rect.top;
+
+  // Find clicked field (check reverse so topmost renders on top)
+  for (let i = F.length - 1; i >= 0; i--) {
+    const f = F[i];
+    const fontSize = f.fs * SX;
+    ctx.font = `${f.bold?'bold ':''} ${fontSize}px "Times New Roman", serif`;
+    const tw = ctx.measureText(f.txt).width;
+    const cx = f.x !== null ? f.x * SX : (DISP_W - tw) / 2;
+    const cy = cvY(f.pdfY);
+    if (mx >= cx - 5 && mx <= cx + tw + 5 && my >= cy - fontSize && my <= cy + 4) {
+      selectedId = f.id;
+      selectField(f.id);
+      startDrag(e, f, mx, my);
+      return;
+    }
+  }
+});
+
+function startDrag(e0, f, startMx, startMy) {
+  const origX   = f.x;
+  const origPdfY = f.pdfY;
+
+  const onMove = e => {
+    const rect = cv.getBoundingClientRect();
+    const mx = e.clientX - rect.left;
+    const my = e.clientY - rect.top;
+    const dx = (mx - startMx) / SX;
+    const dy = -(my - startMy) / SY; // canvas y is inverted vs PDF y
+
+    if (f.x !== null) {
+      f.x = Math.round(origX + dx);
+      document.getElementById('ix_' + f.id).value = f.x;
+    }
+    f.pdfY = Math.round(origPdfY + dy);
+    document.getElementById('iy_' + f.id).value = f.pdfY;
+
+    updatePdfVal(f);
+    render();
+    genOutput();
+  };
+
+  const onUp = () => {
+    document.removeEventListener('mousemove', onMove);
+    document.removeEventListener('mouseup', onUp);
+  };
+  document.addEventListener('mousemove', onMove);
+  document.addEventListener('mouseup', onUp);
+}
+
+// ── Control panel ──────────────────────────────────────────────────────────
+const ctrls = document.getElementById('ctrls');
+F.forEach(f => {
+  const g = document.createElement('div');
+  g.className = 'grp' + (f.id === selectedId ? ' active' : '');
+  g.id = 'g_' + f.id;
+  g.innerHTML = `
+    <h4 style="cursor:pointer" onclick="selectField('${f.id}')">${f.lbl} <span style="color:#556;font-size:9px;text-transform:none">(click to select)</span></h4>
+    <div class="row">
+      <label>Text</label>
+      <input type="text" value="${f.txt}" style="flex:4" oninput="updTxt('${f.id}',this.value)">
+    </div>
+    <div class="row">
+      ${f.x !== null ? `<label>X</label><input type="number" id="ix_${f.id}" value="${f.x}" oninput="updPos('${f.id}')">` : `<label style="color:#346">X</label><input disabled value="centered" style="flex:1;color:#346;background:#0a1628">`}
+      <label>Y</label><input type="number" id="iy_${f.id}" value="${f.pdfY}" oninput="updPos('${f.id}')">
+      <label>Sz</label><input type="number" id="if_${f.id}" value="${f.fs}" oninput="updPos('${f.id}')" style="width:44px;flex:none">
+    </div>
+    <div class="pdf-val" id="pv_${f.id}"></div>
+  `;
+  ctrls.appendChild(g);
+  updatePdfVal(f);
+});
+
+function selectField(id) {
+  selectedId = id;
+  document.querySelectorAll('.grp').forEach(g => g.classList.remove('active'));
+  document.getElementById('g_' + id)?.classList.add('active');
+  // Scroll the group into view
+  document.getElementById('g_' + id)?.scrollIntoView({ behavior:'smooth', block:'nearest' });
+  render();
+}
+
+function updTxt(id, txt) {
+  const f = F.find(f => f.id === id);
+  f.txt = txt;
+  render();
+  genOutput();
+}
+
+function updPos(id) {
+  const f = F.find(f => f.id === id);
+  if (f.x !== null) f.x = +document.getElementById('ix_' + id).value || 0;
+  f.pdfY = +document.getElementById('iy_' + id).value || 0;
+  f.fs   = +document.getElementById('if_' + id).value || 10;
+  updatePdfVal(f);
+  render();
+  genOutput();
+}
+
+function updatePdfVal(f) {
+  const el = document.getElementById('pv_' + f.id);
+  if (!el) return;
+  const mode = f.x !== null ? `x=${f.x}` : 'centered';
+  el.textContent = `→ PDF: ${mode}, y=${f.pdfY}, size=${f.fs}`;
+}
+
+// ── Output generation ──────────────────────────────────────────────────────
+function genOutput() {
+  const lines = F.map(f => {
+    const mode = f.x !== null ? `x=${f.x}` : 'centered';
+    return `${f.lbl}: ${mode}, y=${f.pdfY}, size=${f.fs}`;
+  });
+  document.getElementById('out').textContent = lines.join('\n');
+}
+
+function copy() {
+  navigator.clipboard.writeText(document.getElementById('out').textContent).then(() => {
+    const b = document.querySelector('.out button');
+    b.textContent = '✅ Copied!';
+    setTimeout(() => b.textContent = 'Copy to Clipboard', 1500);
+  });
+}
+
+genOutput();
+render();
+</script>
+</body>
+</html>
