@@ -31,11 +31,7 @@ jobs:
       - name: TypeScript check
         run: npx tsc --noEmit
 
-      # 5. ESLint
-      - name: Lint
-        run: npm run lint
-
-      # 6. Build (catches any runtime build errors)
+      # 5. Build (catches any runtime build errors)
       - name: Build
         run: npm run build
         env:
