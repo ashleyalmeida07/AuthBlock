@@ -141,7 +141,7 @@ export default function NotFound() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
           >
-            The page or credential you're looking for seems to have been dropped from the chain. Let's get you back to the genesis block.
+            The page or credential you&apos;re looking for seems to have been dropped from the chain. Let&apos;s get you back to the genesis block.
           </motion.p>
 
           <motion.div
