@@ -43,7 +43,7 @@ function InteractiveGrid({ hoveredCell }: { hoveredCell: { col: number; row: num
 
       {/* Neighbouring cells — softer glow */}
       {hoveredCell &&
-        [[-1,-1],[0,-1],[1,-1],[-1,0],[1,0],[-1,1],[0,1],[1,1]].map(([dc, dr]) => (
+        [[-1, -1], [0, -1], [1, -1], [-1, 0], [1, 0], [-1, 1], [0, 1], [1, 1]].map(([dc, dr]) => (
           <div
             key={`${dc},${dr}`}
             className="absolute transition-all duration-100 ease-out"
@@ -165,6 +165,7 @@ export function Hero({ isLoggedIn = false }: { isLoggedIn?: boolean }) {
           {/* Badge */}
           <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-blue-50 border border-blue-200 rounded-full mb-8">
             <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse" />
+            {/* CI/CD Test Update */}
             <span className="text-xs font-semibold text-blue-700 tracking-wide">Blockchain Verified on Ethereum</span>
           </div>
 
