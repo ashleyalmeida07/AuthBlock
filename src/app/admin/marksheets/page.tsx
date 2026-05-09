@@ -521,8 +521,8 @@ function MarksheetsContent({ currentUser }: { currentUser: AdminRecord }) {
                         value={formData.student_name} onChange={e => setFormData({...formData, student_name: e.target.value})} />
                     </div>
                     <div>
-                      <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Email Address</label>
-                      <input type="email" placeholder="Optional" className="input font-medium" 
+                      <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Email Address *</label>
+                      <input type="email" required placeholder="student@example.com" className="input font-medium" 
                         value={formData.student_email} onChange={e => setFormData({...formData, student_email: e.target.value})} />
                     </div>
                   </div>

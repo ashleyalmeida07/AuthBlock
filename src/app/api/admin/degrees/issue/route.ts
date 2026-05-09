@@ -7,7 +7,7 @@ import path from 'path'
 import crypto from 'crypto'
 import QRCode from 'qrcode'
 import { getDegreeBlockchainContract } from '@/lib/blockchain'
-import { publishIssuanceNotification } from '@/lib/notifications'
+import { sendIssuanceEmail } from '@/lib/notifications'
 
 export async function POST(req: Request) {
   try {
@@ -351,25 +351,22 @@ export async function POST(req: Request) {
     console.log('[Database] Saved to degrees table with ID:', newId)
 
     // Fire-and-forget email
-    if (student_email) {
-      publishIssuanceNotification({
-        studentName: String(student_name),
-        studentEmail: String(student_email),
-        prnNo: String(prn_no),
-        serialNo: String(serial_no || ''),
-        examination: `Final Degree - ${degree_title}`,
-        branch: String(branch || ''),
-        session: String(year_of_passing || ''),
-        sgpi: '',
-        cgpi: String(final_cgpi || ''),
-        remarks: String(classification || ''),
-        marksheetUrl: degreeUrl,
-        certificateUrl: certUrl,
-        certificateId,
-        verificationUrl,
-        issueDate: new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' }),
-      }).catch(e => console.error('[Notify] Email notification failed:', e))
-    }
+    sendIssuanceEmail({
+      studentName: String(student_name),
+      studentEmail: String(student_email || ''),
+      prnNo: String(prn_no),
+      serialNo: String(serial_no || ''),
+      documentType: 'degree',
+      degreeTitle: String(degree_title || ''),
+      branch: String(branch || ''),
+      yearOfPassing: String(year_of_passing || ''),
+      classification: String(classification || ''),
+      documentUrl: degreeUrl,
+      certificateUrl: certUrl,
+      certificateId,
+      verificationUrl,
+      issueDate: new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' }),
+    }).catch(e => console.error('[Notify] Email notification failed:', e))
 
     console.log('[Degree Issue] === DEGREE ISSUANCE COMPLETE ===\n')
 

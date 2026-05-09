@@ -7,7 +7,7 @@ import path from 'path'
 import crypto from 'crypto'
 import QRCode from 'qrcode'
 import { getCourseBlockchainContract } from '@/lib/blockchain'
-import { publishIssuanceNotification } from '@/lib/notifications'
+import { sendIssuanceEmail } from '@/lib/notifications'
 
 export async function POST(req: Request) {
   try {
@@ -348,25 +348,22 @@ export async function POST(req: Request) {
     console.log('[Database] ✓ Saved to courses table with ID:', newId)
 
     // Fire-and-forget email notification
-    if (student_email) {
-      publishIssuanceNotification({
-        studentName: String(student_name),
-        studentEmail: String(student_email),
-        prnNo: String(prn_no),
-        serialNo: '',
-        examination: `${course_type || 'Course'} — ${course_name}`,
-        branch: '',
-        session: String(end_date || ''),
-        sgpi: '',
-        cgpi: '',
-        remarks: String(grade || ''),
-        marksheetUrl: templateUrl,
-        certificateUrl: certUrl,
-        certificateId,
-        verificationUrl,
-        issueDate: new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' }),
-      }).catch(e => console.error('[Notify] Email notification failed:', e))
-    }
+    sendIssuanceEmail({
+      studentName: String(student_name),
+      studentEmail: String(student_email || ''),
+      prnNo: String(prn_no),
+      documentType: 'course',
+      courseName: String(course_name || ''),
+      courseType: String(course_type || ''),
+      grade: String(grade || ''),
+      duration: String(duration || ''),
+      instructorName: String(instructor_name || ''),
+      documentUrl: templateUrl,
+      certificateUrl: certUrl,
+      certificateId,
+      verificationUrl,
+      issueDate: new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' }),
+    }).catch(e => console.error('[Notify] Email notification failed:', e))
 
     console.log('[Course Issue] === COURSE ISSUANCE COMPLETE ===\n')
 

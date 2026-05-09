@@ -13,7 +13,7 @@ import {
   type MarksheetCoordinateMap,
   type CertificateData
 } from '@/lib/certificate'
-import { publishIssuanceNotification } from '@/lib/notifications'
+import { sendIssuanceEmail } from '@/lib/notifications'
 
 export async function POST(req: Request) {
   try {
@@ -384,21 +384,22 @@ export async function POST(req: Request) {
     console.log('\n[Database] ✓ Saved to marksheets table with ID:', newId)
 
     // ============================================================
-    // PART 9: SEND EMAIL NOTIFICATION DIRECTLY VIA SES
+    // PART 9: SEND EMAIL NOTIFICATION VIA SMTP
     // (fire-and-forget: any failure does NOT affect the issuance response)
     // ============================================================
-    publishIssuanceNotification({
+    sendIssuanceEmail({
       studentName:     String(student_name || ''),
       studentEmail:    String(student_email || ''),
       prnNo:           String(prn_no || ''),
       serialNo:        String(serial_no || ''),
+      documentType:    'marksheet',
       examination:     String(examination || ''),
       branch:          String(branch || ''),
       session:         String(session_name || ''),
       sgpi:            String(sgpi || ''),
       cgpi:            String(cgpi || ''),
       remarks:         String(remarks || 'SUCCESSFUL'),
-      marksheetUrl:    marksheetPdfUrl,
+      documentUrl:     marksheetPdfUrl,
       certificateUrl:  certPdfUrl,
       certificateId:   certificateData.certificate_id,
       verificationUrl: verificationUrl,

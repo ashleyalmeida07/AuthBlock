@@ -327,8 +327,8 @@ function CoursesContent({ currentUser }: { currentUser: AdminRecord }) {
                     </Field>
                   </div>
 
-                  <Field label="Email Address">
-                    <input type="email" placeholder="Optional — for notification" className="input font-medium"
+                  <Field label="Email Address" required>
+                    <input type="email" required placeholder="student@example.com" className="input font-medium"
                       value={formData.student_email} onChange={set('student_email')} />
                   </Field>
 
