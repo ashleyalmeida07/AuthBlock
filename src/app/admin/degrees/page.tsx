@@ -37,7 +37,7 @@ function DegreesContent({ currentUser }: { currentUser: AdminRecord }) {
   const [activeTab, setActiveTab] = useState<'manual' | 'bulk' | 'history'>('manual')
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [error, setError] = useState('')
-  const [successData, setSuccessData] = useState<{ url: string; degree_url: string; tx: string } | null>(null)
+  const [successData, setSuccessData] = useState<{ url: string; degree_url: string; cert_url: string; tx: string } | null>(null)
   const [history, setHistory] = useState<any[]>([])
   const [loadingHistory, setLoadingHistory] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
@@ -131,7 +131,7 @@ function DegreesContent({ currentUser }: { currentUser: AdminRecord }) {
       await new Promise(r => setTimeout(r, 200))
       updateStep(5, 'done')
 
-      setSuccessData({ url: data.certificate?.url || '', degree_url: data.certificate?.degree_url || '', tx: data.certificate?.tx_data || '' })
+      setSuccessData({ url: data.certificate?.url || '', degree_url: data.certificate?.degree_url || '', cert_url: data.certificate?.cert_url || '', tx: data.certificate?.tx_data || '' })
       setFormData({
         serial_no: '', student_name: '', student_email: '', prn_no: '',
         branch: '', degree_title: 'Bachelor of Engineering',
@@ -443,10 +443,10 @@ function DegreesContent({ currentUser }: { currentUser: AdminRecord }) {
                     <Download className="w-3.5 h-3.5" /> Degree PDF
                   </a>
                 )}
-                {successData.url && (
-                  <a href={successData.url} target="_blank" rel="noreferrer"
+                {successData.cert_url && (
+                  <a href={successData.cert_url} target="_blank" rel="noreferrer"
                     className="inline-flex items-center gap-2 px-4 py-2 bg-white border border-blue-200 text-blue-700 hover:border-blue-400 rounded-xl text-xs font-bold transition-colors">
-                    <Download className="w-3.5 h-3.5" /> Certificate
+                    <Download className="w-3.5 h-3.5" /> AuthBlock Cert
                   </a>
                 )}
                 {successData.tx && (
