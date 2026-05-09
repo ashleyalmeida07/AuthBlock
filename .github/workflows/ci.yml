@@ -54,3 +54,11 @@ jobs:
           ALCHEMY_RPC_URL: "https://eth-sepolia.g.alchemy.com/v2/dummy"
           OCR_SPACE_API_KEY: "dummy-ocr-key"
           GOOGLE_VISION_API_KEY: "dummy-vision-key"
+
+      # 6. Deploy to Vercel (Only runs on main branch if everything above passed)
+      - name: Deploy to Vercel
+        if: github.ref == 'refs/heads/main'
+        run: npx vercel deploy --prod --yes --token=${{ secrets.VERCEL_TOKEN }}
+        env:
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
