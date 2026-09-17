@@ -60,9 +60,20 @@ export default function AdminShell({ children }: AdminShellProps) {
   const [sidebarOpen, setSidebarOpen] = useState(false)
 
   const fetchAdmin = useCallback(async (email: string) => {
-    const res  = await fetch(`/api/admin/me?email=${encodeURIComponent(email)}`)
-    const data = await res.json()
-    if (data.admin) setAdmin(data.admin)
+    try {
+      const res  = await fetch(`/api/admin/me?email=${encodeURIComponent(email)}`)
+      const data = await res.json()
+      if (data.admin) {
+        setAdmin(data.admin)
+      } else {
+        // Email authenticated via Google but not found in admin DB
+        console.error('[AdminShell] Admin not found for email:', email, data)
+        await signOut({ callbackUrl: '/admin/login?error=AccessDenied' })
+      }
+    } catch (err) {
+      console.error('[AdminShell] fetchAdmin error:', err)
+      await signOut({ callbackUrl: '/admin/login?error=AccessDenied' })
+    }
   }, [])
 
   useEffect(() => {
@@ -89,6 +100,7 @@ export default function AdminShell({ children }: AdminShellProps) {
   }
 
   if (!admin) return null
+
 
   const isSuperAdmin = admin.admin_type === 'superadmin'
   const pageTitle = pathname.split('/').pop()?.replace(/-/g, ' ') || 'Dashboard'
