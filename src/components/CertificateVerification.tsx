@@ -57,6 +57,7 @@ export default function CertificateVerification({ certId, hash, tx }: Certificat
 
   useEffect(() => {
     verifyCertificate()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [certId, hash, tx])
 
   const verifyCertificate = async () => {

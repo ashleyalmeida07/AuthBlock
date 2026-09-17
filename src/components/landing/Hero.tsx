@@ -176,7 +176,6 @@ export function Hero({ isLoggedIn = false }: { isLoggedIn?: boolean }) {
             <span className="text-blue-600">the risk.</span>
           </h1>
 
-          {/* Description */}
           <p className="text-lg text-slate-500 mb-10 leading-relaxed max-w-xl mx-auto">
             Issue tamper-proof certificates anchored on the Ethereum blockchain.
             If it&apos;s verified, share it globally. If it&apos;s tampered, the chain catches it instantly.

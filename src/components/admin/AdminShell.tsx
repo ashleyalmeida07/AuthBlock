@@ -153,6 +153,7 @@ export default function AdminShell({ children }: AdminShellProps) {
       <div className="px-3 py-4 border-t border-slate-100 shrink-0 bg-white">
         <div className="flex items-center gap-3 px-3 py-2.5 rounded-lg mb-2 bg-slate-50 border border-slate-100">
           {session?.user?.image ? (
+            /* eslint-disable-next-line @next/next/no-img-element */
             <img src={session.user.image} alt={admin.name} className="w-8 h-8 rounded-full object-cover shrink-0" referrerPolicy="no-referrer" />
           ) : (
             <div className="w-8 h-8 rounded-full flex items-center justify-center text-white font-bold text-sm shrink-0 bg-blue-600 shadow-sm">
@@ -222,6 +223,7 @@ export default function AdminShell({ children }: AdminShellProps) {
             {/* Admin avatar */}
             <div className="flex items-center gap-2 pl-3 border-l border-slate-200">
               {session?.user?.image ? (
+                /* eslint-disable-next-line @next/next/no-img-element */
                 <img src={session.user.image} alt={admin.name} className="w-7 h-7 rounded-full object-cover" referrerPolicy="no-referrer" />
               ) : (
                 <div className="w-7 h-7 rounded-full flex items-center justify-center text-white font-bold text-xs" style={{ background: '#2563EB' }}>
