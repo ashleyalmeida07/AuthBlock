@@ -20,7 +20,7 @@ export function Navbar({ isLoggedIn: _isLoggedIn, user: _user }: { isLoggedIn?: 
   const [sessionLoaded, setSessionLoaded] = useState(false)
 
   useEffect(() => {
-    fetch('/api/auth/session')
+    fetch('/api/student-session')
       .then(r => r.json())
       .then(data => {
         setUser(data.loggedIn ? data.user : null)
@@ -95,7 +95,7 @@ export function Navbar({ isLoggedIn: _isLoggedIn, user: _user }: { isLoggedIn?: 
                   </div>
                 </Link>
                 <a
-                  href="/api/auth/logout"
+                  href="/api/student-logout"
                   className="text-sm font-semibold text-red-600 hover:text-red-700 flex items-center gap-1 px-2 py-2 hover:bg-red-50 rounded-lg transition-colors"
                 >
                   <LogOut className="w-4 h-4" /> Sign Out
@@ -162,7 +162,7 @@ export function Navbar({ isLoggedIn: _isLoggedIn, user: _user }: { isLoggedIn?: 
                       <div className="text-blue-600 text-xs font-bold font-mono">GO →</div>
                     </Link>
                     <a
-                      href="/api/auth/logout"
+                      href="/api/student-logout"
                       className="block w-full text-center px-5 py-3 text-red-600 border border-red-200 text-sm font-semibold rounded-full hover:bg-red-50 transition-colors"
                     >
                       Sign Out
