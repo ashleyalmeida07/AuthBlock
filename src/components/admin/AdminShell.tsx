@@ -4,8 +4,7 @@ import React, { useEffect, useState, useCallback } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { usePathname, useRouter } from 'next/navigation'
-import { onAuthStateChanged, signOut } from 'firebase/auth'
-import { auth } from '@/lib/firebase'
+import { useSession, signOut } from 'next-auth/react'
 import {
   LayoutDashboard, FileText, Users, Settings, LogOut, Menu, X,
   ActivitySquare, GraduationCap, BookOpen, ChevronRight, Shield
@@ -56,8 +55,8 @@ const NAV_SECTIONS = [
 export default function AdminShell({ children }: AdminShellProps) {
   const router   = useRouter()
   const pathname = usePathname()
+  const { data: session, status } = useSession()
   const [admin, setAdmin]           = useState<AdminRecord | null>(null)
-  const [loading, setLoading]       = useState(true)
   const [sidebarOpen, setSidebarOpen] = useState(false)
 
   const fetchAdmin = useCallback(async (email: string) => {
@@ -67,20 +66,18 @@ export default function AdminShell({ children }: AdminShellProps) {
   }, [])
 
   useEffect(() => {
-    const unsub = onAuthStateChanged(auth, async (user) => {
-      if (!user) { router.replace('/admin/login'); return }
-      await fetchAdmin(user.email!)
-      setLoading(false)
-    })
-    return () => unsub()
-  }, [router, fetchAdmin])
+    if (status === 'unauthenticated') {
+      router.replace('/admin/login')
+    } else if (status === 'authenticated' && session?.user?.email) {
+      fetchAdmin(session.user.email)
+    }
+  }, [status, session, router, fetchAdmin])
 
   async function handleSignOut() {
-    await signOut(auth)
-    router.replace('/admin/login')
+    await signOut({ callbackUrl: '/admin/login' })
   }
 
-  if (loading || !admin) {
+  if (status === 'loading' || (status === 'authenticated' && !admin)) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-slate-50">
         <div className="flex items-center gap-3 text-slate-500">
@@ -90,6 +87,8 @@ export default function AdminShell({ children }: AdminShellProps) {
       </div>
     )
   }
+
+  if (!admin) return null
 
   const isSuperAdmin = admin.admin_type === 'superadmin'
   const pageTitle = pathname.split('/').pop()?.replace(/-/g, ' ') || 'Dashboard'
@@ -153,8 +152,8 @@ export default function AdminShell({ children }: AdminShellProps) {
       {/* Admin footer */}
       <div className="px-3 py-4 border-t border-slate-100 shrink-0 bg-white">
         <div className="flex items-center gap-3 px-3 py-2.5 rounded-lg mb-2 bg-slate-50 border border-slate-100">
-          {admin.firebase_photo_url ? (
-            <img src={admin.firebase_photo_url} alt={admin.name} className="w-8 h-8 rounded-full object-cover shrink-0" referrerPolicy="no-referrer" />
+          {session?.user?.image ? (
+            <img src={session.user.image} alt={admin.name} className="w-8 h-8 rounded-full object-cover shrink-0" referrerPolicy="no-referrer" />
           ) : (
             <div className="w-8 h-8 rounded-full flex items-center justify-center text-white font-bold text-sm shrink-0 bg-blue-600 shadow-sm">
               {admin.name[0].toUpperCase()}
@@ -222,8 +221,8 @@ export default function AdminShell({ children }: AdminShellProps) {
 
             {/* Admin avatar */}
             <div className="flex items-center gap-2 pl-3 border-l border-slate-200">
-              {admin.firebase_photo_url ? (
-                <img src={admin.firebase_photo_url} alt={admin.name} className="w-7 h-7 rounded-full object-cover" referrerPolicy="no-referrer" />
+              {session?.user?.image ? (
+                <img src={session.user.image} alt={admin.name} className="w-7 h-7 rounded-full object-cover" referrerPolicy="no-referrer" />
               ) : (
                 <div className="w-7 h-7 rounded-full flex items-center justify-center text-white font-bold text-xs" style={{ background: '#2563EB' }}>
                   {admin.name[0].toUpperCase()}

@@ -1,14 +1,13 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
-import { useRouter } from 'next/navigation'
-import { GoogleAuthProvider, signInWithPopup } from 'firebase/auth'
-import { auth } from '@/lib/firebase'
+import { useRouter, useSearchParams } from 'next/navigation'
+import { signIn } from 'next-auth/react'
 import { Shield, ArrowLeft, AlertCircle, Loader2, Lock } from 'lucide-react'
 
-type Status = 'idle' | 'loading' | 'denied' | 'error'
+type Status = 'idle' | 'loading' | 'error'
 
 const GoogleIcon = () => (
   <svg className="w-4 h-4 shrink-0" viewBox="0 0 24 24" aria-hidden>
@@ -21,67 +20,29 @@ const GoogleIcon = () => (
 
 export default function AdminLoginPage() {
   const router = useRouter()
+  const searchParams = useSearchParams()
   const [status, setStatus] = useState<Status>('idle')
   const [errorMsg, setErrorMsg] = useState('')
-  const [deniedEmail, setDeniedEmail] = useState('')
+
+  useEffect(() => {
+    const errorParam = searchParams.get('error')
+    if (errorParam === 'AccessDenied') {
+      setStatus('error')
+      setErrorMsg('Access Denied. Your email is not registered as an admin.')
+    } else if (errorParam) {
+      setStatus('error')
+      setErrorMsg('An error occurred during sign in.')
+    }
+  }, [searchParams])
 
   async function handleGoogleSignIn() {
     setStatus('loading')
     setErrorMsg('')
-    setDeniedEmail('')
-
-    let signedInEmail = ''
-    let signedInUid = ''
-    let signedInPhoto = ''
 
     try {
-      const provider = new GoogleAuthProvider()
-      provider.addScope('email')
-      const cred = await signInWithPopup(auth, provider)
-
-      signedInEmail = cred.user.email ?? ''
-      signedInUid = cred.user.uid
-      signedInPhoto = cred.user.photoURL ?? ''
-
-      const res = await fetch('/api/admin/check-email', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: signedInEmail.toLowerCase() }),
-      })
-      const data = await res.json()
-
-      if (!data.allowed) {
-        try { await cred.user.delete() } catch { /* best effort */ }
-        await auth.signOut()
-        setDeniedEmail(signedInEmail)
-        setStatus('denied')
-        return
-      }
-
-      await fetch('/api/admin/link-firebase', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          email: signedInEmail.toLowerCase(),
-          firebase_uid: signedInUid,
-          firebase_email: signedInEmail,
-          firebase_photo_url: signedInPhoto || null
-        }),
-      })
-
-      router.push('/admin/dashboard')
-
+      await signIn('google', { callbackUrl: '/admin/dashboard' })
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : String(err)
-      if (
-        msg.includes('popup-closed-by-user') ||
-        msg.includes('cancelled-popup-request') ||
-        msg.includes('user-cancelled')
-      ) {
-        setStatus('idle')
-        return
-      }
-      try { await auth.signOut() } catch { /* ignore */ }
       setErrorMsg(msg)
       setStatus('error')
     }
@@ -180,18 +141,6 @@ export default function AdminLoginPage() {
               </div>
 
               {/* Status messages */}
-              {status === 'denied' && (
-                <div className="mb-5 p-4 rounded-xl flex items-start gap-3 bg-red-50 border border-red-200">
-                  <AlertCircle className="w-4 h-4 text-red-500 shrink-0 mt-0.5" />
-                  <div>
-                    <p className="text-sm font-semibold text-red-700">Access Denied</p>
-                    <p className="text-xs mt-0.5 leading-relaxed text-red-600">
-                      <span className="font-mono">{deniedEmail}</span> is not registered as an admin.
-                    </p>
-                  </div>
-                </div>
-              )}
-
               {status === 'error' && (
                 <div className="mb-5 p-4 rounded-xl flex items-start gap-3 bg-amber-50 border border-amber-200">
                   <AlertCircle className="w-4 h-4 text-amber-500 shrink-0 mt-0.5" />
@@ -219,7 +168,7 @@ export default function AdminLoginPage() {
               </button>
 
               {/* Retry */}
-              {(status === 'denied' || status === 'error') && (
+              {status === 'error' && (
                 <button
                   onClick={() => setStatus('idle')}
                   className="w-full mt-3 text-xs py-2 text-slate-400 hover:text-slate-600 transition-colors"

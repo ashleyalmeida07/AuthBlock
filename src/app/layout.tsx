@@ -25,6 +25,8 @@ export const metadata: Metadata = {
   },
 }
 
+import { Providers } from '@/components/Providers'
+
 export default function RootLayout({
   children,
 }: {
@@ -33,7 +35,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${inter.variable} font-sans min-h-screen bg-white antialiased`}>
-        {children}
+        <Providers>
+          {children}
+        </Providers>
       </body>
     </html>
   )
