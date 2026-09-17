@@ -109,6 +109,7 @@ function SettingsContent({ currentUser }: { currentUser: AdminRecord }) {
           {/* Avatar card */}
           <div className="bg-white border border-slate-200 rounded-xl p-6 flex flex-col items-center text-center gap-3">
             {currentUser.firebase_photo_url ? (
+              /* eslint-disable-next-line @next/next/no-img-element */
               <img
                 src={currentUser.firebase_photo_url}
                 alt={currentUser.name}

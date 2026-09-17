@@ -23,6 +23,7 @@ function CertificateContent() {
       setLoading(false)
       setError('No certificate ID provided')
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [certId])
 
   const fetchCertificate = async () => {

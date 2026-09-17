@@ -1,5 +1,7 @@
 import { NextResponse } from 'next/server'
 
+export const dynamic = 'force-dynamic'
+
 // How many recent blocks to fetch
 const BLOCKS_TO_FETCH = 20
 

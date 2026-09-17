@@ -244,6 +244,7 @@ function ManageAdminsContent({ currentUser }: { currentUser: AdminRecord }) {
                         {/* Avatar */}
                         <div className="shrink-0">
                           {admin.firebase_photo_url && admin.firebase_photo_url.trim() !== '' ? (
+                            /* eslint-disable-next-line @next/next/no-img-element */
                             <img src={admin.firebase_photo_url} alt={admin.name} className="w-12 h-12 rounded-full shadow-sm object-cover shrink-0 bg-slate-200" referrerPolicy="no-referrer" />
                           ) : (
                             <div className={`w-12 h-12 rounded-full flex items-center justify-center text-white font-bold text-lg shadow-sm shrink-0 ${
