@@ -2,10 +2,10 @@
 
 import React, { useState, useEffect, Suspense } from 'react'
 import Link from 'next/link'
-import Image from 'next/image'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { signIn } from 'next-auth/react'
-import { Shield, ArrowLeft, AlertCircle, Loader2, Lock } from 'lucide-react'
+import { ArrowLeft, AlertCircle, Loader2, Lock } from 'lucide-react'
+import { Logo } from '@/components/ui'
 
 type Status = 'idle' | 'loading' | 'error'
 
@@ -51,36 +51,36 @@ function AdminLoginContent() {
   const isLoading = status === 'loading'
 
   return (
-    <div className="min-h-screen flex bg-slate-50"
+    <div className="min-h-screen flex bg-brand-bg"
       style={{
         backgroundImage:
-          'linear-gradient(to right, rgba(203,213,225,0.3) 1px, transparent 1px),' +
-          'linear-gradient(to bottom, rgba(203,213,225,0.3) 1px, transparent 1px)',
+          'linear-gradient(to right, rgba(7, 20, 61, 0.05) 1px, transparent 1px),' +
+          'linear-gradient(to bottom, rgba(7, 20, 61, 0.05) 1px, transparent 1px)',
         backgroundSize: '40px 40px',
       }}
     >
       {/* ── Left panel — white branding ─────────────────────── */}
-      <div className="hidden lg:flex flex-col justify-between w-[400px] shrink-0 p-10 bg-white border-r border-slate-200 relative">
+      <div className="hidden lg:flex flex-col justify-between w-[400px] shrink-0 p-10 bg-white border-r border-brand-border/50 relative">
 
         {/* Logo */}
         <div>
           <div className="flex items-center gap-3 mb-12">
-            <div className="w-9 h-9 rounded-xl flex items-center justify-center bg-blue-600">
-              <Shield className="w-5 h-5 text-white" />
+            <div className="w-9 h-9 rounded-xl flex items-center justify-center bg-brand-navy">
+              <Logo className="w-5 h-5" fill="white" />
             </div>
-            <span className="text-sm font-bold tracking-widest text-slate-900 uppercase">AuthBlock</span>
+            <span className="text-sm font-bold tracking-widest text-brand-navy uppercase">AuthBlock</span>
           </div>
 
           <div className="space-y-4">
-            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-widest bg-blue-50 text-blue-700 border border-blue-100">
-              <span className="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse" />
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-widest bg-brand-soft/50 text-brand-blue border border-brand-blue/20">
+              <span className="w-1.5 h-1.5 rounded-full bg-brand-blue animate-pulse" />
               Restricted Access
             </div>
-            <h1 className="text-3xl font-bold text-slate-900 leading-tight">
+            <h1 className="text-3xl font-light text-brand-heading leading-tight">
               Admin<br />Portal
             </h1>
-            <p className="text-sm leading-relaxed text-slate-500">
-              Issue and manage blockchain-verified academic credentials for Fr. Conceicao Rodrigues College of Engineering.
+            <p className="text-sm leading-relaxed text-brand-navy/60">
+              Issue and manage blockchain-verified academic credentials securely.
             </p>
           </div>
         </div>
@@ -89,19 +89,18 @@ function AdminLoginContent() {
         <div className="space-y-3">
           {[
             { label: 'Smart Contracts', value: '4 Active', color: 'text-emerald-600' },
-            { label: 'Network', value: 'Ethereum Sepolia', color: 'text-blue-600' },
-            { label: 'Documents', value: 'Marksheet · Degree · Course', color: 'text-amber-600' },
+            { label: 'Network', value: 'Ethereum Sepolia', color: 'text-brand-blue' },
+            { label: 'Documents', value: 'Marksheet · Degree', color: 'text-amber-600' },
           ].map(item => (
-            <div key={item.label} className="flex items-center justify-between py-2.5 border-b border-slate-100">
-              <span className="text-xs text-slate-500">{item.label}</span>
+            <div key={item.label} className="flex items-center justify-between py-2.5 border-b border-brand-border/30">
+              <span className="text-xs text-brand-navy/60">{item.label}</span>
               <span className={`text-xs font-semibold font-mono ${item.color}`}>{item.value}</span>
             </div>
           ))}
 
           {/* Powered by Ethereum badge */}
           <div className="flex items-center gap-2 pt-2">
-
-            <span className="text-xs text-slate-400">Secured by Ethereum blockchain</span>
+            <span className="text-xs text-brand-navy/40">Secured by Ethereum blockchain</span>
           </div>
         </div>
       </div>
@@ -112,7 +111,7 @@ function AdminLoginContent() {
         {/* Back to site */}
         <Link
           href="/"
-          className="absolute top-6 left-6 flex items-center gap-1.5 text-xs font-medium text-slate-400 hover:text-slate-700 transition-colors"
+          className="absolute top-6 left-6 flex items-center gap-1.5 text-xs font-medium text-brand-navy/50 hover:text-brand-navy transition-colors"
         >
           <ArrowLeft className="w-3.5 h-3.5" /> Back to site
         </Link>
@@ -121,32 +120,31 @@ function AdminLoginContent() {
 
           {/* Mobile logo */}
           <div className="flex items-center gap-2.5 mb-8 lg:hidden">
-            <Image src="/logo.png" alt="Authblock" width={28} height={28} />
-            <span className="text-sm font-bold tracking-widest text-slate-900 uppercase">AuthBlock Admin</span>
+            <div className="w-8 h-8 rounded-lg flex items-center justify-center bg-brand-navy">
+              <Logo className="w-4 h-4" fill="white" />
+            </div>
+            <span className="text-sm font-bold tracking-widest text-brand-navy uppercase">AuthBlock Admin</span>
           </div>
 
           {/* Card */}
-          <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
-
-            {/* Card top accent */}
-            <div className="h-1 bg-gradient-to-r from-blue-600 to-blue-400" />
+          <div className="bg-white rounded-3xl border border-brand-border shadow-sm overflow-hidden">
 
             <div className="p-8">
               {/* Header */}
               <div className="mb-7">
-                <h2 className="text-xl font-bold text-slate-900 mb-1.5">Sign in to Admin Portal</h2>
-                <p className="text-sm text-slate-500">
+                <h2 className="text-xl font-medium text-brand-heading mb-1.5">Sign in to Admin Portal</h2>
+                <p className="text-sm text-brand-navy/60">
                   Use your authorized Google account to continue.
                 </p>
               </div>
 
               {/* Status messages */}
               {status === 'error' && (
-                <div className="mb-5 p-4 rounded-xl flex items-start gap-3 bg-amber-50 border border-amber-200">
-                  <AlertCircle className="w-4 h-4 text-amber-500 shrink-0 mt-0.5" />
+                <div className="mb-5 p-4 rounded-xl flex items-start gap-3 bg-red-50 border border-red-200">
+                  <AlertCircle className="w-4 h-4 text-red-500 shrink-0 mt-0.5" />
                   <div>
-                    <p className="text-sm font-semibold text-amber-700">Something went wrong</p>
-                    <p className="text-xs mt-0.5 text-amber-600">{errorMsg || 'Please try again.'}</p>
+                    <p className="text-sm font-medium text-red-700">Something went wrong</p>
+                    <p className="text-xs mt-0.5 text-red-600">{errorMsg || 'Please try again.'}</p>
                   </div>
                 </div>
               )}
@@ -155,14 +153,14 @@ function AdminLoginContent() {
               <button
                 onClick={handleGoogleSignIn}
                 disabled={isLoading}
-                className={`w-full flex items-center justify-center gap-3 py-3 rounded-xl font-semibold text-sm transition-all duration-200 border
+                className={`w-full flex items-center justify-center gap-3 py-3 rounded-full font-medium text-sm transition-all duration-200 border
                   ${isLoading
-                    ? 'bg-slate-50 border-slate-200 text-slate-400 cursor-not-allowed'
-                    : 'bg-white border-slate-200 text-slate-700 hover:bg-slate-50 hover:border-slate-300 hover:shadow-md active:scale-[0.99]'
+                    ? 'bg-brand-bg border-brand-border text-brand-navy/40 cursor-not-allowed'
+                    : 'bg-white border-brand-border text-brand-navy hover:bg-brand-bg hover:border-brand-border/80 hover:shadow-sm active:scale-[0.99]'
                   }`}
               >
                 {isLoading
-                  ? <><Loader2 className="w-4 h-4 animate-spin" /> Verifying access…</>
+                  ? <><Loader2 className="w-4 h-4 animate-spin text-brand-blue" /> Verifying access…</>
                   : <><GoogleIcon /> Continue with Google</>
                 }
               </button>
@@ -171,16 +169,16 @@ function AdminLoginContent() {
               {status === 'error' && (
                 <button
                   onClick={() => setStatus('idle')}
-                  className="w-full mt-3 text-xs py-2 text-slate-400 hover:text-slate-600 transition-colors"
+                  className="w-full mt-3 text-xs py-2 text-brand-navy/40 hover:text-brand-navy/70 transition-colors"
                 >
                   ← Try a different account
                 </button>
               )}
 
               {/* Security notice */}
-              <div className="mt-6 flex items-start gap-2.5 p-3.5 rounded-xl bg-slate-50 border border-slate-100">
-                <Lock className="w-3.5 h-3.5 shrink-0 mt-0.5 text-slate-400" />
-                <p className="text-[11px] leading-relaxed text-slate-400">
+              <div className="mt-6 flex items-start gap-2.5 p-4 rounded-2xl bg-brand-bg border border-brand-border/50">
+                <Lock className="w-3.5 h-3.5 shrink-0 mt-0.5 text-brand-navy/40" />
+                <p className="text-[11px] leading-relaxed text-brand-navy/50">
                   Access is restricted to authorized administrators only. All sign-in attempts are verified against the admin registry.
                 </p>
               </div>
@@ -195,8 +193,8 @@ function AdminLoginContent() {
 export default function AdminLoginPage() {
   return (
     <Suspense fallback={
-      <div className="min-h-screen flex items-center justify-center bg-slate-50">
-        <Loader2 className="w-8 h-8 text-blue-600 animate-spin" />
+      <div className="min-h-screen flex items-center justify-center bg-brand-bg">
+        <Loader2 className="w-8 h-8 text-brand-blue animate-spin" />
       </div>
     }>
       <AdminLoginContent />

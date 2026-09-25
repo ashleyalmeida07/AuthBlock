@@ -14,26 +14,26 @@ const tickerItems = [
 function TickerItem({ item }: { item: typeof tickerItems[0] }) {
   return (
     <span className="inline-flex items-center gap-2 mx-6 text-sm">
-      <span className="text-blue-600 font-semibold">●</span>
-      <span className="font-semibold text-slate-700">{item.name}</span>
-      <span className="text-slate-900 font-bold">{item.count}</span>
+      <span className="text-brand-blue font-semibold">●</span>
+      <span className="font-semibold text-brand-navy">{item.name}</span>
+      <span className="text-brand-navy font-bold">{item.count}</span>
       <span className={`font-semibold ${item.up ? 'text-emerald-600' : 'text-red-500'}`}>
         {item.up ? '▲' : '▼'} {item.change}
       </span>
-      <span className="text-slate-400">—</span>
-      <span className="text-slate-500">Blockchain verified today</span>
-      <span className="text-slate-300 ml-4">|</span>
+      <span className="text-brand-navy/30">—</span>
+      <span className="text-brand-navy/60 font-light">Blockchain verified today</span>
+      <span className="text-brand-border ml-4">|</span>
     </span>
   )
 }
 
 export function TickerBar() {
   return (
-    <div className="w-full py-3 border-y border-slate-100 bg-white/80 backdrop-blur-sm overflow-hidden">
+    <div className="w-full py-3 border-y border-brand-border bg-white/80 backdrop-blur-sm overflow-hidden">
       <div className="ticker-wrapper">
         <div className="ticker-content">
           {/* Duplicate items for seamless loop */}
-          {[...tickerItems, ...tickerItems].map((item, i) => (
+          {[...tickerItems, ...tickerItems, ...tickerItems].map((item, i) => (
             <TickerItem key={i} item={item} />
           ))}
         </div>

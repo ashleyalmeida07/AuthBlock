@@ -1,230 +1,89 @@
 'use client'
 
-import React, { useCallback, useRef, useState } from 'react'
+import React from 'react'
 import Link from 'next/link'
-import Image from 'next/image'
-import { Container } from '@/components/ui'
-import { ArrowRight } from 'lucide-react'
-
-/* ── Interactive grid background ────────────────────────────────── */
-const CELL = 40 // grid cell size in px
-
-function InteractiveGrid({ hoveredCell }: { hoveredCell: { col: number; row: number } | null }) {
-  const cellX = hoveredCell ? hoveredCell.col * CELL : -9999
-  const cellY = hoveredCell ? hoveredCell.row * CELL : -9999
-
-  return (
-    <div className="absolute inset-0 pointer-events-none" style={{ zIndex: 1 }}>
-      {/* Base grid lines */}
-      <div
-        className="absolute inset-0"
-        style={{
-          backgroundImage:
-            'linear-gradient(to right, rgba(203, 213, 225, 0.5) 1px, transparent 1px),' +
-            'linear-gradient(to bottom, rgba(203, 213, 225, 0.5) 1px, transparent 1px)',
-          backgroundSize: `${CELL}px ${CELL}px`,
-        }}
-      />
-
-      {/* Active cell glow — snaps to individual box */}
-      {hoveredCell && (
-        <div
-          className="absolute transition-all duration-100 ease-out"
-          style={{
-            left: cellX,
-            top: cellY,
-            width: CELL,
-            height: CELL,
-            background: 'rgba(191, 219, 254, 0.5)',
-            boxShadow: '0 0 14px 3px rgba(96, 165, 250, 0.25)',
-          }}
-        />
-      )}
-
-      {/* Neighbouring cells — softer glow */}
-      {hoveredCell &&
-        [[-1, -1], [0, -1], [1, -1], [-1, 0], [1, 0], [-1, 1], [0, 1], [1, 1]].map(([dc, dr]) => (
-          <div
-            key={`${dc},${dr}`}
-            className="absolute transition-all duration-100 ease-out"
-            style={{
-              left: (hoveredCell.col + dc) * CELL,
-              top: (hoveredCell.row + dr) * CELL,
-              width: CELL,
-              height: CELL,
-              background: 'rgba(191, 219, 254, 0.18)',
-            }}
-          />
-        ))}
-    </div>
-  )
-}
-
-/* ── tiny SVG sparkline (pure component) ────────────────────────── */
-function MiniChart({ points, color = '#0066FF', height = 40 }: { points: number[]; color?: string; height?: number }) {
-  const width = 120
-  const max = Math.max(...points)
-  const min = Math.min(...points)
-  const range = max - min || 1
-  const step = width / (points.length - 1)
-
-  const pathD = points
-    .map((p, i) => {
-      const x = i * step
-      const y = height - ((p - min) / range) * (height - 4) - 2
-      return `${i === 0 ? 'M' : 'L'}${x},${y}`
-    })
-    .join(' ')
-
-  const areaD = `${pathD} L${width},${height} L0,${height} Z`
-
-  return (
-    <svg viewBox={`0 0 ${width} ${height}`} className="w-full" style={{ height }}>
-      <defs>
-        <linearGradient id={`grad-${color.replace('#', '')}`} x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor={color} stopOpacity={0.15} />
-          <stop offset="100%" stopColor={color} stopOpacity={0} />
-        </linearGradient>
-      </defs>
-      <path d={areaD} fill={`url(#grad-${color.replace('#', '')})`} />
-      <path d={pathD} fill="none" stroke={color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-    </svg>
-  )
-}
-
-/* ── Credential mini-cards (below hero like PPN.FI market cards) ── */
-const credentials = [
-  {
-    category: 'UNIVERSITY',
-    name: 'B.Tech CS',
-    count: '3,520',
-    change: '+2.98%',
-    up: true,
-    points: [5, 8, 4, 9, 6, 11, 7, 13, 10, 14, 12, 15],
-    color: '#0066FF',
-  },
-  {
-    category: 'BOARD',
-    name: 'Higher Secondary',
-    count: '42',
-    change: '+0.33%',
-    up: true,
-    points: [3, 5, 4, 6, 5, 7, 6, 4, 7, 5, 8, 6],
-    color: '#0066FF',
-  },
-  {
-    category: 'INSTITUTION',
-    name: 'Diploma Eng.',
-    count: '73',
-    change: '+2.50%',
-    up: true,
-    points: [4, 3, 5, 7, 6, 4, 8, 5, 9, 7, 11, 8],
-    color: '#0066FF',
-  },
-  {
-    category: 'RESEARCH',
-    name: 'PhD Thesis',
-    count: '183',
-    change: '+0.15%',
-    up: true,
-    points: [2, 4, 3, 6, 5, 8, 7, 9, 6, 10, 8, 12],
-    color: '#0066FF',
-  },
-]
+import { Container, Logo } from '@/components/ui'
+import { ArrowRight, Search } from 'lucide-react'
 
 export function Hero({ isLoggedIn = false }: { isLoggedIn?: boolean }) {
-  const sectionRef = useRef<HTMLElement>(null)
-  const [hoveredCell, setHoveredCell] = useState<{ col: number; row: number } | null>(null)
-
-  const handleMouseMove = useCallback((e: React.MouseEvent<HTMLElement>) => {
-    if (!sectionRef.current) return
-    const rect = sectionRef.current.getBoundingClientRect()
-    const x = e.clientX - rect.left
-    const y = e.clientY - rect.top
-    setHoveredCell({ col: Math.floor(x / CELL), row: Math.floor(y / CELL) })
-  }, [])
-
-  const handleMouseLeave = useCallback(() => {
-    setHoveredCell(null)
-  }, [])
-
   return (
     <section
-      ref={sectionRef}
-      className="relative min-h-screen flex items-center overflow-hidden pt-20 bg-white"
-      onMouseMove={handleMouseMove}
-      onMouseLeave={handleMouseLeave}
+      className="relative min-h-[95vh] flex flex-col justify-center overflow-hidden bg-brand-bg pt-28 md:pt-36 pb-0"
     >
-      {/* Interactive grid background — pointer-events-none, receives cell from section */}
-      <InteractiveGrid hoveredCell={hoveredCell} />
-      <div className="absolute inset-0 bg-gradient-to-b from-white/80 via-transparent to-white/80" style={{ zIndex: 2 }} />
+      {/* Subtle top glow */}
+      <div className="absolute top-0 inset-x-0 h-[600px] bg-hero-glow pointer-events-none" />
+      
+      {/* Heavy blue gradient at the bottom based on the reference */}
+      <div className="absolute bottom-0 inset-x-0 h-[60vh] bg-gradient-to-t from-brand-blue/80 via-brand-blue/20 to-transparent pointer-events-none" />
 
-      <Container className="relative z-10">
-        <div className="max-w-3xl mx-auto text-center pt-8 pb-12">
-
+      <Container className="relative z-10 flex-1 flex flex-col justify-center pb-24 md:pb-32">
+        <div className="max-w-5xl mx-auto text-center">
+          
           {/* Badge */}
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-blue-50 border border-blue-200 rounded-full mb-8">
-            <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse" />
-            {/* CI/CD Test Update */}
-            <span className="text-xs font-semibold text-blue-700 tracking-wide">Blockchain Verified on Ethereum</span>
+          <div className="inline-flex items-center gap-3 px-4 py-2 bg-brand-soft/50 border border-brand-border/50 rounded-full mb-10 animate-fade-in shadow-sm bg-white/50 backdrop-blur-sm">
+            <span className="w-2 h-2 rounded-full bg-brand-blue animate-pulse" />
+            <span className="text-xs font-medium text-brand-navy tracking-wide">Blockchain Verified on Ethereum</span>
           </div>
 
           {/* Main Heading */}
-          <h1 className="text-4xl sm:text-5xl lg:text-[3.75rem] font-bold text-slate-900 leading-[1.1] mb-6 tracking-tight">
-            Secure your academic<br />
-            credentials without<br />
-            <span className="text-blue-600">the risk.</span>
+          <h1 className="text-5xl sm:text-6xl md:text-[5rem] lg:text-[6.5rem] font-light text-brand-heading leading-[1.05] mb-8 tracking-tight animate-fade-up opacity-0" style={{ animationDelay: '100ms', animationFillMode: 'forwards' }}>
+            Secure credentials
+            <br />
+            without the <span className="text-brand-blue font-normal">risk.</span>
           </h1>
 
-          <p className="text-lg text-slate-500 mb-10 leading-relaxed max-w-xl mx-auto">
-            Issue tamper-proof certificates anchored on the Ethereum blockchain.
+          <p className="text-lg md:text-xl text-brand-navy/60 mb-14 leading-relaxed max-w-2xl mx-auto animate-fade-up opacity-0 font-light" style={{ animationDelay: '200ms', animationFillMode: 'forwards' }}>
+            Issue tamper-proof certificates anchored on the Ethereum blockchain. 
             If it&apos;s verified, share it globally. If it&apos;s tampered, the chain catches it instantly.
           </p>
 
-          {/* CTA Buttons */}
-          <div className="flex flex-wrap gap-3 justify-center">
+          {/* Pill CTA - Matching the reference image */}
+          <div className="mx-auto max-w-lg p-2 bg-white rounded-full shadow-lg border border-brand-border/30 flex items-center justify-between gap-2 animate-fade-up opacity-0 relative z-20 hover:shadow-xl hover:border-brand-border/60 transition-all duration-300" style={{ animationDelay: '300ms', animationFillMode: 'forwards' }}>
+            <div className="flex-1 flex items-center pl-6 pr-2 py-1">
+              <Search className="w-5 h-5 text-brand-navy/30 mr-3" />
+              <input 
+                type="text" 
+                placeholder="Enter Certificate ID to Verify..." 
+                className="w-full bg-transparent border-none outline-none text-brand-navy placeholder:text-brand-navy/40 text-base"
+              />
+            </div>
             <Link
               href={isLoggedIn ? "/dashboard" : "/login"}
-              className="inline-flex items-center gap-2 px-7 py-3.5 bg-blue-600 text-white font-semibold rounded-xl hover:bg-blue-700 transition-all duration-200 hover:shadow-lg hover:shadow-blue-600/25 text-sm"
+              className="group inline-flex items-center justify-center gap-1 sm:gap-2 px-4 sm:px-8 py-3 sm:py-4 bg-brand-blue text-white font-medium rounded-full hover:bg-brand-bright transition-all duration-300 shadow-blue-glow w-auto shrink-0 text-xs sm:text-sm"
             >
-              <Image src="/logo.png" alt="" width={16} height={16} className="w-4 h-4" />
-              {isLoggedIn ? "Dashboard" : "Get Started"}
-              <ArrowRight className="w-4 h-4" />
-            </Link>
-            <Link
-              href="/verify"
-              className="inline-flex items-center gap-2 px-7 py-3.5 bg-white text-slate-700 font-semibold rounded-xl border border-slate-200 hover:border-slate-300 hover:bg-slate-50 transition-all duration-200 text-sm"
-            >
-              Verify Certificate
+              <span className="hidden sm:inline">{isLoggedIn ? "Dashboard" : "Issue Credentials"}</span>
+              <span className="sm:hidden">{isLoggedIn ? "Dash" : "Issue"}</span>
+              <ArrowRight className="w-3.5 h-3.5 sm:w-4 sm:h-4 transition-transform group-hover:translate-x-1" />
             </Link>
           </div>
 
-          {/* Trust row */}
-          <div className="mt-10 flex flex-wrap items-center justify-center gap-6 text-xs text-slate-400">
-            <span className="flex items-center gap-1.5">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" /> Tamper-Proof
-            </span>
-            <span className="flex items-center gap-1.5">
-              <span className="w-1.5 h-1.5 rounded-full bg-blue-400" /> Ethereum Secured
-            </span>
-            <span className="flex items-center gap-1.5">
-              <span className="w-1.5 h-1.5 rounded-full bg-amber-400" /> Instantly Verifiable
-            </span>
-            <span className="flex items-center gap-1.5">
-              <span className="w-1.5 h-1.5 rounded-full bg-teal-400" /> Permanent Record
-            </span>
-          </div>
-        </div>
-
-        {/* Scroll indicator */}
-        <div className="flex justify-center pb-8">
-          <div className="animate-bounce-subtle">
-            <svg className="w-5 h-5 text-slate-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
-            </svg>
-          </div>
         </div>
       </Container>
+      
+      {/* Logo Farm row at the bottom of the hero section */}
+      <div className="relative z-10 w-full border-t border-white/20 bg-brand-blue/10 backdrop-blur-sm py-6">
+        <Container>
+          <div className="flex flex-wrap items-center justify-center gap-x-12 gap-y-6 text-sm text-white font-medium animate-fade-up opacity-0" style={{ animationDelay: '400ms', animationFillMode: 'forwards' }}>
+            <span className="flex items-center gap-2 opacity-80 hover:opacity-100 transition-opacity">
+              <Logo className="w-6 h-6" fill="white" />
+              <span className="tracking-wide">AUTHBLOCK</span>
+            </span>
+            <span className="flex items-center gap-2 opacity-80 hover:opacity-100 transition-opacity">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" /> Tamper-Proof
+            </span>
+            <span className="flex items-center gap-2 opacity-80 hover:opacity-100 transition-opacity">
+              <span className="w-1.5 h-1.5 rounded-full bg-blue-200" /> Ethereum Secured
+            </span>
+            <span className="flex items-center gap-2 opacity-80 hover:opacity-100 transition-opacity">
+              <span className="w-1.5 h-1.5 rounded-full bg-amber-400" /> Instantly Verifiable
+            </span>
+            <span className="flex items-center gap-2 opacity-80 hover:opacity-100 transition-opacity">
+              <span className="w-1.5 h-1.5 rounded-full bg-indigo-200" /> Permanent Record
+            </span>
+          </div>
+        </Container>
+      </div>
     </section>
   )
 }
+

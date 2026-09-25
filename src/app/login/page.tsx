@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation'
 import { AnimatePresence, motion } from 'framer-motion'
 import { Loader2, ArrowRight, ShieldCheck, GraduationCap, AlertCircle, Hash, User, ArrowLeft, Lock } from 'lucide-react'
 import Link from 'next/link'
-import Image from 'next/image'
+import { Logo } from '@/components/ui'
 
 export default function LoginPage() {
   const router = useRouter()
@@ -34,35 +34,37 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen flex bg-slate-50"
+    <div className="min-h-screen flex bg-brand-bg"
       style={{
         backgroundImage:
-          'linear-gradient(to right, rgba(203,213,225,0.3) 1px, transparent 1px),' +
-          'linear-gradient(to bottom, rgba(203,213,225,0.3) 1px, transparent 1px)',
+          'linear-gradient(to right, rgba(7, 20, 61, 0.05) 1px, transparent 1px),' +
+          'linear-gradient(to bottom, rgba(7, 20, 61, 0.05) 1px, transparent 1px)',
         backgroundSize: '40px 40px',
       }}
     >
       {/* ── Left panel — branding ──────────────────────────── */}
-      <div className="hidden lg:flex flex-col justify-between w-[420px] shrink-0 p-10 bg-white border-r border-slate-200 relative overflow-hidden">
+      <div className="hidden lg:flex flex-col justify-between w-[420px] shrink-0 p-10 bg-white border-r border-brand-border/50 relative overflow-hidden">
 
         {/* Subtle top-right glow */}
-        <div className="absolute -top-20 -right-20 w-64 h-64 rounded-full blur-3xl opacity-30" style={{ background: '#BFDBFE' }} />
+        <div className="absolute -top-20 -right-20 w-64 h-64 rounded-full blur-3xl opacity-30" style={{ background: '#2563EB' }} />
 
         {/* Logo */}
         <div className="relative z-10">
-          <Link href="/" className="flex items-center gap-2.5 mb-12 hover:opacity-80 transition-opacity w-fit">
-            <Image src="/logo.png" alt="Authblock" width={30} height={30} />
-            <span className="text-sm font-bold tracking-widest text-slate-900 uppercase">AuthBlock</span>
+          <Link href="/" className="flex items-center gap-3 mb-12 hover:opacity-80 transition-opacity w-fit">
+            <div className="w-9 h-9 rounded-xl flex items-center justify-center bg-brand-navy">
+              <Logo className="w-5 h-5" fill="white" />
+            </div>
+            <span className="text-sm font-bold tracking-widest text-brand-navy uppercase">AuthBlock</span>
           </Link>
 
-          <div className="space-y-3">
-            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-blue-50 border border-blue-100 text-[10px] font-bold text-blue-700 uppercase tracking-[0.15em]">
+          <div className="space-y-4">
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-brand-soft/50 border border-brand-blue/20 text-[10px] font-bold text-brand-blue uppercase tracking-[0.15em]">
               <GraduationCap className="w-3 h-3" /> Student Portal
             </div>
-            <h2 className="text-2xl font-bold text-slate-900 leading-tight">
+            <h2 className="text-3xl font-light text-brand-heading leading-tight">
               Your Academic<br />Identity, On-Chain.
             </h2>
-            <p className="text-sm text-slate-500 leading-relaxed max-w-xs">
+            <p className="text-sm text-brand-navy/60 leading-relaxed max-w-xs">
               AuthBlock ties your credentials to a single cryptographic anchor — tamper-proof and verifiable anywhere in the world.
             </p>
           </div>
@@ -71,27 +73,27 @@ export default function LoginPage() {
         {/* Bottom info */}
         <div className="relative z-10 space-y-3">
           {/* Verified badge card */}
-          <div className="bg-white border border-slate-200 rounded-xl p-4 shadow-sm">
+          <div className="bg-brand-bg border border-brand-border/50 rounded-xl p-4 shadow-sm">
             <div className="flex items-center gap-3 mb-2.5">
               <div>
-                <p className="text-xs font-bold text-slate-800">Blockchain Verified</p>
-                <p className="text-[10px] text-slate-400">Sepolia Ethereum Network</p>
+                <p className="text-xs font-bold text-brand-navy">Blockchain Verified</p>
+                <p className="text-[10px] text-brand-navy/50">Sepolia Ethereum Network</p>
               </div>
             </div>
-            <div className="h-1.5 w-full bg-slate-100 rounded-full overflow-hidden">
-              <div className="h-full bg-emerald-500 w-full rounded-full" />
+            <div className="h-1.5 w-full bg-brand-border rounded-full overflow-hidden">
+              <div className="h-full bg-brand-blue w-full rounded-full" />
             </div>
           </div>
 
           {/* Info rows */}
           {[
-            { label: 'Documents', value: 'Marksheet · Degree · Course' },
+            { label: 'Documents', value: 'Marksheet · Degree' },
             { label: 'Storage', value: 'Supabase + Blockchain Hash' },
             { label: 'Network', value: 'Ethereum Sepolia' },
           ].map(item => (
-            <div key={item.label} className="flex items-center justify-between py-2 border-b border-slate-100">
-              <span className="text-[11px] text-slate-400">{item.label}</span>
-              <span className="text-[11px] font-semibold text-slate-600">{item.value}</span>
+            <div key={item.label} className="flex items-center justify-between py-2.5 border-b border-brand-border/30">
+              <span className="text-[11px] text-brand-navy/50">{item.label}</span>
+              <span className="text-[11px] font-semibold text-brand-navy">{item.value}</span>
             </div>
           ))}
         </div>
@@ -103,7 +105,7 @@ export default function LoginPage() {
         {/* Back link */}
         <Link
           href="/"
-          className="absolute top-6 left-6 flex items-center gap-1.5 text-xs font-medium text-slate-400 hover:text-slate-700 transition-colors"
+          className="absolute top-6 left-6 flex items-center gap-1.5 text-xs font-medium text-brand-navy/50 hover:text-brand-navy transition-colors"
         >
           <ArrowLeft className="w-3.5 h-3.5" /> Back to home
         </Link>
@@ -112,20 +114,19 @@ export default function LoginPage() {
 
           {/* Mobile logo */}
           <div className="flex items-center gap-2.5 mb-8 lg:hidden">
-            <Image src="/logo.png" alt="Authblock" width={26} height={26} />
-            <span className="text-sm font-bold tracking-widest text-slate-900 uppercase">AuthBlock</span>
+            <div className="w-8 h-8 rounded-lg flex items-center justify-center bg-brand-navy">
+              <Logo className="w-4 h-4" fill="white" />
+            </div>
+            <span className="text-sm font-bold tracking-widest text-brand-navy uppercase">AuthBlock</span>
           </div>
 
           {/* Card */}
-          <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
-            {/* Blue top accent */}
-            <div className="h-1 bg-gradient-to-r from-blue-600 to-blue-400" />
-
+          <div className="bg-white rounded-3xl border border-brand-border shadow-sm overflow-hidden">
             <div className="p-8">
               {/* Header */}
               <div className="mb-7">
-                <h1 className="text-xl font-bold text-slate-900 mb-1">Student Portal</h1>
-                <p className="text-sm text-slate-500">Enter your details to access your credentials.</p>
+                <h1 className="text-xl font-medium text-brand-heading mb-1.5">Student Portal</h1>
+                <p className="text-sm text-brand-navy/60">Enter your details to access your credentials.</p>
               </div>
 
               {/* Error */}
@@ -146,7 +147,7 @@ export default function LoginPage() {
               <form onSubmit={handleLogin} className="space-y-4">
                 {/* PRN */}
                 <div className="space-y-1.5">
-                  <label htmlFor="prn" className="text-[10px] font-bold uppercase tracking-[0.15em] text-slate-500">
+                  <label htmlFor="prn" className="text-[10px] font-bold uppercase tracking-[0.15em] text-brand-navy/50">
                     PRN Number
                   </label>
                   <div className="relative">
@@ -157,15 +158,15 @@ export default function LoginPage() {
                       value={prn}
                       onChange={e => setPrn(e.target.value)}
                       placeholder="e.g. 2021BTCS001"
-                      className="w-full px-4 py-2.5 pr-10 bg-white border border-slate-200 rounded-lg text-sm font-medium text-slate-800 placeholder-slate-300 outline-none transition-all focus:border-blue-500 focus:ring-2 focus:ring-blue-500/10"
+                      className="w-full px-4 py-3 pr-10 bg-brand-bg border border-brand-border/50 rounded-xl text-sm font-medium text-brand-navy placeholder-brand-navy/30 outline-none transition-all focus:border-brand-blue focus:ring-2 focus:ring-brand-blue/10"
                     />
-                    <Hash className="absolute right-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-300" />
+                    <Hash className="absolute right-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-brand-navy/30" />
                   </div>
                 </div>
 
                 {/* Full Name */}
                 <div className="space-y-1.5">
-                  <label htmlFor="fullName" className="text-[10px] font-bold uppercase tracking-[0.15em] text-slate-500">
+                  <label htmlFor="fullName" className="text-[10px] font-bold uppercase tracking-[0.15em] text-brand-navy/50">
                     Full Name
                   </label>
                   <div className="relative">
@@ -176,9 +177,9 @@ export default function LoginPage() {
                       value={fullName}
                       onChange={e => setFullName(e.target.value)}
                       placeholder="As registered in records"
-                      className="w-full px-4 py-2.5 pr-10 bg-white border border-slate-200 rounded-lg text-sm font-medium text-slate-800 placeholder-slate-300 outline-none transition-all focus:border-blue-500 focus:ring-2 focus:ring-blue-500/10"
+                      className="w-full px-4 py-3 pr-10 bg-brand-bg border border-brand-border/50 rounded-xl text-sm font-medium text-brand-navy placeholder-brand-navy/30 outline-none transition-all focus:border-brand-blue focus:ring-2 focus:ring-brand-blue/10"
                     />
-                    <User className="absolute right-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-300" />
+                    <User className="absolute right-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-brand-navy/30" />
                   </div>
                 </div>
 
@@ -186,7 +187,7 @@ export default function LoginPage() {
                 <button
                   type="submit"
                   disabled={isLoading}
-                  className="w-full flex items-center justify-center gap-2 mt-2 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-xl text-sm transition-all duration-200 hover:shadow-lg hover:shadow-blue-600/25 disabled:opacity-60 disabled:pointer-events-none"
+                  className="w-full flex items-center justify-center gap-2 mt-4 py-3.5 bg-brand-blue hover:bg-brand-bright text-white font-medium rounded-full text-sm transition-all duration-300 hover:shadow-blue-glow hover:-translate-y-0.5 disabled:opacity-60 disabled:pointer-events-none"
                 >
                   {isLoading
                     ? <><Loader2 className="w-4 h-4 animate-spin" /> Authenticating…</>
@@ -196,9 +197,9 @@ export default function LoginPage() {
               </form>
 
               {/* Security notice */}
-              <div className="mt-5 flex items-start gap-2 p-3 rounded-lg bg-slate-50 border border-slate-100">
-                <Lock className="w-3.5 h-3.5 shrink-0 mt-0.5 text-slate-400" />
-                <p className="text-[11px] text-slate-400 leading-relaxed">
+              <div className="mt-6 flex items-start gap-2.5 p-4 rounded-2xl bg-brand-bg border border-brand-border/50">
+                <Lock className="w-3.5 h-3.5 shrink-0 mt-0.5 text-brand-navy/40" />
+                <p className="text-[11px] text-brand-navy/50 leading-relaxed">
                   Your credentials are secured on the Ethereum blockchain — only you can access them with your registered details.
                 </p>
               </div>
@@ -206,10 +207,10 @@ export default function LoginPage() {
           </div>
 
           {/* Guest verify link */}
-          <div className="mt-5 text-center">
+          <div className="mt-6 text-center">
             <Link
               href="/verify"
-              className="inline-flex items-center gap-1.5 text-xs font-medium text-slate-400 hover:text-blue-600 transition-colors"
+              className="inline-flex items-center gap-1.5 text-xs font-medium text-brand-navy/50 hover:text-brand-blue transition-colors"
             >
               <ShieldCheck className="w-3.5 h-3.5" />
               Not a student? Verify a document instead
