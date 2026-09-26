@@ -16,7 +16,7 @@ import ProcessingTerminal, { type TerminalLog } from '@/components/admin/Process
 
 function Label({ required, children }: { required?: boolean; children: React.ReactNode }) {
   return (
-    <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
+    <label className="block text-xs font-bold text-brand-navy uppercase tracking-wider mb-1.5">
       {children}{required && <span className="text-red-500 ml-0.5">*</span>}
     </label>
   )
@@ -316,14 +316,14 @@ function DegreesContent({ currentUser }: { currentUser: AdminRecord }) {
         className="flex flex-col md:flex-row md:items-end justify-between gap-4"
       >
         <div>
-          <h1 className="text-3xl md:text-4xl font-bold text-slate-900 tracking-tight flex items-center gap-3">
+          <h1 className="text-3xl md:text-4xl font-bold text-brand-heading tracking-tight flex items-center gap-3">
             {/* Gold graduation cap accent */}
-            <span className="w-10 h-10 rounded-xl flex items-center justify-center bg-blue-600">
+            <span className="w-10 h-10 rounded-xl flex items-center justify-center bg-brand-blue">
               <GraduationCap className="w-5 h-5 text-white" />
             </span>
             Issue Degree Certificates
           </h1>
-          <p className="text-base text-slate-500 mt-2">
+          <p className="text-base text-brand-navy/60 mt-2">
             Issue blockchain-verified final degree certificates secured on Ethereum.
           </p>
         </div>
@@ -335,13 +335,13 @@ function DegreesContent({ currentUser }: { currentUser: AdminRecord }) {
       </motion.div>
 
       {/* ── Tabs ── */}
-      <div className="flex items-center gap-2 border-b border-slate-200">
+      <div className="flex items-center gap-2 border-b border-brand-border">
         <button
           onClick={() => setActiveTab('manual')}
           className={`flex items-center gap-2 px-6 py-4 font-bold transition-all text-sm uppercase tracking-wide border-b-2 ${
             activeTab === 'manual'
-              ? 'border-blue-600 text-blue-700'
-              : 'border-transparent text-slate-400 hover:text-slate-600'
+              ? 'border-brand-blue text-brand-bright'
+              : 'border-transparent text-brand-navy/40 hover:text-brand-navy/80'
           }`}
         >
           <FileSignature className="w-4 h-4" /> Manual Entry
@@ -351,7 +351,7 @@ function DegreesContent({ currentUser }: { currentUser: AdminRecord }) {
           className={`flex items-center gap-2 px-6 py-4 font-bold transition-all text-sm uppercase tracking-wide border-b-2 ${
             activeTab === 'bulk'
               ? 'border-amber-600 text-amber-700'
-              : 'border-transparent text-slate-400 hover:text-slate-600'
+              : 'border-transparent text-brand-navy/40 hover:text-brand-navy/80'
           }`}
         >
           <UploadCloud className="w-4 h-4" /> Bulk CSV Upload
@@ -360,13 +360,13 @@ function DegreesContent({ currentUser }: { currentUser: AdminRecord }) {
           onClick={() => setActiveTab('history')}
           className={`flex items-center gap-2 px-6 py-4 font-bold transition-all text-sm uppercase tracking-wide border-b-2 ${
             activeTab === 'history'
-              ? 'border-blue-600 text-blue-700'
-              : 'border-transparent text-slate-400 hover:text-slate-600'
+              ? 'border-brand-blue text-brand-bright'
+              : 'border-transparent text-brand-navy/40 hover:text-brand-navy/80'
           }`}
         >
           <History className="w-4 h-4" /> History
           {history.length > 0 && (
-            <span className="ml-1 px-2 py-0.5 text-[10px] font-bold rounded-full bg-blue-100 text-blue-700">
+            <span className="ml-1 px-2 py-0.5 text-[10px] font-bold rounded-full bg-blue-100 text-brand-bright">
               {history.length}
             </span>
           )}
@@ -395,26 +395,26 @@ function DegreesContent({ currentUser }: { currentUser: AdminRecord }) {
               initial={{ opacity: 0, y: -8 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -8 }}
-              className="mb-6 bg-white border border-slate-200 rounded-xl overflow-hidden"
+              className="mb-6 bg-white border border-brand-border rounded-xl overflow-hidden"
             >
-              <div className="px-4 py-3 border-b border-slate-100 flex items-center gap-2">
-                <Loader2 className={`w-4 h-4 text-blue-600 ${processingSteps.every(s => s.status === 'done') ? '' : 'animate-spin'}`} />
-                <span className="text-sm font-semibold text-slate-700">
+              <div className="px-4 py-3 border-b border-brand-border/50 flex items-center gap-2">
+                <Loader2 className={`w-4 h-4 text-brand-blue ${processingSteps.every(s => s.status === 'done') ? '' : 'animate-spin'}`} />
+                <span className="text-sm font-semibold text-brand-navy">
                   {processingSteps.every(s => s.status === 'done') ? 'Degree Issued Successfully' : 'Issuing Degree Certificate...'}
                 </span>
               </div>
               <div className="px-4 py-3 space-y-2">
                 {processingSteps.map((step, i) => (
                   <div key={i} className="flex items-center gap-2.5 text-sm">
-                    {step.status === 'pending' && <span className="w-4 h-4 rounded-full border-2 border-slate-200" />}
-                    {step.status === 'active' && <Loader2 className="w-4 h-4 text-blue-600 animate-spin" />}
+                    {step.status === 'pending' && <span className="w-4 h-4 rounded-full border-2 border-brand-border" />}
+                    {step.status === 'active' && <Loader2 className="w-4 h-4 text-brand-blue animate-spin" />}
                     {step.status === 'done' && <CheckCircle className="w-4 h-4 text-emerald-500" />}
                     {step.status === 'error' && <AlertCircle className="w-4 h-4 text-red-500" />}
                     <span className={
-                      step.status === 'done' ? 'text-slate-500' :
-                      step.status === 'active' ? 'text-slate-800 font-medium' :
+                      step.status === 'done' ? 'text-brand-navy/60' :
+                      step.status === 'active' ? 'text-brand-heading font-medium' :
                       step.status === 'error' ? 'text-red-600 font-medium' :
-                      'text-slate-400'
+                      'text-brand-navy/40'
                     }>{step.label}</span>
                   </div>
                 ))}
@@ -427,7 +427,7 @@ function DegreesContent({ currentUser }: { currentUser: AdminRecord }) {
             <motion.div
               initial={{ scale: 0.95 }}
               animate={{ scale: 1 }}
-              className="mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-5 bg-blue-50 border border-blue-200 rounded-2xl text-blue-800"
+              className="mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-5 bg-brand-soft border border-blue-200 rounded-2xl text-blue-800"
             >
               <div className="flex items-center gap-3">
                 <CheckCircle className="w-6 h-6 text-blue-500" />
@@ -439,19 +439,19 @@ function DegreesContent({ currentUser }: { currentUser: AdminRecord }) {
               <div className="flex flex-col sm:flex-row gap-2 shrink-0 border-t sm:border-l sm:border-t-0 border-blue-200/50 pt-3 sm:pt-0 sm:pl-4 mt-3 sm:mt-0">
                 {successData.degree_url && (
                   <a href={successData.degree_url} target="_blank" rel="noreferrer"
-                    className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-bold transition-colors">
+                    className="inline-flex items-center gap-2 px-4 py-2 bg-brand-blue hover:bg-blue-700 text-white rounded-xl text-xs font-bold transition-colors">
                     <Download className="w-3.5 h-3.5" /> Degree PDF
                   </a>
                 )}
                 {successData.cert_url && (
                   <a href={successData.cert_url} target="_blank" rel="noreferrer"
-                    className="inline-flex items-center gap-2 px-4 py-2 bg-white border border-blue-200 text-blue-700 hover:border-blue-400 rounded-xl text-xs font-bold transition-colors">
+                    className="inline-flex items-center gap-2 px-4 py-2 bg-white border border-blue-200 text-brand-bright hover:border-blue-400 rounded-xl text-xs font-bold transition-colors">
                     <Download className="w-3.5 h-3.5" /> AuthBlock Cert
                   </a>
                 )}
                 {successData.tx && (
                   <a href={`https://sepolia.etherscan.io/tx/${successData.tx}`} target="_blank" rel="noreferrer"
-                    className="inline-flex items-center gap-2 px-4 py-2 bg-white border border-blue-200 text-blue-700 hover:border-blue-400 rounded-xl text-xs font-bold transition-colors">
+                    className="inline-flex items-center gap-2 px-4 py-2 bg-white border border-blue-200 text-brand-bright hover:border-blue-400 rounded-xl text-xs font-bold transition-colors">
                     <ExternalLink className="w-3.5 h-3.5" /> Etherscan
                   </a>
                 )}
@@ -468,16 +468,16 @@ function DegreesContent({ currentUser }: { currentUser: AdminRecord }) {
 
                 {/* Left: Student Info */}
                 <div className="space-y-5">
-                  <h3 className="text-lg font-bold text-slate-900 border-b border-slate-100 pb-2 flex items-center gap-2">
+                  <h3 className="text-lg font-bold text-brand-heading border-b border-brand-border/50 pb-2 flex items-center gap-2">
                     <span className="w-5 h-5 rounded bg-blue-100 flex items-center justify-center">
-                      <GraduationCap className="w-3 h-3 text-blue-600" />
+                      <GraduationCap className="w-3 h-3 text-brand-blue" />
                     </span>
                     Student Information
                   </h3>
 
                   <div className="grid grid-cols-2 gap-4">
                     <Field label="Serial No.">
-                      <input type="text" className="input font-medium font-mono text-blue-700"
+                      <input type="text" className="input font-medium font-mono text-brand-bright"
                         value={formData.serial_no} onChange={set('serial_no')} />
                     </Field>
                     <Field label="PRN No." required>
@@ -518,9 +518,9 @@ function DegreesContent({ currentUser }: { currentUser: AdminRecord }) {
 
                 {/* Right: Academic Details */}
                 <div className="space-y-5">
-                  <h3 className="text-lg font-bold text-slate-900 border-b border-slate-100 pb-2 flex items-center gap-2">
+                  <h3 className="text-lg font-bold text-brand-heading border-b border-brand-border/50 pb-2 flex items-center gap-2">
                     <span className="w-5 h-5 rounded bg-blue-100 flex items-center justify-center">
-                      <GraduationCap className="w-3 h-3 text-blue-600" />
+                      <GraduationCap className="w-3 h-3 text-brand-blue" />
                     </span>
                     Academic Details
                   </h3>
@@ -563,25 +563,25 @@ function DegreesContent({ currentUser }: { currentUser: AdminRecord }) {
                     <motion.div
                       initial={{ opacity: 0, scale: 0.98 }}
                       animate={{ opacity: 1, scale: 1 }}
-                      className="p-4 rounded-xl border bg-blue-50 border-blue-200"
+                      className="p-4 rounded-xl border bg-brand-soft border-blue-200"
                     >
-                      <p className="text-[10px] font-bold text-blue-600 uppercase tracking-wider mb-1">Preview</p>
-                      <p className="font-bold text-slate-800 text-sm">{formData.student_name || '—'}</p>
-                      <p className="text-xs text-slate-500">{formData.degree_title} · {formData.branch || '—'}</p>
-                      <p className="text-xs text-slate-500">{formData.enrollment_year || '—'} – {formData.year_of_passing || '—'}</p>
+                      <p className="text-[10px] font-bold text-brand-blue uppercase tracking-wider mb-1">Preview</p>
+                      <p className="font-bold text-brand-heading text-sm">{formData.student_name || '—'}</p>
+                      <p className="text-xs text-brand-navy/60">{formData.degree_title} · {formData.branch || '—'}</p>
+                      <p className="text-xs text-brand-navy/60">{formData.enrollment_year || '—'} – {formData.year_of_passing || '—'}</p>
                       {formData.final_cgpi && (
-                        <p className="text-xs font-bold text-blue-700 mt-1">CGPI: {formData.final_cgpi} · {formData.classification}</p>
+                        <p className="text-xs font-bold text-brand-bright mt-1">CGPI: {formData.final_cgpi} · {formData.classification}</p>
                       )}
                     </motion.div>
                   )}
                 </div>
               </div>
 
-              <div className="flex justify-end pt-6 border-t border-slate-100">
+              <div className="flex justify-end pt-6 border-t border-brand-border/50">
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="min-w-[220px] flex items-center justify-center gap-2 py-3 px-8 font-semibold text-white rounded-lg transition-colors disabled:opacity-60 bg-blue-600 hover:bg-blue-700 border border-blue-700"
+                  className="min-w-[220px] flex items-center justify-center gap-2 py-3 px-8 font-semibold text-white rounded-lg transition-colors disabled:opacity-60 bg-brand-blue hover:bg-blue-700 border border-blue-700"
                 >
                   {isSubmitting
                     ? <><Loader2 className="w-5 h-5 animate-spin" /> Generating on Blockchain...</>
@@ -606,26 +606,26 @@ function DegreesContent({ currentUser }: { currentUser: AdminRecord }) {
               <div className="w-16 h-16 bg-amber-50 rounded-2xl flex items-center justify-center mx-auto mb-6">
                 <GraduationCap className="w-8 h-8 text-amber-500" />
               </div>
-              <h2 className="text-2xl font-bold text-slate-900 mb-2">Bulk Degree Issuance</h2>
-              <p className="text-slate-500 max-w-md mx-auto mb-8">
+              <h2 className="text-2xl font-bold text-brand-heading mb-2">Bulk Degree Issuance</h2>
+              <p className="text-brand-navy/60 max-w-md mx-auto mb-8">
                 Upload a .CSV or .XLSX containing student data to issue multiple degree certificates concurrently.
               </p>
 
               <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-                <label className="bg-blue-600 hover:bg-blue-700 text-white transition-all font-semibold rounded-xl cursor-pointer flex items-center justify-center gap-2 py-3.5 px-8 min-w-[200px]">
+                <label className="bg-brand-blue hover:bg-blue-700 text-white transition-all font-semibold rounded-xl cursor-pointer flex items-center justify-center gap-2 py-3.5 px-8 min-w-[200px]">
                   <UploadCloud className="w-5 h-5" /> Choose File
                   <input type="file" accept=".csv,.xlsx,.xls" className="hidden" onChange={handleBulkUpload} disabled={isSubmitting} />
                 </label>
-                <button onClick={downloadDegreeTemplate} type="button" className="flex items-center gap-2 py-3.5 px-8 font-semibold text-slate-700 bg-white border border-slate-200 hover:border-slate-300 rounded-xl transition-colors min-w-[200px] justify-center">
+                <button onClick={downloadDegreeTemplate} type="button" className="flex items-center gap-2 py-3.5 px-8 font-semibold text-brand-navy bg-white border border-brand-border hover:border-brand-border rounded-xl transition-colors min-w-[200px] justify-center">
                   <Download className="w-5 h-5" /> Download Template
                 </button>
               </div>
 
-              <div className="mt-8 text-left max-w-lg mx-auto bg-slate-50 rounded-xl p-4 border border-slate-200">
-                <h3 className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-3">Required Columns</h3>
+              <div className="mt-8 text-left max-w-lg mx-auto bg-brand-bg rounded-xl p-4 border border-brand-border">
+                <h3 className="text-xs font-bold text-brand-navy/60 uppercase tracking-widest mb-3">Required Columns</h3>
                 <div className="flex flex-wrap gap-1.5">
                   {['serial_no','student_name','student_email','prn_no','branch','degree_title','enrollment_year','year_of_passing','final_cgpi','classification','convocation_date'].map(col => (
-                    <span key={col} className="text-[10px] font-mono font-bold bg-white border border-slate-200 px-2 py-1 rounded text-slate-600">{col}</span>
+                    <span key={col} className="text-[10px] font-mono font-bold bg-white border border-brand-border px-2 py-1 rounded text-brand-navy/80">{col}</span>
                   ))}
                 </div>
               </div>
@@ -633,26 +633,26 @@ function DegreesContent({ currentUser }: { currentUser: AdminRecord }) {
             )
           ) : activeTab === 'history' ? (
             <div className="glass-card overflow-hidden">
-              <div className="p-4 bg-blue-50 border-b border-blue-100 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div className="p-4 bg-brand-soft border-b border-blue-100 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <h2 className="font-bold text-blue-900 flex items-center gap-2">
                   <GraduationCap className="w-4 h-4" /> Issued Degree Certificates
-                  <span className="text-xs font-normal text-blue-600">({history.length} total)</span>
+                  <span className="text-xs font-normal text-brand-blue">({history.length} total)</span>
                 </h2>
                 <div className="flex gap-2">
                   <div className="relative">
-                    <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
+                    <Search className="w-4 h-4 text-brand-navy/40 absolute left-3 top-1/2 -translate-y-1/2" />
                     <input
                       type="text"
                       placeholder="Search name, PRN or degree..."
                       value={searchQuery}
                       onChange={e => setSearchQuery(e.target.value)}
-                      className="pl-9 pr-4 py-2 border border-blue-200 rounded-lg text-sm font-medium outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 w-full sm:w-[280px] bg-white"
+                      className="pl-9 pr-4 py-2 border border-blue-200 rounded-lg text-sm font-medium outline-none focus:border-brand-blue focus:ring-1 focus:ring-brand-blue w-full sm:w-[280px] bg-white"
                     />
                   </div>
                   <button
                     onClick={fetchHistory}
                     disabled={loadingHistory}
-                    className="px-3 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-semibold text-sm transition disabled:opacity-50"
+                    className="px-3 py-2 bg-brand-blue hover:bg-blue-700 text-white rounded-lg font-semibold text-sm transition disabled:opacity-50"
                   >
                     {loadingHistory ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Refresh'}
                   </button>
@@ -661,43 +661,43 @@ function DegreesContent({ currentUser }: { currentUser: AdminRecord }) {
 
               <div className="overflow-x-auto min-h-[400px]">
                 <table className="w-full text-left text-sm">
-                  <thead className="bg-white border-b border-slate-200">
+                  <thead className="bg-white border-b border-brand-border">
                     <tr>
-                      <th className="px-6 py-4 font-bold text-slate-600 text-xs uppercase tracking-wider">Student</th>
-                      <th className="px-6 py-4 font-bold text-slate-600 text-xs uppercase tracking-wider">Degree</th>
-                      <th className="px-6 py-4 font-bold text-slate-600 text-xs uppercase tracking-wider">Performance</th>
-                      <th className="px-6 py-4 font-bold text-slate-600 text-xs uppercase tracking-wider">Issued</th>
-                      <th className="px-6 py-4 font-bold text-slate-600 text-xs uppercase tracking-wider text-right">Actions</th>
+                      <th className="px-6 py-4 font-bold text-brand-navy/80 text-xs uppercase tracking-wider">Student</th>
+                      <th className="px-6 py-4 font-bold text-brand-navy/80 text-xs uppercase tracking-wider">Degree</th>
+                      <th className="px-6 py-4 font-bold text-brand-navy/80 text-xs uppercase tracking-wider">Performance</th>
+                      <th className="px-6 py-4 font-bold text-brand-navy/80 text-xs uppercase tracking-wider">Issued</th>
+                      <th className="px-6 py-4 font-bold text-brand-navy/80 text-xs uppercase tracking-wider text-right">Actions</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-100 bg-white">
                     {loadingHistory ? (
-                      <tr><td colSpan={5} className="p-8 text-center text-slate-400">
+                      <tr><td colSpan={5} className="p-8 text-center text-brand-navy/40">
                         <Loader2 className="w-6 h-6 animate-spin mx-auto text-blue-500 mb-2" /> Loading degrees...
                       </td></tr>
                     ) : filtered.length === 0 ? (
                       <tr><td colSpan={5} className="p-12 text-center">
                         <GraduationCap className="w-10 h-10 text-blue-200 mx-auto mb-3" />
-                        <p className="text-slate-500 font-medium">No degree certificates issued yet.</p>
+                        <p className="text-brand-navy/60 font-medium">No degree certificates issued yet.</p>
                       </td></tr>
                     ) : (
                       filtered.map(d => (
-                        <tr key={d.id} className="hover:bg-blue-50/30 transition-colors">
+                        <tr key={d.id} className="hover:bg-brand-soft/30 transition-colors">
                           <td className="px-6 py-4">
-                            <div className="font-bold text-slate-900">{d.student_name}</div>
-                            <div className="font-mono text-xs text-slate-500 mt-0.5">{d.prn_no}</div>
+                            <div className="font-bold text-brand-heading">{d.student_name}</div>
+                            <div className="font-mono text-xs text-brand-navy/60 mt-0.5">{d.prn_no}</div>
                           </td>
                           <td className="px-6 py-4">
                             <div className="font-semibold text-blue-800 text-sm">{d.degree_title}</div>
-                            <div className="text-[10px] text-slate-400 mt-0.5">{d.branch} · {d.enrollment_year}–{d.year_of_passing}</div>
+                            <div className="text-[10px] text-brand-navy/40 mt-0.5">{d.branch} · {d.enrollment_year}–{d.year_of_passing}</div>
                           </td>
                           <td className="px-6 py-4">
                             <span className="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-bold bg-blue-100 text-blue-800">
                               CGPI: {d.final_cgpi || '—'}
                             </span>
-                            <div className="text-[10px] text-slate-500 mt-1">{d.classification || '—'}</div>
+                            <div className="text-[10px] text-brand-navy/60 mt-1">{d.classification || '—'}</div>
                           </td>
-                          <td className="px-6 py-4 text-slate-600 text-xs font-medium">
+                          <td className="px-6 py-4 text-brand-navy/80 text-xs font-medium">
                             {d.issued_at ? new Date(d.issued_at).toLocaleDateString('en-IN', {
                               day: 'numeric', month: 'short', year: 'numeric'
                             }) : 'N/A'}
@@ -712,7 +712,7 @@ function DegreesContent({ currentUser }: { currentUser: AdminRecord }) {
                               )}
                               {d.pdf_url && (
                                 <a href={d.pdf_url} target="_blank" rel="noreferrer"
-                                  className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-blue-50 text-blue-700 hover:bg-blue-600 hover:text-white rounded-lg text-xs font-bold transition-colors border border-blue-200">
+                                  className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-brand-soft text-brand-bright hover:bg-brand-blue hover:text-white rounded-lg text-xs font-bold transition-colors border border-blue-200">
                                   <Download className="w-3.5 h-3.5" /> Certificate
                                 </a>
                               )}
@@ -723,7 +723,7 @@ function DegreesContent({ currentUser }: { currentUser: AdminRecord }) {
                                 </a>
                               )}
                               {!d.pdf_url && !d.tx_hash_data && (
-                                <span className="text-xs text-slate-400">No links</span>
+                                <span className="text-xs text-brand-navy/40">No links</span>
                               )}
                             </div>
                           </td>

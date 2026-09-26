@@ -86,8 +86,8 @@ function ManageAdminsContent({ currentUser }: { currentUser: AdminRecord }) {
         <div className="w-16 h-16 bg-red-50 rounded-full flex items-center justify-center mb-4 border border-red-100 shadow-sm">
           <Shield className="w-8 h-8 text-red-500" />
         </div>
-        <h2 className="text-xl md:text-2xl font-bold text-slate-900 mb-2">Access Restricted</h2>
-        <p className="text-slate-500 max-w-sm">
+        <h2 className="text-xl md:text-2xl font-bold text-brand-heading mb-2">Access Restricted</h2>
+        <p className="text-brand-navy/60 max-w-sm">
           Only superadmins can manage administrator accounts. You do not have permission to view this page.
         </p>
       </div>
@@ -104,8 +104,8 @@ function ManageAdminsContent({ currentUser }: { currentUser: AdminRecord }) {
         className="flex flex-col md:flex-row md:items-end justify-between gap-4"
       >
         <div>
-          <h1 className="text-3xl md:text-4xl font-bold text-slate-900 tracking-tight">Administrators</h1>
-          <p className="text-base text-slate-500 mt-2">
+          <h1 className="text-3xl md:text-4xl font-bold text-brand-heading tracking-tight">Administrators</h1>
+          <p className="text-base text-brand-navy/60 mt-2">
             Manage who has access to the Authblock Admin Portal.
           </p>
         </div>
@@ -122,20 +122,20 @@ function ManageAdminsContent({ currentUser }: { currentUser: AdminRecord }) {
         >
           <div className="glass-card overflow-hidden sticky top-6">
             {/* Terminal-style Header */}
-            <div className="terminal-header bg-slate-50">
+            <div className="terminal-header bg-brand-bg">
               {/* Removed dots */}
-              <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest font-mono">
+              <div className="text-[10px] font-bold text-brand-navy/40 uppercase tracking-widest font-mono">
                 new_admin.sh
               </div>
             </div>
 
             <form onSubmit={handleAddSubmit} className="p-6 bg-white space-y-5">
               <div className="mb-2">
-                <h3 className="text-lg font-bold text-slate-900 inline-flex items-center gap-2">
-                  <UserPlus className="w-5 h-5 text-blue-600" />
+                <h3 className="text-lg font-bold text-brand-heading inline-flex items-center gap-2">
+                  <UserPlus className="w-5 h-5 text-brand-blue" />
                   Grant Access
                 </h3>
-                <p className="text-xs text-slate-500 mt-1">
+                <p className="text-xs text-brand-navy/60 mt-1">
                   New users will automatically link their Google accounts on first login.
                 </p>
               </div>
@@ -149,7 +149,7 @@ function ManageAdminsContent({ currentUser }: { currentUser: AdminRecord }) {
 
               <div className="space-y-4">
                 <div>
-                  <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Full Name</label>
+                  <label className="block text-xs font-bold text-brand-navy uppercase tracking-wider mb-1.5">Full Name</label>
                   <input
                     type="text" required
                     value={formData.name} onChange={e => setFormData({ ...formData, name: e.target.value })}
@@ -157,7 +157,7 @@ function ManageAdminsContent({ currentUser }: { currentUser: AdminRecord }) {
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Work Email (Required for Google Auth)</label>
+                  <label className="block text-xs font-bold text-brand-navy uppercase tracking-wider mb-1.5">Work Email (Required for Google Auth)</label>
                   <input
                     type="email" required
                     value={formData.email} onChange={e => setFormData({ ...formData, email: e.target.value })}
@@ -166,7 +166,7 @@ function ManageAdminsContent({ currentUser }: { currentUser: AdminRecord }) {
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div className="col-span-1">
-                    <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Phone No.</label>
+                    <label className="block text-xs font-bold text-brand-navy uppercase tracking-wider mb-1.5">Phone No.</label>
                     <input
                       type="text"
                       value={formData.phone} onChange={e => setFormData({ ...formData, phone: e.target.value })}
@@ -174,7 +174,7 @@ function ManageAdminsContent({ currentUser }: { currentUser: AdminRecord }) {
                     />
                   </div>
                   <div className="col-span-1">
-                    <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Position</label>
+                    <label className="block text-xs font-bold text-brand-navy uppercase tracking-wider mb-1.5">Position</label>
                     <input
                       type="text"
                       value={formData.position} onChange={e => setFormData({ ...formData, position: e.target.value })}
@@ -183,7 +183,7 @@ function ManageAdminsContent({ currentUser }: { currentUser: AdminRecord }) {
                   </div>
                 </div>
                 <div>
-                  <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Admin Level</label>
+                  <label className="block text-xs font-bold text-brand-navy uppercase tracking-wider mb-1.5">Admin Level</label>
                   <select
                     value={formData.admin_type} onChange={e => setFormData({ ...formData, admin_type: e.target.value as any })}
                     className="input font-medium cursor-pointer"
@@ -214,17 +214,17 @@ function ManageAdminsContent({ currentUser }: { currentUser: AdminRecord }) {
           className="xl:col-span-2"
         >
           <div className="glass-card overflow-hidden h-full flex flex-col">
-            <div className="p-6 border-b border-slate-100 bg-white">
-              <h3 className="text-lg font-bold text-slate-900 inline-flex items-center gap-2">
-                <Users className="w-5 h-5 text-blue-600" />
+            <div className="p-6 border-b border-brand-border/50 bg-white">
+              <h3 className="text-lg font-bold text-brand-heading inline-flex items-center gap-2">
+                <Users className="w-5 h-5 text-brand-blue" />
                 Active Directory
               </h3>
             </div>
 
-            <div className="flex-1 bg-slate-50/50 p-6 min-h-[400px]">
+            <div className="flex-1 bg-brand-bg/50 p-6 min-h-[400px]">
               {loading ? (
-                <div className="flex flex-col items-center justify-center h-full text-slate-400">
-                  <Loader2 className="w-8 h-8 animate-spin mb-4 text-blue-600" />
+                <div className="flex flex-col items-center justify-center h-full text-brand-navy/40">
+                  <Loader2 className="w-8 h-8 animate-spin mb-4 text-brand-blue" />
                   <p className="font-medium animate-pulse">Syncing directory…</p>
                 </div>
               ) : error ? (
@@ -239,7 +239,7 @@ function ManageAdminsContent({ currentUser }: { currentUser: AdminRecord }) {
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, scale: 0.95 }}
                         transition={{ delay: idx * 0.05 }}
-                        className="bg-white border border-slate-200 rounded-xl p-5 hover:border-blue-200 hover:shadow-md transition-all group flex flex-col sm:flex-row sm:items-center gap-4"
+                        className="bg-white border border-brand-border rounded-xl p-5 hover:border-blue-200 hover:shadow-md transition-all group flex flex-col sm:flex-row sm:items-center gap-4"
                       >
                         {/* Avatar */}
                         <div className="shrink-0">
@@ -258,24 +258,24 @@ function ManageAdminsContent({ currentUser }: { currentUser: AdminRecord }) {
                         {/* Info */}
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center gap-2 mb-1">
-                            <h4 className="font-bold text-slate-900 text-base truncate">{admin.name}</h4>
+                            <h4 className="font-bold text-brand-heading text-base truncate">{admin.name}</h4>
                             {admin.admin_type === 'superadmin' ? (
                               <span className="badge bg-purple-100 text-purple-700 text-[10px] uppercase font-bold tracking-wider py-0.5">
                                 Superadmin
                               </span>
                             ) : (
-                              <span className="badge bg-blue-100 text-blue-700 text-[10px] uppercase font-bold tracking-wider py-0.5">
+                              <span className="badge bg-blue-100 text-brand-bright text-[10px] uppercase font-bold tracking-wider py-0.5">
                                 Admin
                               </span>
                             )}
                           </div>
-                          <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-3 text-xs text-slate-500">
-                            <span className="font-mono text-slate-600">{admin.email}</span>
-                            <span className="hidden sm:inline text-slate-300">•</span>
+                          <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-3 text-xs text-brand-navy/60">
+                            <span className="font-mono text-brand-navy/80">{admin.email}</span>
+                            <span className="hidden sm:inline text-brand-navy/30">•</span>
                             <span>{admin.position || 'No position'}</span>
                              {admin.phone && (
                                <>
-                                 <span className="hidden sm:inline text-slate-300">•</span>
+                                 <span className="hidden sm:inline text-brand-navy/30">•</span>
                                  <span>{admin.phone}</span>
                                </>
                              )}
@@ -283,7 +283,7 @@ function ManageAdminsContent({ currentUser }: { currentUser: AdminRecord }) {
                         </div>
 
                         {/* Status & Actions */}
-                        <div className="flex items-center justify-between sm:justify-end gap-4 mt-2 sm:mt-0 pt-3 sm:pt-0 border-t sm:border-0 border-slate-100">
+                        <div className="flex items-center justify-between sm:justify-end gap-4 mt-2 sm:mt-0 pt-3 sm:pt-0 border-t sm:border-0 border-brand-border/50">
                           {admin.firebase_uid ? (
                             <div className="flex items-center gap-1.5 px-3 py-1.5 bg-emerald-50 text-emerald-700 rounded-full border border-emerald-100">
                               <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
@@ -299,7 +299,7 @@ function ManageAdminsContent({ currentUser }: { currentUser: AdminRecord }) {
                           {admin.id !== currentUser.id && (
                             <button
                               onClick={() => handleDelete(admin.id, admin.name)}
-                              className="w-8 h-8 flex items-center justify-center rounded-lg text-slate-400 hover:text-red-600 hover:bg-red-50 hover:border-red-100 border border-transparent transition-all"
+                              className="w-8 h-8 flex items-center justify-center rounded-lg text-brand-navy/40 hover:text-red-600 hover:bg-red-50 hover:border-red-100 border border-transparent transition-all"
                               title="Revoke Access"
                             >
                               <Trash2 className="w-4 h-4" />
@@ -311,7 +311,7 @@ function ManageAdminsContent({ currentUser }: { currentUser: AdminRecord }) {
                   </AnimatePresence>
                   
                   {admins.length === 0 && !loading && (
-                    <div className="text-center py-12 text-slate-500 bg-white rounded-xl border border-slate-200 border-dashed">
+                    <div className="text-center py-12 text-brand-navy/60 bg-white rounded-xl border border-brand-border border-dashed">
                       No administrators found in directory.
                     </div>
                   )}

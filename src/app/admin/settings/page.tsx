@@ -11,7 +11,7 @@ import AdminShell, { type AdminRecord } from '@/components/admin/AdminShell'
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <div>
-      <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
+      <label className="block text-xs font-bold text-brand-navy uppercase tracking-wider mb-1.5">
         {label}
       </label>
       {children}
@@ -21,13 +21,13 @@ function Field({ label, children }: { label: string; children: React.ReactNode }
 
 function InfoRow({ icon: Icon, label, value }: { icon: React.ElementType; label: string; value: string }) {
   return (
-    <div className="flex items-center gap-3 py-3 border-b border-slate-100 last:border-0">
-      <div className="w-8 h-8 rounded-lg bg-slate-50 flex items-center justify-center shrink-0">
-        <Icon className="w-4 h-4 text-slate-400" />
+    <div className="flex items-center gap-3 py-3 border-b border-brand-border/50 last:border-0">
+      <div className="w-8 h-8 rounded-lg bg-brand-bg flex items-center justify-center shrink-0">
+        <Icon className="w-4 h-4 text-brand-navy/40" />
       </div>
       <div className="min-w-0 flex-1">
-        <div className="text-[10px] font-bold uppercase tracking-wider text-slate-400">{label}</div>
-        <div className="text-sm font-medium text-slate-700 truncate">{value || '—'}</div>
+        <div className="text-[10px] font-bold uppercase tracking-wider text-brand-navy/40">{label}</div>
+        <div className="text-sm font-medium text-brand-navy truncate">{value || '—'}</div>
       </div>
     </div>
   )
@@ -84,13 +84,13 @@ function SettingsContent({ currentUser }: { currentUser: AdminRecord }) {
         className="flex flex-col md:flex-row md:items-end justify-between gap-4"
       >
         <div>
-          <h1 className="text-3xl font-bold text-slate-900 tracking-tight">Settings</h1>
-          <p className="text-slate-500 mt-1.5 text-sm">Manage your profile and account preferences.</p>
+          <h1 className="text-3xl font-bold text-brand-heading tracking-tight">Settings</h1>
+          <p className="text-brand-navy/60 mt-1.5 text-sm">Manage your profile and account preferences.</p>
         </div>
         <div className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-bold border ${
           isSuperAdmin
             ? 'bg-amber-50 border-amber-200 text-amber-700'
-            : 'bg-blue-50 border-blue-200 text-blue-700'
+            : 'bg-brand-soft border-blue-200 text-brand-bright'
         }`}>
           <Shield className="w-3.5 h-3.5" />
           {isSuperAdmin ? 'Superadmin' : 'Admin'}
@@ -107,14 +107,14 @@ function SettingsContent({ currentUser }: { currentUser: AdminRecord }) {
           className="lg:col-span-1 space-y-4"
         >
           {/* Avatar card */}
-          <div className="bg-white border border-slate-200 rounded-xl p-6 flex flex-col items-center text-center gap-3">
+          <div className="bg-white border border-brand-border rounded-xl p-6 flex flex-col items-center text-center gap-3">
             {currentUser.firebase_photo_url ? (
               /* eslint-disable-next-line @next/next/no-img-element */
               <img
                 src={currentUser.firebase_photo_url}
                 alt={currentUser.name}
                 referrerPolicy="no-referrer"
-                className="w-20 h-20 rounded-full object-cover border-2 border-slate-200 shadow-sm"
+                className="w-20 h-20 rounded-full object-cover border-2 border-brand-border shadow-sm"
               />
             ) : (
               <div className={`w-20 h-20 rounded-full flex items-center justify-center text-white text-3xl font-bold shadow-sm ${
@@ -126,14 +126,14 @@ function SettingsContent({ currentUser }: { currentUser: AdminRecord }) {
               </div>
             )}
             <div>
-              <div className="font-bold text-slate-900 text-base">{currentUser.name}</div>
-              <div className="text-xs text-slate-500 mt-0.5">{currentUser.position || 'No position set'}</div>
+              <div className="font-bold text-brand-heading text-base">{currentUser.name}</div>
+              <div className="text-xs text-brand-navy/60 mt-0.5">{currentUser.position || 'No position set'}</div>
             </div>
-            <div className="w-full pt-1 border-t border-slate-100">
-              <div className="text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1">Auth Provider</div>
+            <div className="w-full pt-1 border-t border-brand-border/50">
+              <div className="text-[10px] font-bold uppercase tracking-wider text-brand-navy/40 mb-1">Auth Provider</div>
               <div className="flex items-center justify-center gap-1.5">
                 <div className={`w-2 h-2 rounded-full ${currentUser.firebase_uid ? 'bg-emerald-500' : 'bg-amber-500'}`} />
-                <span className="text-xs font-medium text-slate-600">
+                <span className="text-xs font-medium text-brand-navy/80">
                   {currentUser.firebase_uid ? 'Google Auth — Active' : 'Pending First Login'}
                 </span>
               </div>
@@ -141,8 +141,8 @@ function SettingsContent({ currentUser }: { currentUser: AdminRecord }) {
           </div>
 
           {/* Read-only info */}
-          <div className="bg-white border border-slate-200 rounded-xl p-5">
-            <div className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-3">Account Details</div>
+          <div className="bg-white border border-brand-border rounded-xl p-5">
+            <div className="text-xs font-bold uppercase tracking-wider text-brand-navy/40 mb-3">Account Details</div>
             <InfoRow icon={Mail}     label="Email"      value={currentUser.email} />
             <InfoRow icon={Hash}     label="Account ID" value={currentUser.id} />
             <InfoRow icon={Shield}   label="Role"       value={isSuperAdmin ? 'Superadmin' : 'Admin'} />
@@ -157,10 +157,10 @@ function SettingsContent({ currentUser }: { currentUser: AdminRecord }) {
           transition={{ delay: 0.15 }}
           className="lg:col-span-2 space-y-4"
         >
-          <div className="bg-white border border-slate-200 rounded-xl overflow-hidden">
-            <div className="px-6 py-4 border-b border-slate-100 flex items-center gap-2">
-              <User className="w-4 h-4 text-blue-600" />
-              <h2 className="text-sm font-bold text-slate-800">Edit Profile</h2>
+          <div className="bg-white border border-brand-border rounded-xl overflow-hidden">
+            <div className="px-6 py-4 border-b border-brand-border/50 flex items-center gap-2">
+              <User className="w-4 h-4 text-brand-blue" />
+              <h2 className="text-sm font-bold text-brand-heading">Edit Profile</h2>
             </div>
 
             <form onSubmit={handleSave} className="p-6 space-y-5">
@@ -188,7 +188,7 @@ function SettingsContent({ currentUser }: { currentUser: AdminRecord }) {
 
               <Field label="Full Name">
                 <div className="relative">
-                  <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                  <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-brand-navy/40" />
                   <input
                     type="text"
                     required
@@ -202,7 +202,7 @@ function SettingsContent({ currentUser }: { currentUser: AdminRecord }) {
 
               <Field label="Phone Number">
                 <div className="relative">
-                  <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                  <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-brand-navy/40" />
                   <input
                     type="text"
                     value={form.phone}
@@ -215,7 +215,7 @@ function SettingsContent({ currentUser }: { currentUser: AdminRecord }) {
 
               <Field label="Position / Designation">
                 <div className="relative">
-                  <Briefcase className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                  <Briefcase className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-brand-navy/40" />
                   <input
                     type="text"
                     value={form.position}
@@ -228,24 +228,24 @@ function SettingsContent({ currentUser }: { currentUser: AdminRecord }) {
 
               <Field label="Email Address">
                 <div className="relative">
-                  <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                  <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-brand-navy/40" />
                   <input
                     type="email"
                     value={currentUser.email}
                     disabled
-                    className="input pl-9 bg-slate-50 text-slate-400 cursor-not-allowed"
+                    className="input pl-9 bg-brand-bg text-brand-navy/40 cursor-not-allowed"
                   />
                 </div>
-                <p className="text-[11px] text-slate-400 mt-1.5">
+                <p className="text-[11px] text-brand-navy/40 mt-1.5">
                   Email is linked to your Google account and cannot be changed here.
                 </p>
               </Field>
 
-              <div className="flex justify-end pt-2 border-t border-slate-100">
+              <div className="flex justify-end pt-2 border-t border-brand-border/50">
                 <button
                   type="submit"
                   disabled={isSaving}
-                  className="flex items-center gap-2 py-2.5 px-6 font-semibold text-white rounded-lg bg-blue-600 hover:bg-blue-700 border border-blue-700 transition-colors disabled:opacity-60 text-sm"
+                  className="flex items-center gap-2 py-2.5 px-6 font-semibold text-white rounded-lg bg-brand-blue hover:bg-blue-700 border border-blue-700 transition-colors disabled:opacity-60 text-sm"
                 >
                   {isSaving
                     ? <><Loader2 className="w-4 h-4 animate-spin" /> Saving...</>
@@ -257,25 +257,25 @@ function SettingsContent({ currentUser }: { currentUser: AdminRecord }) {
           </div>
 
           {/* Security info card */}
-          <div className="bg-white border border-slate-200 rounded-xl p-5">
+          <div className="bg-white border border-brand-border rounded-xl p-5">
             <div className="flex items-center gap-2 mb-4">
-              <Shield className="w-4 h-4 text-blue-600" />
-              <h2 className="text-sm font-bold text-slate-800">Security</h2>
+              <Shield className="w-4 h-4 text-brand-blue" />
+              <h2 className="text-sm font-bold text-brand-heading">Security</h2>
             </div>
             <div className="space-y-3">
-              <div className="flex items-center justify-between py-2.5 border-b border-slate-100">
+              <div className="flex items-center justify-between py-2.5 border-b border-brand-border/50">
                 <div>
-                  <div className="text-sm font-medium text-slate-700">Authentication Method</div>
-                  <div className="text-xs text-slate-400 mt-0.5">Managed via Google OAuth (Firebase)</div>
+                  <div className="text-sm font-medium text-brand-navy">Authentication Method</div>
+                  <div className="text-xs text-brand-navy/40 mt-0.5">Managed via Google OAuth (Firebase)</div>
                 </div>
-                <span className="text-xs font-bold px-2.5 py-1 bg-blue-50 text-blue-700 rounded-full border border-blue-100">
+                <span className="text-xs font-bold px-2.5 py-1 bg-brand-soft text-brand-bright rounded-full border border-blue-100">
                   Google Auth
                 </span>
               </div>
               <div className="flex items-center justify-between py-2.5">
                 <div>
-                  <div className="text-sm font-medium text-slate-700">Session Status</div>
-                  <div className="text-xs text-slate-400 mt-0.5">Your current authenticated session</div>
+                  <div className="text-sm font-medium text-brand-navy">Session Status</div>
+                  <div className="text-xs text-brand-navy/40 mt-0.5">Your current authenticated session</div>
                 </div>
                 <div className="flex items-center gap-1.5">
                   <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />

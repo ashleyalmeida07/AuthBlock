@@ -405,22 +405,22 @@ function MarksheetsContent({ currentUser }: { currentUser: AdminRecord }) {
         className="flex flex-col md:flex-row md:items-end justify-between gap-4"
       >
         <div>
-          <h1 className="text-3xl md:text-4xl font-bold text-slate-900 tracking-tight flex items-center gap-3">
-            <FileText className="w-8 h-8 text-blue-600" />
+          <h1 className="text-3xl md:text-4xl font-bold text-brand-heading tracking-tight flex items-center gap-3">
+            <FileText className="w-8 h-8 text-brand-blue" />
             Issue Marksheets
           </h1>
-          <p className="text-base text-slate-500 mt-2">
+          <p className="text-base text-brand-navy/60 mt-2">
             Generate blockchain-verified marksheets and store them securely.
           </p>
         </div>
       </motion.div>
 
       {/* ── Tabs ── */}
-      <div className="flex items-center gap-2 border-b border-slate-200">
+      <div className="flex items-center gap-2 border-b border-brand-border">
         <button
           onClick={() => setActiveTab('manual')}
           className={`flex items-center gap-2 px-6 py-4 font-bold transition-all text-sm uppercase tracking-wide border-b-2 ${
-            activeTab === 'manual' ? 'border-blue-600 text-blue-600' : 'border-transparent text-slate-400 hover:text-slate-600'
+            activeTab === 'manual' ? 'border-brand-blue text-brand-blue' : 'border-transparent text-brand-navy/40 hover:text-brand-navy/80'
           }`}
         >
           <FileSignature className="w-4 h-4" /> Manual Entry
@@ -428,7 +428,7 @@ function MarksheetsContent({ currentUser }: { currentUser: AdminRecord }) {
         <button
           onClick={() => setActiveTab('bulk')}
           className={`flex items-center gap-2 px-6 py-4 font-bold transition-all text-sm uppercase tracking-wide border-b-2 ${
-            activeTab === 'bulk' ? 'border-purple-600 text-purple-600' : 'border-transparent text-slate-400 hover:text-slate-600'
+            activeTab === 'bulk' ? 'border-purple-600 text-purple-600' : 'border-transparent text-brand-navy/40 hover:text-brand-navy/80'
           }`}
         >
           <UploadCloud className="w-4 h-4" /> Bulk CSV Upload
@@ -436,7 +436,7 @@ function MarksheetsContent({ currentUser }: { currentUser: AdminRecord }) {
         <button
           onClick={() => setActiveTab('history')}
           className={`flex items-center gap-2 px-6 py-4 font-bold transition-all text-sm uppercase tracking-wide border-b-2 ${
-            activeTab === 'history' ? 'border-amber-600 text-amber-600' : 'border-transparent text-slate-400 hover:text-slate-600'
+            activeTab === 'history' ? 'border-amber-600 text-amber-600' : 'border-transparent text-brand-navy/40 hover:text-brand-navy/80'
           }`}
         >
           <History className="w-4 h-4" /> History
@@ -464,29 +464,29 @@ function MarksheetsContent({ currentUser }: { currentUser: AdminRecord }) {
                 initial={{ opacity: 0, y: 50, scale: 0.9 }} 
                 animate={{ opacity: 1, y: 0, scale: 1 }} 
                 exit={{ opacity: 0, scale: 0.9, y: 20 }}
-                className="fixed bottom-6 right-6 z-50 flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-5 bg-white border border-slate-200 rounded-2xl shadow-2xl shadow-slate-200/60 max-w-lg"
+                className="fixed bottom-6 right-6 z-50 flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-5 bg-white border border-brand-border rounded-2xl shadow-2xl shadow-slate-200/60 max-w-lg"
               >
                 <div className="flex items-center gap-3">
                   <CheckCircle className="w-6 h-6 text-emerald-500" />
                   <div>
-                    <h4 className="font-bold text-slate-900">Success!</h4>
-                    <p className="text-sm text-slate-500">{successLink.includes('http') ? 'Saved to storage and recorded in database.' : successLink}</p>
+                    <h4 className="font-bold text-brand-heading">Success!</h4>
+                    <p className="text-sm text-brand-navy/60">{successLink.includes('http') ? 'Saved to storage and recorded in database.' : successLink}</p>
                   </div>
                 </div>
-                <div className="flex flex-col sm:flex-row gap-2 shrink-0 border-t sm:border-l sm:border-t-0 border-slate-100 pt-3 sm:pt-0 sm:pl-4 mt-3 sm:mt-0">
+                <div className="flex flex-col sm:flex-row gap-2 shrink-0 border-t sm:border-l sm:border-t-0 border-brand-border/50 pt-3 sm:pt-0 sm:pl-4 mt-3 sm:mt-0">
                   {successLink.includes('http') && (
                     <a href={successLink} target="_blank" rel="noreferrer" className="btn-primary !bg-emerald-600 hover:!bg-emerald-700 border-none shadow-emerald-500/30 text-xs py-2 px-3 h-auto">
                       View PDF
                     </a>
                   )}
                   {successTx && (
-                    <a href={`https://sepolia.etherscan.io/tx/${successTx}`} target="_blank" rel="noreferrer" className="btn-secondary !bg-white !text-blue-600 !border-blue-100 hover:!border-blue-300 text-xs py-2 px-3 h-auto shadow-sm">
+                    <a href={`https://sepolia.etherscan.io/tx/${successTx}`} target="_blank" rel="noreferrer" className="btn-secondary !bg-white !text-brand-blue !border-blue-100 hover:!border-blue-300 text-xs py-2 px-3 h-auto shadow-sm">
                       <ExternalLink className="w-3.5 h-3.5 mr-1 inline-block" /> Etherscan
                     </a>
                   )}
                   <button 
                     onClick={() => { setSuccessLink(''); setSuccessTx(''); }}
-                    className="text-slate-600 hover:text-slate-900 bg-slate-100 hover:bg-slate-200 px-3 py-2 rounded-lg text-xs font-bold transition-colors"
+                    className="text-brand-navy/80 hover:text-brand-heading bg-brand-border/30 hover:bg-slate-200 px-3 py-2 rounded-lg text-xs font-bold transition-colors"
                   >
                     Dismiss
                   </button>
@@ -500,40 +500,40 @@ function MarksheetsContent({ currentUser }: { currentUser: AdminRecord }) {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
                 {/* Left Col: Basics */}
                 <div className="space-y-5">
-                  <h3 className="text-lg font-bold text-slate-900 border-b border-slate-100 pb-2">Student Information</h3>
+                  <h3 className="text-lg font-bold text-brand-heading border-b border-brand-border/50 pb-2">Student Information</h3>
                   
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Marksheet No.<span className="text-red-500 ml-0.5">*</span></label>
+                      <label className="block text-xs font-bold text-brand-navy uppercase tracking-wider mb-1.5">Marksheet No.<span className="text-red-500 ml-0.5">*</span></label>
                       <input type="text" required className="input font-medium font-mono text-purple-600" 
                         value={formData.serial_no} onChange={e => setFormData({...formData, serial_no: e.target.value})} />
                     </div>
                     <div>
-                      <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">PRN No.<span className="text-red-500 ml-0.5">*</span></label>
+                      <label className="block text-xs font-bold text-brand-navy uppercase tracking-wider mb-1.5">PRN No.<span className="text-red-500 ml-0.5">*</span></label>
                       <input type="text" required className="input font-medium font-mono"
                         value={formData.prn_no} onChange={e => setFormData({...formData, prn_no: e.target.value})} />
                     </div>
                   </div>
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Student Full Name<span className="text-red-500 ml-0.5">*</span></label>
+                      <label className="block text-xs font-bold text-brand-navy uppercase tracking-wider mb-1.5">Student Full Name<span className="text-red-500 ml-0.5">*</span></label>
                       <input type="text" required className="input font-medium" 
                         value={formData.student_name} onChange={e => setFormData({...formData, student_name: e.target.value})} />
                     </div>
                     <div>
-                      <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Email Address *</label>
+                      <label className="block text-xs font-bold text-brand-navy uppercase tracking-wider mb-1.5">Email Address *</label>
                       <input type="email" required placeholder="student@example.com" className="input font-medium" 
                         value={formData.student_email} onChange={e => setFormData({...formData, student_email: e.target.value})} />
                     </div>
                   </div>
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">SGPI<span className="text-red-500 ml-0.5">*</span></label>
+                      <label className="block text-xs font-bold text-brand-navy uppercase tracking-wider mb-1.5">SGPI<span className="text-red-500 ml-0.5">*</span></label>
                       <input type="text" required className="input font-medium"
                         value={formData.sgpi} onChange={e => setFormData({...formData, sgpi: e.target.value})} />
                     </div>
                     <div>
-                      <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">CGPI<span className="text-red-500 ml-0.5">*</span></label>
+                      <label className="block text-xs font-bold text-brand-navy uppercase tracking-wider mb-1.5">CGPI<span className="text-red-500 ml-0.5">*</span></label>
                       <input type="text" required className="input font-medium"
                         value={formData.cgpi} onChange={e => setFormData({...formData, cgpi: e.target.value})} />
                     </div>
@@ -542,31 +542,31 @@ function MarksheetsContent({ currentUser }: { currentUser: AdminRecord }) {
 
                 {/* Right Col: Metadata */}
                 <div className="space-y-5">
-                  <h3 className="text-lg font-bold text-slate-900 border-b border-slate-100 pb-2">Course Information</h3>
+                  <h3 className="text-lg font-bold text-brand-heading border-b border-brand-border/50 pb-2">Course Information</h3>
                   <div>
-                    <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Examination<span className="text-red-500 ml-0.5">*</span></label>
-                    <input type="text" required className="input font-medium bg-slate-50"
+                    <label className="block text-xs font-bold text-brand-navy uppercase tracking-wider mb-1.5">Examination<span className="text-red-500 ml-0.5">*</span></label>
+                    <input type="text" required className="input font-medium bg-brand-bg"
                       value={formData.examination} onChange={e => setFormData({...formData, examination: e.target.value})} />
                   </div>
                   <div>
-                    <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Branch<span className="text-red-500 ml-0.5">*</span></label>
-                    <input type="text" required className="input font-medium bg-slate-50"
+                    <label className="block text-xs font-bold text-brand-navy uppercase tracking-wider mb-1.5">Branch<span className="text-red-500 ml-0.5">*</span></label>
+                    <input type="text" required className="input font-medium bg-brand-bg"
                       value={formData.branch} onChange={e => setFormData({...formData, branch: e.target.value})} />
                   </div>
                   <div>
-                    <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Session<span className="text-red-500 ml-0.5">*</span></label>
-                    <input type="text" required className="input font-medium bg-slate-50"
+                    <label className="block text-xs font-bold text-brand-navy uppercase tracking-wider mb-1.5">Session<span className="text-red-500 ml-0.5">*</span></label>
+                    <input type="text" required className="input font-medium bg-brand-bg"
                       value={formData.session_name} onChange={e => setFormData({...formData, session_name: e.target.value})} />
                   </div>
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Remarks<span className="text-red-500 ml-0.5">*</span></label>
-                      <input type="text" required className="input font-medium bg-slate-50"
+                      <label className="block text-xs font-bold text-brand-navy uppercase tracking-wider mb-1.5">Remarks<span className="text-red-500 ml-0.5">*</span></label>
+                      <input type="text" required className="input font-medium bg-brand-bg"
                         value={formData.remarks} onChange={e => setFormData({...formData, remarks: e.target.value})} />
                     </div>
                     <div>
-                      <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Date<span className="text-red-500 ml-0.5">*</span></label>
-                      <input type="text" required className="input font-medium bg-slate-50"
+                      <label className="block text-xs font-bold text-brand-navy uppercase tracking-wider mb-1.5">Date<span className="text-red-500 ml-0.5">*</span></label>
+                      <input type="text" required className="input font-medium bg-brand-bg"
                         value={formData.date} onChange={e => setFormData({...formData, date: e.target.value})} />
                     </div>
                   </div>
@@ -575,19 +575,19 @@ function MarksheetsContent({ currentUser }: { currentUser: AdminRecord }) {
 
               {/* Table section */}
               <div className="mb-8">
-                <div className="flex items-center justify-between border-b border-slate-100 pb-2 mb-4">
-                  <h3 className="text-lg font-bold text-slate-900">Subjects Matrix</h3>
-                  <button type="button" onClick={addSubject} className="text-xs font-bold text-blue-600 hover:text-blue-700 uppercase tracking-wider flex items-center gap-1 bg-blue-50 px-3 py-1.5 rounded-lg border border-blue-100 transition-colors">
+                <div className="flex items-center justify-between border-b border-brand-border/50 pb-2 mb-4">
+                  <h3 className="text-lg font-bold text-brand-heading">Subjects Matrix</h3>
+                  <button type="button" onClick={addSubject} className="text-xs font-bold text-brand-blue hover:text-brand-bright uppercase tracking-wider flex items-center gap-1 bg-brand-soft px-3 py-1.5 rounded-lg border border-blue-100 transition-colors">
                     <Plus className="w-3.5 h-3.5" /> Add Row
                   </button>
                 </div>
                 
                 <div className="space-y-3">
                   {formData.subjects.map((sub, idx) => (
-                    <div key={idx} className="flex flex-col md:flex-row items-center gap-3 p-3 bg-slate-50 rounded-xl border border-slate-200/60">
+                    <div key={idx} className="flex flex-col md:flex-row items-center gap-3 p-3 bg-brand-bg rounded-xl border border-brand-border/60">
                       <div className="grid grid-cols-10 w-full gap-3">
                         <div className="col-span-2">
-                          <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Code</label>
+                          <label className="block text-[10px] font-bold text-brand-navy/60 uppercase tracking-wider mb-1">Code</label>
                           <input type="text" placeholder="Code" className="input font-medium text-xs w-full" value={sub.code} onChange={e => {
                             const newSubjects = [...formData.subjects]
                             newSubjects[idx] = { ...newSubjects[idx], code: e.target.value }
@@ -595,7 +595,7 @@ function MarksheetsContent({ currentUser }: { currentUser: AdminRecord }) {
                           }} required />
                         </div>
                         <div className="col-span-4">
-                          <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Title</label>
+                          <label className="block text-[10px] font-bold text-brand-navy/60 uppercase tracking-wider mb-1">Title</label>
                           <input type="text" placeholder="Title" className="input font-medium text-xs w-full" value={sub.title} onChange={e => {
                             const newSubjects = [...formData.subjects]
                             newSubjects[idx] = { ...newSubjects[idx], title: e.target.value }
@@ -603,7 +603,7 @@ function MarksheetsContent({ currentUser }: { currentUser: AdminRecord }) {
                           }} required />
                         </div>
                         <div className="col-span-1">
-                          <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Cr.</label>
+                          <label className="block text-[10px] font-bold text-brand-navy/60 uppercase tracking-wider mb-1">Cr.</label>
                           <input type="text" placeholder="Cr." className="input font-medium text-xs w-full" value={sub.credits} onChange={e => {
                             const newSubjects = [...formData.subjects]
                             newSubjects[idx] = { ...newSubjects[idx], credits: e.target.value }
@@ -611,7 +611,7 @@ function MarksheetsContent({ currentUser }: { currentUser: AdminRecord }) {
                           }} required />
                         </div>
                         <div className="col-span-1">
-                          <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Gr.</label>
+                          <label className="block text-[10px] font-bold text-brand-navy/60 uppercase tracking-wider mb-1">Gr.</label>
                           <input type="text" placeholder="Gr." className="input font-medium text-xs w-full" value={sub.grade} onChange={e => {
                             const newSubjects = [...formData.subjects]
                             newSubjects[idx] = { ...newSubjects[idx], grade: e.target.value }
@@ -619,7 +619,7 @@ function MarksheetsContent({ currentUser }: { currentUser: AdminRecord }) {
                           }} required />
                         </div>
                         <div className="col-span-2">
-                          <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">GP</label>
+                          <label className="block text-[10px] font-bold text-brand-navy/60 uppercase tracking-wider mb-1">GP</label>
                           <input type="text" placeholder="GP" className="input font-medium text-xs w-full" value={sub.gp} onChange={e => {
                             const newSubjects = [...formData.subjects]
                             newSubjects[idx] = { ...newSubjects[idx], gp: e.target.value }
@@ -627,7 +627,7 @@ function MarksheetsContent({ currentUser }: { currentUser: AdminRecord }) {
                           }} required />
                         </div>
                       </div>
-                      <button type="button" onClick={() => removeSubject(idx)} disabled={formData.subjects.length === 1} className="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg disabled:opacity-30 transition-colors">
+                      <button type="button" onClick={() => removeSubject(idx)} disabled={formData.subjects.length === 1} className="p-2 text-brand-navy/40 hover:text-red-600 hover:bg-red-50 rounded-lg disabled:opacity-30 transition-colors">
                         <Trash2 className="w-4 h-4" />
                       </button>
                     </div>
@@ -642,9 +642,9 @@ function MarksheetsContent({ currentUser }: { currentUser: AdminRecord }) {
                     initial={{ opacity: 0, height: 0 }}
                     animate={{ opacity: 1, height: 'auto' }}
                     exit={{ opacity: 0, height: 0 }}
-                    className="mb-6 bg-slate-50 border border-slate-200 rounded-xl p-5"
+                    className="mb-6 bg-brand-bg border border-brand-border rounded-xl p-5"
                   >
-                    <h4 className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-4">Issuance Progress</h4>
+                    <h4 className="text-xs font-bold text-brand-navy/60 uppercase tracking-widest mb-4">Issuance Progress</h4>
                     <div className="space-y-3">
                       {processingSteps.map((step, i) => (
                         <div key={i} className="flex items-center gap-3">
@@ -656,14 +656,14 @@ function MarksheetsContent({ currentUser }: { currentUser: AdminRecord }) {
                             ) : step.status === 'error' ? (
                               <AlertCircle className="w-4.5 h-4.5 text-red-500" />
                             ) : (
-                              <div className="w-4.5 h-4.5 rounded-full border-2 border-slate-200" />
+                              <div className="w-4.5 h-4.5 rounded-full border-2 border-brand-border" />
                             )}
                           </div>
                           <span className={`text-sm font-medium ${
                             step.status === 'done' ? 'text-emerald-700' :
-                            step.status === 'active' ? 'text-blue-700' :
+                            step.status === 'active' ? 'text-brand-bright' :
                             step.status === 'error' ? 'text-red-700' :
-                            'text-slate-400'
+                            'text-brand-navy/40'
                           }`}>{step.label}</span>
                         </div>
                       ))}
@@ -672,8 +672,8 @@ function MarksheetsContent({ currentUser }: { currentUser: AdminRecord }) {
                 )}
               </AnimatePresence>
 
-              <div className="flex justify-end pt-6 border-t border-slate-100">
-                <button type="submit" disabled={isSubmitting} className="min-w-[200px] flex items-center justify-center gap-2 py-3 px-8 font-semibold text-white rounded-lg transition-colors bg-blue-600 hover:bg-blue-700 border border-blue-700 disabled:opacity-60">
+              <div className="flex justify-end pt-6 border-t border-brand-border/50">
+                <button type="submit" disabled={isSubmitting} className="min-w-[200px] flex items-center justify-center gap-2 py-3 px-8 font-semibold text-white rounded-lg transition-colors bg-brand-blue hover:bg-blue-700 border border-blue-700 disabled:opacity-60">
                   {isSubmitting ? <Loader2 className="w-5 h-5 animate-spin" /> : <FileSignature className="w-5 h-5" />}
                   {isSubmitting ? 'Generating...' : 'Issue Marksheet'}
                 </button>
@@ -692,11 +692,11 @@ function MarksheetsContent({ currentUser }: { currentUser: AdminRecord }) {
               />
             ) : (
             <div className="glass-card p-12 text-center rounded-3xl border-dashed">
-              <div className="w-16 h-16 bg-blue-50 rounded-2xl flex items-center justify-center mx-auto mb-6">
+              <div className="w-16 h-16 bg-brand-soft rounded-2xl flex items-center justify-center mx-auto mb-6">
                 <FileText className="w-8 h-8 text-blue-500" />
               </div>
-              <h2 className="text-2xl font-bold text-slate-900 mb-2">Upload Bulk Data</h2>
-              <p className="text-slate-500 max-w-md mx-auto mb-8">
+              <h2 className="text-2xl font-bold text-brand-heading mb-2">Upload Bulk Data</h2>
+              <p className="text-brand-navy/60 max-w-md mx-auto mb-8">
                 Upload a verified .CSV or .XLSX containing student data to issue multiple marksheets concurrently.
               </p>
               
@@ -714,18 +714,18 @@ function MarksheetsContent({ currentUser }: { currentUser: AdminRecord }) {
                 </button>
               </div>
               
-              <div className="mt-8 pt-8 border-t border-slate-100 text-sm font-medium text-slate-400">
-                Expected headers: <code className="bg-slate-100 px-1 py-0.5 rounded text-blue-600">serial_no, student_name, prn_no, examination, ...</code> and <code className="bg-slate-100 px-1 py-0.5 rounded text-blue-600">sub_1_code, sub_1_title, sub_1_credits</code>
+              <div className="mt-8 pt-8 border-t border-brand-border/50 text-sm font-medium text-brand-navy/40">
+                Expected headers: <code className="bg-brand-border/30 px-1 py-0.5 rounded text-brand-blue">serial_no, student_name, prn_no, examination, ...</code> and <code className="bg-brand-border/30 px-1 py-0.5 rounded text-brand-blue">sub_1_code, sub_1_title, sub_1_credits</code>
               </div>
             </div>
             )
           ) : activeTab === 'history' ? (
             <div className="glass-card overflow-hidden">
-               <div className="p-4 bg-slate-50 border-b border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                 <h2 className="font-bold text-slate-800">Issued Marksheets</h2>
+               <div className="p-4 bg-brand-bg border-b border-brand-border flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                 <h2 className="font-bold text-brand-heading">Issued Marksheets</h2>
                  <div className="flex gap-2">
                    <div className="relative">
-                     <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
+                     <Search className="w-4 h-4 text-brand-navy/40 absolute left-3 top-1/2 -translate-y-1/2" />
                      <input
                        type="text"
                        placeholder="Search PRN, Name or Serial..."
@@ -734,13 +734,13 @@ function MarksheetsContent({ currentUser }: { currentUser: AdminRecord }) {
                          setSearchQuery(e.target.value)
                          if (e.target.value) fetchHistory()
                        }}
-                       className="pl-9 pr-4 py-2 border border-slate-200 rounded-lg text-sm font-medium outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 w-full sm:w-[280px]"
+                       className="pl-9 pr-4 py-2 border border-brand-border rounded-lg text-sm font-medium outline-none focus:border-brand-blue focus:ring-1 focus:ring-brand-blue w-full sm:w-[280px]"
                      />
                    </div>
                    <button
                      onClick={fetchHistory}
                      disabled={loadingHistory}
-                     className="px-3 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-semibold text-sm transition disabled:opacity-50"
+                     className="px-3 py-2 bg-brand-blue hover:bg-blue-700 text-white rounded-lg font-semibold text-sm transition disabled:opacity-50"
                    >
                      {loadingHistory ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Refresh'}
                    </button>
@@ -749,45 +749,45 @@ function MarksheetsContent({ currentUser }: { currentUser: AdminRecord }) {
 
                <div className="overflow-x-auto min-h-[400px]">
                  <table className="w-full text-left text-sm">
-                   <thead className="bg-white border-b border-slate-200">
+                   <thead className="bg-white border-b border-brand-border">
                      <tr>
-                       <th className="px-6 py-4 font-bold text-slate-600 text-xs uppercase tracking-wider">Serial No.</th>
-                       <th className="px-6 py-4 font-bold text-slate-600 text-xs uppercase tracking-wider">Student & PRN</th>
-                       <th className="px-6 py-4 font-bold text-slate-600 text-xs uppercase tracking-wider">Performance</th>
-                       <th className="px-6 py-4 font-bold text-slate-600 text-xs uppercase tracking-wider">Date Issued</th>
-                       <th className="px-6 py-4 font-bold text-slate-600 text-xs uppercase tracking-wider text-right">Actions</th>
+                       <th className="px-6 py-4 font-bold text-brand-navy/80 text-xs uppercase tracking-wider">Serial No.</th>
+                       <th className="px-6 py-4 font-bold text-brand-navy/80 text-xs uppercase tracking-wider">Student & PRN</th>
+                       <th className="px-6 py-4 font-bold text-brand-navy/80 text-xs uppercase tracking-wider">Performance</th>
+                       <th className="px-6 py-4 font-bold text-brand-navy/80 text-xs uppercase tracking-wider">Date Issued</th>
+                       <th className="px-6 py-4 font-bold text-brand-navy/80 text-xs uppercase tracking-wider text-right">Actions</th>
                      </tr>
                    </thead>
                    <tbody className="divide-y divide-slate-100 bg-white">
                      {loadingHistory ? (
-                       <tr><td colSpan={5} className="p-8 text-center text-slate-400"><Loader2 className="w-6 h-6 animate-spin mx-auto text-blue-500 mb-2" /> Loading marksheets...</td></tr>
+                       <tr><td colSpan={5} className="p-8 text-center text-brand-navy/40"><Loader2 className="w-6 h-6 animate-spin mx-auto text-blue-500 mb-2" /> Loading marksheets...</td></tr>
                      ) : history.length === 0 ? (
-                       <tr><td colSpan={5} className="p-8 text-center text-slate-500 border border-dashed rounded-xl m-4">No marksheets have been issued yet.</td></tr>
+                       <tr><td colSpan={5} className="p-8 text-center text-brand-navy/60 border border-dashed rounded-xl m-4">No marksheets have been issued yet.</td></tr>
                      ) : (
                        history.filter(m =>
                          m.student_name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
                          m.prn_no?.includes(searchQuery) ||
                          m.serial_no?.toLowerCase().includes(searchQuery.toLowerCase())
                        ).map(m => (
-                         <tr key={m.id} className="hover:bg-slate-50/50 transition-colors">
+                         <tr key={m.id} className="hover:bg-brand-bg/50 transition-colors">
                            <td className="px-6 py-4">
-                             <div className="font-mono text-xs text-blue-600 font-bold">{m.serial_no || 'N/A'}</div>
-                             <div className="text-[10px] text-slate-400 mt-0.5">
+                             <div className="font-mono text-xs text-brand-blue font-bold">{m.serial_no || 'N/A'}</div>
+                             <div className="text-[10px] text-brand-navy/40 mt-0.5">
                                {m.branch || 'N/A'}
                              </div>
                            </td>
                            <td className="px-6 py-4">
-                             <div className="font-bold text-slate-900">{m.student_name}</div>
-                             <div className="font-mono text-xs text-slate-500 mt-0.5">{m.prn_no}</div>
+                             <div className="font-bold text-brand-heading">{m.student_name}</div>
+                             <div className="font-mono text-xs text-brand-navy/60 mt-0.5">{m.prn_no}</div>
                            </td>
                            <td className="px-6 py-4">
                              <div className="flex gap-2 text-xs">
-                               <span className="font-bold text-slate-600 bg-slate-100 px-2 py-1 rounded">SGPI: {m.sgpi || '-'}</span>
-                               <span className="font-bold text-slate-600 bg-slate-100 px-2 py-1 rounded">CGPI: {m.cgpi || '-'}</span>
+                               <span className="font-bold text-brand-navy/80 bg-brand-border/30 px-2 py-1 rounded">SGPI: {m.sgpi || '-'}</span>
+                               <span className="font-bold text-brand-navy/80 bg-brand-border/30 px-2 py-1 rounded">CGPI: {m.cgpi || '-'}</span>
                              </div>
-                             <div className="text-[10px] text-slate-500 mt-1">{m.remarks || m.examination || ''}</div>
+                             <div className="text-[10px] text-brand-navy/60 mt-1">{m.remarks || m.examination || ''}</div>
                            </td>
-                           <td className="px-6 py-4 text-slate-600 text-xs font-medium">
+                           <td className="px-6 py-4 text-brand-navy/80 text-xs font-medium">
                              {m.issued_at ? new Date(m.issued_at).toLocaleDateString('en-IN', {
                                day: 'numeric',
                                month: 'short',
@@ -801,7 +801,7 @@ function MarksheetsContent({ currentUser }: { currentUser: AdminRecord }) {
                                    href={m.supabase_pdf_url}
                                    target="_blank"
                                    rel="noreferrer"
-                                   className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-blue-50 text-blue-600 hover:bg-blue-600 hover:text-white rounded-lg text-xs font-bold transition-colors border border-blue-100 hover:border-blue-600"
+                                   className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-brand-soft text-brand-blue hover:bg-brand-blue hover:text-white rounded-lg text-xs font-bold transition-colors border border-blue-100 hover:border-brand-blue"
                                  >
                                    <FileText className="w-3.5 h-3.5" /> Marksheet
                                  </a>
@@ -827,7 +827,7 @@ function MarksheetsContent({ currentUser }: { currentUser: AdminRecord }) {
                                  </a>
                                )}
                                {!m.supabase_pdf_url && !m.certificate_url && (
-                                 <span className="text-xs text-slate-400">No PDFs</span>
+                                 <span className="text-xs text-brand-navy/40">No PDFs</span>
                                )}
                              </div>
                            </td>

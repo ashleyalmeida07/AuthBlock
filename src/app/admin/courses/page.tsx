@@ -11,7 +11,7 @@ import AdminShell, { type AdminRecord } from '@/components/admin/AdminShell'
 function Field({ label, required, children }: { label: string; required?: boolean; children: React.ReactNode }) {
   return (
     <div>
-      <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
+      <label className="block text-xs font-bold text-brand-navy uppercase tracking-wider mb-1.5">
         {label}{required && <span className="text-red-500 ml-0.5">*</span>}
       </label>
       {children}
@@ -154,7 +154,7 @@ function CoursesContent({ currentUser }: { currentUser: AdminRecord }) {
 
   // Type badge colours
   const typeColors: Record<string, string> = {
-    Workshop: 'bg-blue-100 text-blue-700',
+    Workshop: 'bg-blue-100 text-brand-bright',
     Certification: 'bg-cyan-100 text-cyan-700',
     'Online Course': 'bg-sky-100 text-sky-700',
     Seminar: 'bg-indigo-100 text-indigo-700',
@@ -176,13 +176,13 @@ function CoursesContent({ currentUser }: { currentUser: AdminRecord }) {
         className="flex flex-col md:flex-row md:items-end justify-between gap-4"
       >
         <div>
-          <h1 className="text-3xl md:text-4xl font-bold text-slate-900 tracking-tight flex items-center gap-3">
-            <span className="w-10 h-10 rounded-xl flex items-center justify-center bg-blue-600">
+          <h1 className="text-3xl md:text-4xl font-bold text-brand-heading tracking-tight flex items-center gap-3">
+            <span className="w-10 h-10 rounded-xl flex items-center justify-center bg-brand-blue">
               <BookOpen className="w-5 h-5 text-white" />
             </span>
             Issue Course Certificates
           </h1>
-          <p className="text-base text-slate-500 mt-2">
+          <p className="text-base text-brand-navy/60 mt-2">
             Issue blockchain-verified certificates for workshops, seminars, and short-term courses.
           </p>
         </div>
@@ -193,21 +193,21 @@ function CoursesContent({ currentUser }: { currentUser: AdminRecord }) {
       </motion.div>
 
       {/* ── Tabs ── */}
-      <div className="flex items-center gap-2 border-b border-slate-200">
+      <div className="flex items-center gap-2 border-b border-brand-border">
         {(['manual', 'history'] as const).map(tab => (
           <button
             key={tab}
             onClick={() => setActiveTab(tab)}
             className={`flex items-center gap-2 px-6 py-4 font-bold transition-all text-sm uppercase tracking-wide border-b-2 ${
               activeTab === tab
-                ? 'border-blue-600 text-blue-700'
-                : 'border-transparent text-slate-400 hover:text-slate-600'
+                ? 'border-brand-blue text-brand-bright'
+                : 'border-transparent text-brand-navy/40 hover:text-brand-navy/80'
             }`}
           >
             {tab === 'manual' ? <FileSignature className="w-4 h-4" /> : <History className="w-4 h-4" />}
             {tab === 'manual' ? 'Manual Entry' : (
               <>History{history.length > 0 && (
-                <span className="ml-1 px-2 py-0.5 text-[10px] font-bold rounded-full bg-blue-100 text-blue-700">
+                <span className="ml-1 px-2 py-0.5 text-[10px] font-bold rounded-full bg-blue-100 text-brand-bright">
                   {history.length}
                 </span>
               )}</>
@@ -237,26 +237,26 @@ function CoursesContent({ currentUser }: { currentUser: AdminRecord }) {
               initial={{ opacity: 0, y: -8 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -8 }}
-              className="mb-6 bg-white border border-slate-200 rounded-xl overflow-hidden"
+              className="mb-6 bg-white border border-brand-border rounded-xl overflow-hidden"
             >
-              <div className="px-4 py-3 border-b border-slate-100 flex items-center gap-2">
-                <Loader2 className={`w-4 h-4 text-blue-600 ${processingSteps.every(s => s.status === 'done') ? '' : 'animate-spin'}`} />
-                <span className="text-sm font-semibold text-slate-700">
+              <div className="px-4 py-3 border-b border-brand-border/50 flex items-center gap-2">
+                <Loader2 className={`w-4 h-4 text-brand-blue ${processingSteps.every(s => s.status === 'done') ? '' : 'animate-spin'}`} />
+                <span className="text-sm font-semibold text-brand-navy">
                   {processingSteps.every(s => s.status === 'done') ? 'Certificate Issued Successfully' : 'Issuing Course Certificate...'}
                 </span>
               </div>
               <div className="px-4 py-3 space-y-2">
                 {processingSteps.map((step, i) => (
                   <div key={i} className="flex items-center gap-2.5 text-sm">
-                    {step.status === 'pending' && <span className="w-4 h-4 rounded-full border-2 border-slate-200" />}
-                    {step.status === 'active' && <Loader2 className="w-4 h-4 text-blue-600 animate-spin" />}
+                    {step.status === 'pending' && <span className="w-4 h-4 rounded-full border-2 border-brand-border" />}
+                    {step.status === 'active' && <Loader2 className="w-4 h-4 text-brand-blue animate-spin" />}
                     {step.status === 'done' && <CheckCircle className="w-4 h-4 text-emerald-500" />}
                     {step.status === 'error' && <AlertCircle className="w-4 h-4 text-red-500" />}
                     <span className={
-                      step.status === 'done' ? 'text-slate-500' :
-                      step.status === 'active' ? 'text-slate-800 font-medium' :
+                      step.status === 'done' ? 'text-brand-navy/60' :
+                      step.status === 'active' ? 'text-brand-heading font-medium' :
                       step.status === 'error' ? 'text-red-600 font-medium' :
-                      'text-slate-400'
+                      'text-brand-navy/40'
                     }>{step.label}</span>
                   </div>
                 ))}
@@ -268,10 +268,10 @@ function CoursesContent({ currentUser }: { currentUser: AdminRecord }) {
             <motion.div
               initial={{ scale: 0.95 }}
               animate={{ scale: 1 }}
-              className="mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-5 rounded-2xl border bg-blue-50 border-blue-200 text-blue-800"
+              className="mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-5 rounded-2xl border bg-brand-soft border-blue-200 text-blue-800"
             >
               <div className="flex items-center gap-3">
-                <CheckCircle className="w-6 h-6 text-blue-600" />
+                <CheckCircle className="w-6 h-6 text-brand-blue" />
                 <div>
                   <h4 className="font-bold">Course Certificate Issued!</h4>
                   <p className="text-sm opacity-80">Secured on Ethereum and uploaded to cloud storage.</p>
@@ -280,19 +280,19 @@ function CoursesContent({ currentUser }: { currentUser: AdminRecord }) {
               <div className="flex flex-col sm:flex-row gap-2 shrink-0 border-t sm:border-l sm:border-t-0 border-blue-200/50 pt-3 sm:pt-0 sm:pl-4 mt-3 sm:mt-0">
                 {successData.template_url && (
                   <a href={successData.template_url} target="_blank" rel="noreferrer"
-                    className="inline-flex items-center gap-2 px-4 py-2 text-white rounded-xl text-xs font-bold transition-colors bg-blue-600 hover:bg-blue-700">
+                    className="inline-flex items-center gap-2 px-4 py-2 text-white rounded-xl text-xs font-bold transition-colors bg-brand-blue hover:bg-blue-700">
                     <Download className="w-3.5 h-3.5" /> Course Certificate
                   </a>
                 )}
                 {successData.url && (
                   <a href={successData.url} target="_blank" rel="noreferrer"
-                    className="inline-flex items-center gap-2 px-4 py-2 bg-white border rounded-xl text-xs font-bold transition-colors border-blue-200 text-blue-700 hover:border-blue-400">
+                    className="inline-flex items-center gap-2 px-4 py-2 bg-white border rounded-xl text-xs font-bold transition-colors border-blue-200 text-brand-bright hover:border-blue-400">
                     <Download className="w-3.5 h-3.5" /> AuthBlock Cert
                   </a>
                 )}
                 {successData.tx && (
                   <a href={`https://sepolia.etherscan.io/tx/${successData.tx}`} target="_blank" rel="noreferrer"
-                    className="inline-flex items-center gap-2 px-4 py-2 bg-white border rounded-xl text-xs font-bold transition-colors border-blue-200 text-blue-700 hover:border-blue-400">
+                    className="inline-flex items-center gap-2 px-4 py-2 bg-white border rounded-xl text-xs font-bold transition-colors border-blue-200 text-brand-bright hover:border-blue-400">
                     <ExternalLink className="w-3.5 h-3.5" /> Etherscan
                   </a>
                 )}
@@ -309,9 +309,9 @@ function CoursesContent({ currentUser }: { currentUser: AdminRecord }) {
 
                 {/* Left: Participant Info */}
                 <div className="space-y-5">
-                  <h3 className="text-lg font-bold text-slate-900 border-b border-slate-100 pb-2 flex items-center gap-2">
+                  <h3 className="text-lg font-bold text-brand-heading border-b border-brand-border/50 pb-2 flex items-center gap-2">
                     <span className="w-5 h-5 rounded flex items-center justify-center bg-blue-100">
-                      <BookOpen className="w-3 h-3 text-blue-600" />
+                      <BookOpen className="w-3 h-3 text-brand-blue" />
                     </span>
                     Participant Information
                   </h3>
@@ -343,7 +343,7 @@ function CoursesContent({ currentUser }: { currentUser: AdminRecord }) {
                           className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all border ${
                             formData.course_type === type
                               ? 'text-white border-transparent'
-                              : 'text-slate-500 border-slate-200 bg-slate-50 hover:border-slate-300'
+                              : 'text-brand-navy/60 border-brand-border bg-brand-bg hover:border-brand-border'
                           }`}
                           style={formData.course_type === type ? { background: '#2563EB', borderColor: '#2563EB' } : {}}
                         >
@@ -363,7 +363,7 @@ function CoursesContent({ currentUser }: { currentUser: AdminRecord }) {
                           className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all border ${
                             formData.grade === g
                               ? 'text-white border-transparent'
-                              : 'text-slate-500 border-slate-200 bg-slate-50 hover:border-slate-300'
+                              : 'text-brand-navy/60 border-brand-border bg-brand-bg hover:border-brand-border'
                           }`}
                           style={formData.grade === g ? { background: '#059669', borderColor: '#059669' } : {}}
                         >
@@ -379,9 +379,9 @@ function CoursesContent({ currentUser }: { currentUser: AdminRecord }) {
 
                 {/* Right: Course Details */}
                 <div className="space-y-5">
-                  <h3 className="text-lg font-bold text-slate-900 border-b border-slate-100 pb-2 flex items-center gap-2">
+                  <h3 className="text-lg font-bold text-brand-heading border-b border-brand-border/50 pb-2 flex items-center gap-2">
                     <span className="w-5 h-5 rounded flex items-center justify-center bg-blue-100">
-                      <BookOpen className="w-3 h-3 text-blue-600" />
+                      <BookOpen className="w-3 h-3 text-brand-blue" />
                     </span>
                     Course Details
                   </h3>
@@ -427,21 +427,21 @@ function CoursesContent({ currentUser }: { currentUser: AdminRecord }) {
                     <motion.div
                       initial={{ opacity: 0, scale: 0.98 }}
                       animate={{ opacity: 1, scale: 1 }}
-                      className="p-4 rounded-xl border bg-blue-50 border-blue-200"
+                      className="p-4 rounded-xl border bg-brand-soft border-blue-200"
                     >
-                      <p className="text-[10px] font-bold uppercase tracking-wider mb-1 text-blue-600">Preview</p>
-                      <p className="font-bold text-slate-800 text-sm">{formData.student_name || '—'}</p>
+                      <p className="text-[10px] font-bold uppercase tracking-wider mb-1 text-brand-blue">Preview</p>
+                      <p className="font-bold text-brand-heading text-sm">{formData.student_name || '—'}</p>
                       <div className="flex items-center gap-2 mt-1">
-                        <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${typeColors[formData.course_type] || 'bg-slate-100 text-slate-600'}`}>
+                        <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${typeColors[formData.course_type] || 'bg-brand-border/30 text-brand-navy/80'}`}>
                           {formData.course_type}
                         </span>
-                        <span className="text-xs text-slate-600 font-medium">{formData.course_name}</span>
+                        <span className="text-xs text-brand-navy/80 font-medium">{formData.course_name}</span>
                       </div>
                       {formData.grade && (
                         <p className="text-xs font-bold mt-1" style={{ color: '#059669' }}>Grade: {formData.grade}</p>
                       )}
                       {(formData.start_date || formData.end_date) && (
-                        <p className="text-[10px] text-slate-500 mt-1 flex items-center gap-1">
+                        <p className="text-[10px] text-brand-navy/60 mt-1 flex items-center gap-1">
                           <Clock className="w-3 h-3" />
                           {formData.start_date} {formData.end_date ? `→ ${formData.end_date}` : ''}
                           {formData.duration ? ` · ${formData.duration}` : ''}
@@ -452,11 +452,11 @@ function CoursesContent({ currentUser }: { currentUser: AdminRecord }) {
                 </div>
               </div>
 
-              <div className="flex justify-end pt-6 border-t border-slate-100">
+              <div className="flex justify-end pt-6 border-t border-brand-border/50">
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="min-w-[240px] flex items-center justify-center gap-2 py-3 px-8 font-semibold text-white rounded-lg transition-colors disabled:opacity-60 bg-blue-600 hover:bg-blue-700 border border-blue-700"
+                  className="min-w-[240px] flex items-center justify-center gap-2 py-3 px-8 font-semibold text-white rounded-lg transition-colors disabled:opacity-60 bg-brand-blue hover:bg-blue-700 border border-blue-700"
                 >
                   {isSubmitting
                     ? <><Loader2 className="w-5 h-5 animate-spin" /> Generating on Blockchain...</>
@@ -468,26 +468,26 @@ function CoursesContent({ currentUser }: { currentUser: AdminRecord }) {
           ) : (
             /* ── History Tab ── */
             <div className="glass-card overflow-hidden">
-              <div className="p-4 border-b flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-blue-50 border-blue-100">
+              <div className="p-4 border-b flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-brand-soft border-blue-100">
                 <h2 className="font-bold flex items-center gap-2 text-blue-900">
                   <BookOpen className="w-4 h-4" /> Issued Course Certificates
-                  <span className="text-xs font-normal text-blue-600">({history.length} total)</span>
+                  <span className="text-xs font-normal text-brand-blue">({history.length} total)</span>
                 </h2>
                 <div className="flex gap-2">
                   <div className="relative">
-                    <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
+                    <Search className="w-4 h-4 text-brand-navy/40 absolute left-3 top-1/2 -translate-y-1/2" />
                     <input
                       type="text"
                       placeholder="Search name, PRN or course..."
                       value={searchQuery}
                       onChange={e => setSearchQuery(e.target.value)}
-                      className="pl-9 pr-4 py-2 border rounded-lg text-sm font-medium outline-none w-full sm:w-[280px] bg-white border-blue-200 focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+                      className="pl-9 pr-4 py-2 border rounded-lg text-sm font-medium outline-none w-full sm:w-[280px] bg-white border-blue-200 focus:border-brand-blue focus:ring-1 focus:ring-brand-blue"
                     />
                   </div>
                   <button
                     onClick={fetchHistory}
                     disabled={loadingHistory}
-                    className="px-3 py-2 text-white rounded-lg font-semibold text-sm transition disabled:opacity-50 bg-blue-600 hover:bg-blue-700"
+                    className="px-3 py-2 text-white rounded-lg font-semibold text-sm transition disabled:opacity-50 bg-brand-blue hover:bg-blue-700"
                   >
                     {loadingHistory ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Refresh'}
                   </button>
@@ -496,36 +496,36 @@ function CoursesContent({ currentUser }: { currentUser: AdminRecord }) {
 
               <div className="overflow-x-auto min-h-[400px]">
                 <table className="w-full text-left text-sm">
-                  <thead className="bg-white border-b border-slate-200">
+                  <thead className="bg-white border-b border-brand-border">
                     <tr>
-                      <th className="px-6 py-4 font-bold text-slate-600 text-xs uppercase tracking-wider">Participant</th>
-                      <th className="px-6 py-4 font-bold text-slate-600 text-xs uppercase tracking-wider">Course</th>
-                      <th className="px-6 py-4 font-bold text-slate-600 text-xs uppercase tracking-wider">Details</th>
-                      <th className="px-6 py-4 font-bold text-slate-600 text-xs uppercase tracking-wider">Issued</th>
-                      <th className="px-6 py-4 font-bold text-slate-600 text-xs uppercase tracking-wider text-right">Actions</th>
+                      <th className="px-6 py-4 font-bold text-brand-navy/80 text-xs uppercase tracking-wider">Participant</th>
+                      <th className="px-6 py-4 font-bold text-brand-navy/80 text-xs uppercase tracking-wider">Course</th>
+                      <th className="px-6 py-4 font-bold text-brand-navy/80 text-xs uppercase tracking-wider">Details</th>
+                      <th className="px-6 py-4 font-bold text-brand-navy/80 text-xs uppercase tracking-wider">Issued</th>
+                      <th className="px-6 py-4 font-bold text-brand-navy/80 text-xs uppercase tracking-wider text-right">Actions</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-100 bg-white">
                     {loadingHistory ? (
-                      <tr><td colSpan={5} className="p-8 text-center text-slate-400">
+                      <tr><td colSpan={5} className="p-8 text-center text-brand-navy/40">
                         <Loader2 className="w-6 h-6 animate-spin mx-auto mb-2 text-blue-500" /> Loading courses...
                       </td></tr>
                     ) : filtered.length === 0 ? (
                       <tr><td colSpan={5} className="p-12 text-center">
                         <BookOpen className="w-10 h-10 mx-auto mb-3 text-blue-200" />
-                        <p className="text-slate-500 font-medium">No course certificates issued yet.</p>
+                        <p className="text-brand-navy/60 font-medium">No course certificates issued yet.</p>
                       </td></tr>
                     ) : (
                       filtered.map(c => (
-                        <tr key={c.id} className="transition-colors hover:bg-blue-50/50">
+                        <tr key={c.id} className="transition-colors hover:bg-brand-soft/50">
                           <td className="px-6 py-4">
-                            <div className="font-bold text-slate-900">{c.student_name}</div>
-                            <div className="font-mono text-xs text-slate-500 mt-0.5">{c.prn_no}</div>
+                            <div className="font-bold text-brand-heading">{c.student_name}</div>
+                            <div className="font-mono text-xs text-brand-navy/60 mt-0.5">{c.prn_no}</div>
                           </td>
                           <td className="px-6 py-4">
-                            <div className="font-semibold text-slate-800 text-sm">{c.course_name}</div>
+                            <div className="font-semibold text-brand-heading text-sm">{c.course_name}</div>
                             {c.course_type && (
-                              <span className={`inline-block mt-1 px-2 py-0.5 rounded text-[10px] font-bold ${typeColors[c.course_type] || 'bg-slate-100 text-slate-600'}`}>
+                              <span className={`inline-block mt-1 px-2 py-0.5 rounded text-[10px] font-bold ${typeColors[c.course_type] || 'bg-brand-border/30 text-brand-navy/80'}`}>
                                 {c.course_type}
                               </span>
                             )}
@@ -536,12 +536,12 @@ function CoursesContent({ currentUser }: { currentUser: AdminRecord }) {
                                 {c.grade}
                               </span>
                             )}
-                            <div className="text-[10px] text-slate-400 mt-1 flex items-center gap-1">
+                            <div className="text-[10px] text-brand-navy/40 mt-1 flex items-center gap-1">
                               {c.duration && <><Clock className="w-3 h-3" /> {c.duration}</>}
                               {c.instructor_name && ` · ${c.instructor_name}`}
                             </div>
                           </td>
-                          <td className="px-6 py-4 text-slate-600 text-xs font-medium">
+                          <td className="px-6 py-4 text-brand-navy/80 text-xs font-medium">
                             {c.issued_at ? new Date(c.issued_at).toLocaleDateString('en-IN', {
                               day: 'numeric', month: 'short', year: 'numeric'
                             }) : 'N/A'}
@@ -550,7 +550,7 @@ function CoursesContent({ currentUser }: { currentUser: AdminRecord }) {
                             <div className="flex items-center gap-2 justify-end flex-wrap">
                               {c.pdf_url && (
                                 <a href={c.pdf_url} target="_blank" rel="noreferrer"
-                                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-colors border bg-blue-50 text-blue-600 border-blue-200 hover:bg-blue-600 hover:text-white">
+                                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-colors border bg-brand-soft text-brand-blue border-blue-200 hover:bg-brand-blue hover:text-white">
                                   <Download className="w-3.5 h-3.5" /> Certificate
                                 </a>
                               )}
@@ -561,7 +561,7 @@ function CoursesContent({ currentUser }: { currentUser: AdminRecord }) {
                                 </a>
                               )}
                               {!c.pdf_url && !c.tx_hash_data && (
-                                <span className="text-xs text-slate-400">No links</span>
+                                <span className="text-xs text-brand-navy/40">No links</span>
                               )}
                             </div>
                           </td>

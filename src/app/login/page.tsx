@@ -85,8 +85,8 @@ export default function LoginPage() {
       {/* ── Right panel — form ────────────────────────────── */}
       <div className="flex-1 flex flex-col items-center justify-center px-6 py-12 relative overflow-hidden">
         
-        {/* Center glowing orb behind form */}
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-brand-blue opacity-10 blur-[100px] rounded-full pointer-events-none" />
+        {/* Bottom corner glowing orb */}
+        <div className="absolute -bottom-32 -right-32 w-[800px] h-[800px] bg-brand-blue opacity-15 blur-[120px] rounded-full pointer-events-none" />
 
         {/* Back link */}
         <Link
