@@ -9,7 +9,6 @@ const navLinks = [
   { name: 'Features', href: '/#features' },
   { name: 'How It Works', href: '/#how-it-works' },
   { name: 'Verify', href: '/scan' },
-  { name: 'About', href: '/#about' },
 ]
 
 export function Navbar({ isLoggedIn: _isLoggedIn, user: _user }: { isLoggedIn?: boolean, user?: any }) {
@@ -77,16 +76,19 @@ export function Navbar({ isLoggedIn: _isLoggedIn, user: _user }: { isLoggedIn?: 
               <div className="flex items-center gap-6">
                 <Link
                   href="/dashboard"
-                  className="flex items-center gap-3 text-brand-navy hover:opacity-80 transition-opacity"
+                  className="px-5 py-2 bg-brand-soft text-brand-blue font-semibold text-[14px] rounded-full hover:bg-brand-blue hover:text-white transition-all shadow-sm"
                 >
-                  <div className="w-9 h-9 rounded-full bg-brand-soft flex items-center justify-center text-brand-blue font-medium text-sm">
+                  Dashboard
+                </Link>
+                <div className="flex items-center gap-3 text-brand-navy border-l border-brand-border pl-6">
+                  <div className="w-9 h-9 rounded-full bg-slate-100 flex items-center justify-center text-slate-500 font-medium text-sm">
                     {user.full_name?.charAt(0).toUpperCase()}
                   </div>
                   <span className="text-sm font-medium">{user.full_name}</span>
-                </Link>
+                </div>
                 <a
                   href="/api/student-logout"
-                  className="text-sm font-medium text-brand-navy/60 hover:text-red-600 transition-colors"
+                  className="text-sm font-medium text-brand-navy/60 hover:text-red-600 transition-colors ml-2"
                 >
                   Sign Out
                 </a>
@@ -129,18 +131,21 @@ export function Navbar({ isLoggedIn: _isLoggedIn, user: _user }: { isLoggedIn?: 
               <div className="pt-6 mt-4 border-t border-brand-border flex flex-col gap-4">
                 {!sessionLoaded ? null : user ? (
                   <>
-                    <Link
-                      href="/dashboard"
-                      onClick={() => setIsMobileMenuOpen(false)}
-                      className="flex items-center gap-3 p-4 bg-brand-soft rounded-2xl"
-                    >
-                      <div className="w-12 h-12 rounded-full bg-white flex items-center justify-center text-brand-blue font-medium text-lg">
+                    <div className="flex items-center gap-3 p-4 bg-slate-50 border border-brand-border rounded-2xl mb-2">
+                      <div className="w-12 h-12 rounded-full bg-brand-navy flex items-center justify-center text-white font-medium text-lg">
                         {user.full_name?.charAt(0).toUpperCase()}
                       </div>
                       <div>
                         <p className="text-base font-medium text-brand-navy">{user.full_name}</p>
                         <p className="text-xs text-brand-navy/60">{user.prn_no}</p>
                       </div>
+                    </div>
+                    <Link
+                      href="/dashboard"
+                      onClick={() => setIsMobileMenuOpen(false)}
+                      className="w-full text-center py-3.5 bg-brand-soft text-brand-blue font-semibold rounded-full hover:bg-brand-blue hover:text-white transition-all shadow-sm"
+                    >
+                      Go to Dashboard
                     </Link>
                     <a
                       href="/api/student-logout"

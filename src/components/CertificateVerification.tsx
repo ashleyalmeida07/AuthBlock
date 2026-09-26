@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
+import { Logo } from '@/components/ui'
 import {
   ShieldCheck,
   XCircle,
@@ -86,13 +87,16 @@ export default function CertificateVerification({ certId, hash, tx }: Certificat
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-slate-50 flex items-center justify-center">
-        <div className="text-center">
-          <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4 animate-pulse">
-            <Loader2 className="w-8 h-8 text-blue-600 animate-spin" />
+      <div className="min-h-screen bg-brand-bg flex items-center justify-center">
+        <div className="text-center flex flex-col items-center">
+          <div className="relative w-16 h-16 flex items-center justify-center mb-6">
+            <div className="absolute inset-0 bg-brand-blue opacity-10 blur-xl rounded-full" />
+            <div className="relative z-10 w-12 h-12 bg-brand-navy rounded-xl flex items-center justify-center shadow-lg animate-pulse">
+              <Logo fill="white" className="w-6 h-6 animate-spin" />
+            </div>
           </div>
-          <h2 className="text-xl font-bold text-slate-900 mb-2">Verifying Credential</h2>
-          <p className="text-slate-500 text-sm">Checking blockchain authenticity...</p>
+          <h2 className="text-2xl font-light text-brand-heading mb-2 tracking-tight">Verifying Credential</h2>
+          <p className="text-brand-navy/60 text-sm font-medium">Checking blockchain authenticity...</p>
         </div>
       </div>
     )
