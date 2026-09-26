@@ -40,6 +40,12 @@ export default async function DashboardPage() {
     ORDER BY issued_at DESC
   `
 
+  const courses = await db`
+    SELECT * FROM courses
+    WHERE prn_no = ${user.prn_no}
+    ORDER BY issued_at DESC
+  `
+
   const qrScans = await db`
     SELECT * FROM qr_scans
     WHERE prn_no = ${user.prn_no}
@@ -47,7 +53,7 @@ export default async function DashboardPage() {
     LIMIT 10
   `
 
-  const totalCredentials = marksheets.length + degrees.length
+  const totalCredentials = marksheets.length + degrees.length + courses.length
 
   return (
     <div className="min-h-screen bg-brand-bg relative selection:bg-brand-soft">
@@ -77,7 +83,7 @@ export default async function DashboardPage() {
         </div>
 
         {/* Stats Row */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-10">
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4 mb-10">
           <div className="bg-white rounded-3xl border border-brand-border/50 p-6 shadow-sm">
             <div className="flex items-center gap-3 mb-4">
               <div className="w-10 h-10 rounded-xl bg-brand-soft/50 flex items-center justify-center">
@@ -95,6 +101,15 @@ export default async function DashboardPage() {
             </div>
             <p className="text-3xl font-light text-brand-heading tracking-tight">{degrees.length}</p>
             <p className="text-xs font-bold text-brand-navy/50 uppercase tracking-wider mt-1">Degrees</p>
+          </div>
+          <div className="bg-white rounded-3xl border border-brand-border/50 p-6 shadow-sm">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-10 h-10 rounded-xl bg-purple-50 flex items-center justify-center">
+                <Award className="w-5 h-5 text-purple-600" />
+              </div>
+            </div>
+            <p className="text-3xl font-light text-brand-heading tracking-tight">{courses.length}</p>
+            <p className="text-xs font-bold text-brand-navy/50 uppercase tracking-wider mt-1">Courses</p>
           </div>
           <div className="bg-white rounded-3xl border border-brand-border/50 p-6 shadow-sm">
             <div className="flex items-center gap-3 mb-4">
@@ -199,6 +214,60 @@ export default async function DashboardPage() {
                       <Award className="w-3.5 h-3.5" /> Certificate
                     </a>
                     <a href={`/verify?cert=${deg.certificate_id}&hash=${deg.data_hash}&tx=${deg.tx_hash_data}`}
+                      className="ml-auto inline-flex items-center gap-2 px-4 py-2 bg-brand-navy hover:bg-brand-heading text-white rounded-full text-xs font-medium transition-colors shadow-sm">
+                      <ShieldCheck className="w-3.5 h-3.5" /> Verify
+                    </a>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Courses Section */}
+        {courses.length > 0 && (
+          <div className="mb-12">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-10 h-10 rounded-xl bg-purple-50 flex items-center justify-center">
+                <Award className="w-5 h-5 text-purple-600" />
+              </div>
+              <h2 className="text-xl font-medium text-brand-heading">Course Certificates</h2>
+              <span className="ml-auto text-xs font-bold text-brand-navy/50 bg-brand-bg border border-brand-border px-3 py-1.5 rounded-full">{courses.length} issued</span>
+            </div>
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              {courses.map((course: any) => (
+                <div key={course.id} className="bg-white rounded-3xl border border-brand-border shadow-sm overflow-hidden hover:shadow-md transition-shadow">
+                  <div className="px-8 py-6 border-b border-brand-border/50">
+                    <div className="flex items-start justify-between">
+                      <div>
+                        <span className="text-[10px] font-bold uppercase tracking-widest text-purple-600 block mb-2">{course.course_type || 'Certification'}</span>
+                        <h3 className="text-xl font-medium text-brand-heading">{course.course_name}</h3>
+                      </div>
+                      <span className="text-xs font-bold text-brand-navy/60 bg-brand-bg border border-brand-border px-3 py-1.5 rounded-full">{new Date(course.issued_at).getFullYear()}</span>
+                    </div>
+                  </div>
+
+                  <div className="px-8 py-6 grid grid-cols-3 gap-6">
+                    <div>
+                      <p className="text-[10px] uppercase font-bold text-brand-navy/40 mb-1.5">Grade</p>
+                      <p className="text-sm font-bold text-emerald-600">{course.grade || 'N/A'}</p>
+                    </div>
+                    <div className="border-l border-brand-border/50 pl-6">
+                      <p className="text-[10px] uppercase font-bold text-brand-navy/40 mb-1.5">Duration</p>
+                      <p className="text-sm font-medium text-brand-heading">{course.duration || 'N/A'}</p>
+                    </div>
+                    <div className="border-l border-brand-border/50 pl-6">
+                      <p className="text-[10px] uppercase font-bold text-brand-navy/40 mb-1.5">Instructor</p>
+                      <p className="text-sm font-medium text-brand-navy/80">{course.instructor_name || 'N/A'}</p>
+                    </div>
+                  </div>
+
+                  <div className="px-8 py-5 bg-brand-bg border-t border-brand-border/50 flex flex-wrap items-center gap-3">
+                    <a href={course.pdf_url} target="_blank" rel="noreferrer"
+                      className="inline-flex items-center gap-2 px-4 py-2 bg-white border border-brand-border/80 hover:border-purple-400 rounded-full text-xs font-medium text-brand-navy hover:text-purple-700 transition-colors shadow-sm">
+                        <Download className="w-3.5 h-3.5" /> Certificate
+                    </a>
+                    <a href={`/verify?cert=${course.certificate_id}&hash=${course.data_hash}&tx=${course.tx_hash_data}`}
                       className="ml-auto inline-flex items-center gap-2 px-4 py-2 bg-brand-navy hover:bg-brand-heading text-white rounded-full text-xs font-medium transition-colors shadow-sm">
                       <ShieldCheck className="w-3.5 h-3.5" /> Verify
                     </a>

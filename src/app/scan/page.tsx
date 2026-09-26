@@ -246,7 +246,7 @@ export default function VerifyPage() {
                   <p className="text-slate-500 text-sm mt-1">Upload an image of the QR code or use your camera to scan it live</p>
                 </div>
                 <button onClick={() => { stopCamera(); setActiveMethod(null); setQrSuccess(false); setQrError(null); }}
-                  className="flex items-center gap-1.5 text-sm font-bold text-slate-500 hover:text-slate-800 px-3 py-2 rounded-lg hover:bg-slate-100 transition-colors">
+                  className="flex items-center gap-1.5 text-sm font-bold text-white bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg shadow-sm shadow-blue-600/20 transition-all">
                   <X className="w-4 h-4" /> Change Method
                 </button>
               </div>
@@ -399,7 +399,7 @@ export default function VerifyPage() {
                   <p className="text-slate-500 text-sm mt-1">Enter a Certificate ID or PRN number to fetch and verify credentials</p>
                 </div>
                 <button onClick={() => { setActiveMethod(null); setIdError(null); setCertId(''); setPrn(''); }}
-                  className="flex items-center gap-1.5 text-sm font-bold text-slate-500 hover:text-slate-800 px-3 py-2 rounded-lg hover:bg-slate-100 transition-colors">
+                  className="flex items-center gap-1.5 text-sm font-bold text-white bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg shadow-sm shadow-blue-600/20 transition-all">
                   <X className="w-4 h-4" /> Change Method
                 </button>
               </div>
@@ -461,7 +461,7 @@ export default function VerifyPage() {
                   <p className="text-slate-500 text-sm mt-1">Upload a PDF or scanned image — we extract and match the hash against the blockchain via OCR</p>
                 </div>
                 <button onClick={() => setActiveMethod(null)}
-                  className="flex items-center gap-1.5 text-sm font-bold text-slate-500 hover:text-slate-800 px-3 py-2 rounded-lg hover:bg-slate-100 transition-colors">
+                  className="flex items-center gap-1.5 text-sm font-bold text-white bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg shadow-sm shadow-blue-600/20 transition-all">
                   <X className="w-4 h-4" /> Change Method
                 </button>
               </div>
