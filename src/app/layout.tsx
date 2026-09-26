@@ -13,15 +13,15 @@ export const metadata: Metadata = {
   keywords: ['blockchain', 'certificate verification', 'academic credentials', 'ethereum', 'education', 'FRCRCE'],
   authors: [{ name: 'Authblock Team' }],
   icons: {
-    icon: '/logo.png',
-    shortcut: '/logo.png',
-    apple: '/logo.png',
+    icon: '/logo.svg',
+    shortcut: '/logo.svg',
+    apple: '/logo.svg',
   },
   openGraph: {
     title: 'Authblock - Blockchain Certificate Verification',
     description: 'Secure, tamper-proof academic credential verification powered by blockchain technology.',
     type: 'website',
-    images: ['/logo.png'],
+    images: ['/logo.svg'],
   },
 }
 

@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { Container, Logo } from '@/components/ui'
-import { Menu, X, LogOut, FileText, ArrowRight } from 'lucide-react'
+import { Menu, X, LogOut, FileText, ArrowRight, ChevronDown } from 'lucide-react'
 
 const navLinks = [
   { name: 'Features', href: '/#features' },
@@ -62,7 +62,7 @@ export function Navbar({ isLoggedIn: _isLoggedIn, user: _user }: { isLoggedIn?: 
               <Link
                 key={link.name}
                 href={link.href}
-                className="text-brand-navy/70 hover:text-brand-bright transition-colors duration-200 text-sm font-medium"
+                className="flex items-center gap-1.5 text-brand-navy/70 hover:text-brand-bright transition-colors duration-200 text-[15px] font-medium"
               >
                 {link.name}
               </Link>
@@ -94,7 +94,7 @@ export function Navbar({ isLoggedIn: _isLoggedIn, user: _user }: { isLoggedIn?: 
             ) : (
               <Link
                 href="/login"
-                className="group flex items-center gap-2 px-6 py-2.5 bg-brand-blue text-white text-sm font-medium rounded-full hover:bg-brand-bright transition-all duration-300 shadow-blue-glow hover:-translate-y-0.5"
+                className="group flex items-center gap-2 px-6 py-2.5 bg-brand-blue text-white text-[15px] font-medium rounded-full hover:bg-brand-bright transition-all duration-300 shadow-blue-glow hover:-translate-y-0.5"
               >
                 Get Started
                 <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
@@ -119,7 +119,7 @@ export function Navbar({ isLoggedIn: _isLoggedIn, user: _user }: { isLoggedIn?: 
                 <Link
                   key={link.name}
                   href={link.href}
-                  className="text-brand-navy/80 hover:text-brand-bright transition-colors py-3 text-lg font-medium"
+                  className="flex items-center justify-between text-brand-navy/80 hover:text-brand-bright transition-colors py-3 text-lg font-medium"
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
                   {link.name}

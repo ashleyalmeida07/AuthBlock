@@ -51,14 +51,7 @@ function AdminLoginContent() {
   const isLoading = status === 'loading'
 
   return (
-    <div className="min-h-screen flex bg-brand-bg"
-      style={{
-        backgroundImage:
-          'linear-gradient(to right, rgba(7, 20, 61, 0.05) 1px, transparent 1px),' +
-          'linear-gradient(to bottom, rgba(7, 20, 61, 0.05) 1px, transparent 1px)',
-        backgroundSize: '40px 40px',
-      }}
-    >
+    <div className="min-h-screen flex bg-brand-bg relative overflow-hidden">
       {/* ── Left panel — white branding ─────────────────────── */}
       <div className="hidden lg:flex flex-col justify-between w-[400px] shrink-0 p-10 bg-white border-r border-brand-border/50 relative">
 
@@ -106,7 +99,10 @@ function AdminLoginContent() {
       </div>
 
       {/* ── Right panel — login form ─────────────────────────── */}
-      <div className="flex-1 flex flex-col items-center justify-center px-6 py-12 relative">
+      <div className="flex-1 flex flex-col items-center justify-center px-6 py-12 relative overflow-hidden">
+        
+        {/* Bottom corner glowing orb */}
+        <div className="absolute -bottom-32 -right-32 w-[800px] h-[800px] bg-brand-blue opacity-15 blur-[120px] rounded-full pointer-events-none" />
 
         {/* Back to site */}
         <Link

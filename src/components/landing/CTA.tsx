@@ -4,6 +4,7 @@ import React from 'react'
 import Link from 'next/link'
 import { Container } from '@/components/ui'
 import { ArrowRight, QrCode } from 'lucide-react'
+import { ShiningText } from '@/components/ui/shining-text'
 
 export function CTA({ isLoggedIn = false }: { isLoggedIn?: boolean }) {
   return (
@@ -19,7 +20,7 @@ export function CTA({ isLoggedIn = false }: { isLoggedIn?: boolean }) {
                 Get Started
               </span>
               <h2 className="text-3xl md:text-4xl lg:text-5xl font-light text-white tracking-tight mb-6 leading-tight">
-                Your credentials deserve to be verified — safely.
+                <ShiningText text="Your credentials deserve to be verified — safely." />
               </h2>
               <p className="text-lg text-white/60 font-light leading-relaxed">
                 Upload once. Get verified. Share globally with complete confidence — powered by cryptographic proof, not trust.

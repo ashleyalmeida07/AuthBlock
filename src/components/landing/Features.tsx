@@ -3,6 +3,7 @@
 import React from 'react'
 import { Container } from '@/components/ui'
 import { Shield, Zap, Globe, Lock, QrCode, BarChart3 } from 'lucide-react'
+import { ShiningText } from '@/components/ui/shining-text'
 
 const features = [
   {
@@ -44,7 +45,7 @@ export function Features() {
         {/* Header */}
         <div className="max-w-3xl mb-20">
           <h2 className="text-4xl md:text-5xl lg:text-[4rem] font-light text-brand-heading tracking-tight leading-tight">
-            Everything you need for trusted academic credentials.
+            <ShiningText text="Everything you need for trusted academic credentials." />
           </h2>
         </div>
 

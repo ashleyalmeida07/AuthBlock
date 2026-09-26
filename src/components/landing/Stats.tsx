@@ -3,6 +3,7 @@
 import React from 'react'
 import { Container } from '@/components/ui'
 import { Shield, FileCheck, Clock, Globe } from 'lucide-react'
+import { ShiningText } from '@/components/ui/shining-text'
 
 const stats = [
   {
@@ -38,7 +39,7 @@ export function Stats() {
         {/* Header */}
         <div className="mb-20">
           <h2 className="text-4xl md:text-5xl lg:text-[4rem] font-light text-brand-heading tracking-tight leading-tight">
-            Performance without<br className="hidden md:block" /> sacrificing trust.
+            <ShiningText text={<>Performance without<br className="hidden md:block" /> sacrificing trust.</>} />
           </h2>
           <p className="text-brand-navy/60 mt-6 text-lg max-w-2xl font-light">
             Every metric here is backed by the Ethereum blockchain — not marketing claims.

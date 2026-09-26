@@ -3,13 +3,16 @@ import React from 'react'
 export function Logo({ className = "w-6 h-6", fill = "currentColor" }: { className?: string; fill?: string }) {
   return (
     <svg 
-      viewBox="0 0 100 100" 
+      viewBox="0 0 115 115" 
       className={className} 
-      fill="none" 
       xmlns="http://www.w3.org/2000/svg"
     >
-      <rect x="20" y="20" width="40" height="40" rx="8" stroke={fill} strokeWidth="10" />
-      <rect x="40" y="40" width="40" height="40" rx="8" stroke={fill} strokeWidth="10" />
+      <path
+        fillRule="evenodd"
+        clipRule="evenodd"
+        d="M98.9511 93.1356C88.6069 104.935 73.3917 112.389 56.4281 112.389C52.1817 112.389 48.0447 111.922 44.0663 111.036L80.8419 75.0149L98.9511 93.1356ZM102.076 89.2355C108.856 79.9614 112.857 68.5431 112.857 56.1943C112.857 52.2885 112.457 48.4761 111.695 44.7946L84.3909 71.5384L102.076 89.2355ZM77.3296 71.5012L19.5367 13.6717C7.57108 23.9759 0 39.2046 0 56.1943C0 81.0002 16.1394 102.051 38.5314 109.504L77.3296 71.5012ZM23.4681 10.5775C32.7408 3.92137 44.1248 0 56.4281 0C81.6661 0 103.034 16.4995 110.248 39.2576L80.8791 68.0247L23.4681 10.5775Z"
+        fill={fill === 'currentColor' ? '#07143D' : fill}
+      />
     </svg>
   )
 }

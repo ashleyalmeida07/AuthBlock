@@ -34,14 +34,8 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen flex bg-brand-bg"
-      style={{
-        backgroundImage:
-          'linear-gradient(to right, rgba(7, 20, 61, 0.05) 1px, transparent 1px),' +
-          'linear-gradient(to bottom, rgba(7, 20, 61, 0.05) 1px, transparent 1px)',
-        backgroundSize: '40px 40px',
-      }}
-    >
+    <div className="min-h-screen flex bg-brand-bg relative overflow-hidden">
+
       {/* ── Left panel — branding ──────────────────────────── */}
       <div className="hidden lg:flex flex-col justify-between w-[420px] shrink-0 p-10 bg-white border-r border-brand-border/50 relative overflow-hidden">
 
@@ -72,18 +66,7 @@ export default function LoginPage() {
 
         {/* Bottom info */}
         <div className="relative z-10 space-y-3">
-          {/* Verified badge card */}
-          <div className="bg-brand-bg border border-brand-border/50 rounded-xl p-4 shadow-sm">
-            <div className="flex items-center gap-3 mb-2.5">
-              <div>
-                <p className="text-xs font-bold text-brand-navy">Blockchain Verified</p>
-                <p className="text-[10px] text-brand-navy/50">Sepolia Ethereum Network</p>
-              </div>
-            </div>
-            <div className="h-1.5 w-full bg-brand-border rounded-full overflow-hidden">
-              <div className="h-full bg-brand-blue w-full rounded-full" />
-            </div>
-          </div>
+
 
           {/* Info rows */}
           {[
@@ -100,7 +83,10 @@ export default function LoginPage() {
       </div>
 
       {/* ── Right panel — form ────────────────────────────── */}
-      <div className="flex-1 flex flex-col items-center justify-center px-6 py-12 relative">
+      <div className="flex-1 flex flex-col items-center justify-center px-6 py-12 relative overflow-hidden">
+        
+        {/* Center glowing orb behind form */}
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-brand-blue opacity-10 blur-[100px] rounded-full pointer-events-none" />
 
         {/* Back link */}
         <Link

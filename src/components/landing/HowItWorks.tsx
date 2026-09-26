@@ -3,6 +3,7 @@
 import React from 'react'
 import { Container } from '@/components/ui'
 import { Upload, QrCode, CheckCircle, ArrowRight } from 'lucide-react'
+import { ShiningText } from '@/components/ui/shining-text'
 
 const steps = [
   {
@@ -35,7 +36,7 @@ export function HowItWorks() {
         {/* Header */}
         <div className="text-center mb-24">
           <h2 className="text-4xl md:text-5xl lg:text-[4rem] font-light text-brand-heading tracking-tight leading-tight">
-            From issuance to verification<br className="hidden md:block" /> in three steps.
+            <ShiningText text={<>From issuance to verification<br className="hidden md:block" /> in three steps.</>} />
           </h2>
           <p className="text-brand-navy/60 mt-6 text-lg max-w-2xl mx-auto font-light">
             No third-party lookups. No paper trails. Just cryptographic proof — permanent and tamper-proof.
